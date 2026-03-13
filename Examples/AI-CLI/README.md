@@ -48,7 +48,7 @@ Set API keys for your providers:
 ```bash
 export OPENAI_API_KEY='sk-...'         # OpenAI models
 export ANTHROPIC_API_KEY='sk-ant-...'  # Claude models
-export GEMINI_API_KEY='...'            # Gemini models (legacy GOOGLE_API_KEY or GOOGLE_APPLICATION_CREDENTIALS also accepted)
+export GEMINI_API_KEY='...'            # Gemini models (legacy GOOGLE_API_KEY also accepted)
 export MISTRAL_API_KEY='...'           # Mistral models
 export GROQ_API_KEY='gsk-...'          # Groq models
 export X_AI_API_KEY='xai-...'          # Grok models

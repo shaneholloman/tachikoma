@@ -105,8 +105,8 @@ public enum Provider: Sendable, Hashable, Codable {
     /// Alternative environment variable names (for compatibility)
     public var alternativeEnvironmentVariables: [String] {
         switch self {
-        case .grok: ["XAI_API_KEY"] // Additional Grok alias
-        case .google: ["GOOGLE_API_KEY", "GOOGLE_APPLICATION_CREDENTIALS"] // Backwards compatibility
+        case .grok: ["XAI_API_KEY", "GROK_API_KEY"] // Additional Grok aliases
+        case .google: ["GOOGLE_API_KEY"] // Backwards compatibility
         case .azureOpenAI: ["AZURE_OPENAI_TOKEN", "AZURE_OPENAI_BEARER_TOKEN"]
         default: []
         }

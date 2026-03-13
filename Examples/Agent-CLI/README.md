@@ -220,7 +220,7 @@ Set API keys for providers:
 ```bash
 export OPENAI_API_KEY='sk-...'
 export ANTHROPIC_API_KEY='sk-ant-...'
-export GEMINI_API_KEY='...'   # Legacy GOOGLE_API_KEY / GOOGLE_APPLICATION_CREDENTIALS still work
+export GEMINI_API_KEY='...'   # Legacy GOOGLE_API_KEY still works
 export MISTRAL_API_KEY='...'
 export GROQ_API_KEY='gsk-...'
 export X_AI_API_KEY='xai-...'

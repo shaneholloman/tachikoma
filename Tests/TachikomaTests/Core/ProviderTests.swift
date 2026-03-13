@@ -1,3 +1,8 @@
+#if canImport(Darwin)
+import Darwin
+#else
+import Glibc
+#endif
 import Foundation
 import Testing
 @testable import Tachikoma
@@ -52,11 +57,8 @@ struct ProviderTests {
 
         @Test("Alternative environment variables")
         func alternativeEnvironmentVariables() {
-            #expect(Provider.grok.alternativeEnvironmentVariables == ["XAI_API_KEY"])
-            #expect(Provider.google.alternativeEnvironmentVariables == [
-                "GOOGLE_API_KEY",
-                "GOOGLE_APPLICATION_CREDENTIALS",
-            ])
+            #expect(Provider.grok.alternativeEnvironmentVariables == ["XAI_API_KEY", "GROK_API_KEY"])
+            #expect(Provider.google.alternativeEnvironmentVariables == ["GOOGLE_API_KEY"])
             #expect(Provider.openai.alternativeEnvironmentVariables.isEmpty)
             #expect(Provider.anthropic.alternativeEnvironmentVariables.isEmpty)
             #expect(Provider.azureOpenAI.alternativeEnvironmentVariables == [
@@ -160,7 +162,7 @@ struct ProviderTests {
             // Test that Grok provider loads from XAI_API_KEY when X_AI_API_KEY is not available
             let provider = Provider.grok
             #expect(provider.environmentVariable == "X_AI_API_KEY")
-            #expect(provider.alternativeEnvironmentVariables == ["XAI_API_KEY"])
+            #expect(provider.alternativeEnvironmentVariables == ["XAI_API_KEY", "GROK_API_KEY"])
         }
 
         @Test("Custom providers don't have environment variables")
@@ -168,6 +170,35 @@ struct ProviderTests {
             let customProvider = Provider.custom("test")
             #expect(customProvider.environmentVariable.isEmpty)
             #expect(customProvider.alternativeEnvironmentVariables.isEmpty)
+        }
+
+        @Test("Google ignores ADC credential paths as API keys")
+        func googleIgnoresADCCredentialPaths() {
+            let previousGeminiAPIKey = getenv("GEMINI_API_KEY").map { String(cString: $0) }
+            let previousGoogleAPIKey = getenv("GOOGLE_API_KEY").map { String(cString: $0) }
+            let previousGoogleCredentials = getenv("GOOGLE_APPLICATION_CREDENTIALS").map { String(cString: $0) }
+            unsetenv("GEMINI_API_KEY")
+            unsetenv("GOOGLE_API_KEY")
+            setenv("GOOGLE_APPLICATION_CREDENTIALS", "/tmp/service-account.json", 1)
+            defer {
+                if let previousGeminiAPIKey {
+                    setenv("GEMINI_API_KEY", previousGeminiAPIKey, 1)
+                } else {
+                    unsetenv("GEMINI_API_KEY")
+                }
+                if let previousGoogleAPIKey {
+                    setenv("GOOGLE_API_KEY", previousGoogleAPIKey, 1)
+                } else {
+                    unsetenv("GOOGLE_API_KEY")
+                }
+                if let previousGoogleCredentials {
+                    setenv("GOOGLE_APPLICATION_CREDENTIALS", previousGoogleCredentials, 1)
+                } else {
+                    unsetenv("GOOGLE_APPLICATION_CREDENTIALS")
+                }
+            }
+
+            #expect(Provider.google.loadAPIKeyFromEnvironment() == nil)
         }
     }
 

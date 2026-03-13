@@ -208,7 +208,7 @@ enum TestHelpers {
         case "mistral":
             ["MISTRAL_API_KEY"]
         case "google":
-            ["GEMINI_API_KEY", "GOOGLE_API_KEY", "GOOGLE_APPLICATION_CREDENTIALS"]
+            ["GEMINI_API_KEY", "GOOGLE_API_KEY"]
         default:
             []
         }

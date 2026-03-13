@@ -266,10 +266,10 @@ struct AICLI {
         Set the appropriate environment variable for your provider:
           • OPENAI_API_KEY for OpenAI models
           • ANTHROPIC_API_KEY for Claude models
-          • GEMINI_API_KEY for Gemini models (legacy GOOGLE_API_KEY / GOOGLE_APPLICATION_CREDENTIALS also accepted)
+          • GEMINI_API_KEY for Gemini models (legacy GOOGLE_API_KEY also accepted)
           • MISTRAL_API_KEY for Mistral models
           • GROQ_API_KEY for Groq models
-          • X_AI_API_KEY or XAI_API_KEY for Grok models
+          • X_AI_API_KEY, XAI_API_KEY, or GROK_API_KEY for Grok models
           • Ollama requires local installation (no API key needed)
 
         For detailed documentation, visit: https://github.com/steipete/tachikoma
@@ -314,7 +314,7 @@ struct AICLI {
         self.checkAPIKeyStatus(provider: "Google", envVars: ["GEMINI_API_KEY", "GOOGLE_API_KEY"])
         self.checkAPIKeyStatus(provider: "Mistral", envVars: ["MISTRAL_API_KEY"])
         self.checkAPIKeyStatus(provider: "Groq", envVars: ["GROQ_API_KEY"])
-        self.checkAPIKeyStatus(provider: "Grok", envVars: ["X_AI_API_KEY", "XAI_API_KEY"])
+        self.checkAPIKeyStatus(provider: "Grok", envVars: ["X_AI_API_KEY", "XAI_API_KEY", "GROK_API_KEY"])
 
         // Ollama status
         print("   • Ollama: Local (no API key required)")
@@ -352,7 +352,7 @@ struct AICLI {
             let envVar = provider.environmentVariable.isEmpty ? "API key" : provider.environmentVariable
             if provider == .grok {
                 // Special case for Grok with alternative variables
-                throw CLIError.missingAPIKey("X_AI_API_KEY or XAI_API_KEY")
+                throw CLIError.missingAPIKey("X_AI_API_KEY, XAI_API_KEY, or GROK_API_KEY")
             } else {
                 throw CLIError.missingAPIKey(envVar)
             }
@@ -405,8 +405,6 @@ struct AICLI {
             print("export GEMINI_API_KEY='gk-your-key-here'")
             print("# Legacy names still supported:")
             print("export GOOGLE_API_KEY='gk-your-key-here'")
-            print("# or service-account path:")
-            print("export GOOGLE_APPLICATION_CREDENTIALS='/path/to/service-account.json'")
             print("Get your key at: https://aistudio.google.com/apikey")
         case .mistral:
             print("Set your Mistral API key:")
@@ -421,6 +419,7 @@ struct AICLI {
             print("export X_AI_API_KEY='xai-your-key-here'")
             print("# or alternatively:")
             print("export XAI_API_KEY='xai-your-key-here'")
+            print("export GROK_API_KEY='xai-your-key-here'")
             print("Get your key at: https://console.x.ai/")
         case .ollama:
             print("Install Ollama locally:")

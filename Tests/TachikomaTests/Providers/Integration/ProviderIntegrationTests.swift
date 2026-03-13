@@ -30,7 +30,7 @@ struct ProviderIntegrationTests {
     private static var hasMistralKey: Bool { hasEnv("MISTRAL_API_KEY") }
     private static var hasGroqKey: Bool { hasEnv("GROQ_API_KEY") }
     private static var hasGrokKey: Bool {
-        hasEnv("X_AI_API_KEY") || hasEnv("XAI_API_KEY")
+        hasEnv("X_AI_API_KEY") || hasEnv("XAI_API_KEY") || hasEnv("GROK_API_KEY")
     }
 
     // MARK: - OpenAI Integration Tests
