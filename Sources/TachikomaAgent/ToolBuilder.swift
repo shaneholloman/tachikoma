@@ -150,7 +150,7 @@ public func createTool(
     )
 }
 
-// Helper struct for type-safe tool creation (moved outside to avoid nesting in generic function)
+/// Helper struct for type-safe tool creation (moved outside to avoid nesting in generic function)
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 private struct ConcreteAgentTool<I: AgentToolValue, O: AgentToolValue>: AgentToolProtocol {
     typealias Input = I

@@ -9,8 +9,13 @@ public final class AzureOpenAIProvider: ModelProvider {
     public let modelId: String
     public let apiVersion: String
     public let capabilities: ModelCapabilities
-    public var baseURL: String? { self.resolvedBaseURL }
-    public var apiKey: String? { self.resolvedAPIKey }
+    public var baseURL: String? {
+        self.resolvedBaseURL
+    }
+
+    public var apiKey: String? {
+        self.resolvedAPIKey
+    }
 
     private let authHeaderName: String
     private let authHeaderValuePrefix: String

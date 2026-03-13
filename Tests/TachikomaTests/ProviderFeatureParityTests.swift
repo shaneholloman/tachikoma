@@ -2,9 +2,8 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Provider Feature Parity Tests")
 struct ProviderFeatureParityTests {
-    // Mock provider for testing
+    /// Mock provider for testing
     struct MockProvider: ModelProvider {
         let modelId = "mock-model"
         let baseURL: String? = nil
@@ -27,8 +26,8 @@ struct ProviderFeatureParityTests {
         }
     }
 
-    @Test("Provider configuration defaults")
-    func providerConfigurationDefaults() throws {
+    @Test
+    func `Provider configuration defaults`() {
         let config = ProviderConfiguration()
 
         #expect(config.maxTokens == 4096)
@@ -40,8 +39,8 @@ struct ProviderFeatureParityTests {
         #expect(config.requiresAlternatingRoles == false)
     }
 
-    @Test("Provider configuration presets")
-    func providerConfigurationPresets() throws {
+    @Test
+    func `Provider configuration presets`() {
         let openAI = ProviderConfiguration.openAI
         #expect(openAI.supportsSystemRole == true)
         #expect(openAI.requiresAlternatingRoles == false)
@@ -59,8 +58,8 @@ struct ProviderFeatureParityTests {
         #expect(ollama.maxToolCalls == 0) // No tool support by default
     }
 
-    @Test("Provider feature detection")
-    func providerFeatureDetection() throws {
+    @Test
+    func `Provider feature detection`() {
         let provider = MockProvider(
             capabilities: ModelCapabilities(
                 supportsVision: true,
@@ -82,8 +81,8 @@ struct ProviderFeatureParityTests {
         #expect(adapter.isFeatureSupported(ProviderFeature.systemMessages))
     }
 
-    @Test("System message transformation")
-    func systemMessageTransformation() async throws {
+    @Test
+    func `System message transformation`() throws {
         let provider = MockProvider(
             capabilities: ModelCapabilities(
                 supportsVision: false,
@@ -116,8 +115,8 @@ struct ProviderFeatureParityTests {
         #expect(validated[1].role == .user)
     }
 
-    @Test("Alternating roles enforcement")
-    func alternatingRolesEnforcement() async throws {
+    @Test
+    func `Alternating roles enforcement`() throws {
         let provider = MockProvider(
             capabilities: ModelCapabilities(
                 supportsVision: false,
@@ -146,8 +145,8 @@ struct ProviderFeatureParityTests {
         #expect(validated.count < messages.count)
     }
 
-    @Test("Vision input validation")
-    func visionInputValidation() async throws {
+    @Test
+    func `Vision input validation`() throws {
         let provider = MockProvider(
             capabilities: ModelCapabilities(
                 supportsVision: false, // Doesn't support vision
@@ -187,8 +186,8 @@ struct ProviderFeatureParityTests {
         }
     }
 
-    @Test("Tool limit enforcement")
-    func toolLimitEnforcement() async throws {
+    @Test
+    func `Tool limit enforcement`() {
         let provider = MockProvider(
             capabilities: ModelCapabilities(
                 supportsVision: false,
@@ -222,8 +221,8 @@ struct ProviderFeatureParityTests {
         #expect(config.maxToolCalls == 2)
     }
 
-    @Test("Provider feature flags")
-    func providerFeatureFlags() throws {
+    @Test
+    func `Provider feature flags`() {
         for feature in ProviderFeature.allCases {
             // Verify all features have string representations
             #expect(!feature.rawValue.isEmpty)
@@ -235,8 +234,8 @@ struct ProviderFeatureParityTests {
         #expect(ProviderFeature.allCases.contains(.visionInputs))
     }
 
-    @Test("Provider adapter wrapping")
-    func providerAdapterWrapping() throws {
+    @Test
+    func `Provider adapter wrapping`() {
         let provider = MockProvider(
             capabilities: ModelCapabilities(
                 supportsVision: true,

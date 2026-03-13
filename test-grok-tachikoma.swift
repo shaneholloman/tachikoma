@@ -6,7 +6,7 @@ import Tachikoma
 // Set up API key
 setenv("X_AI_API_KEY", ProcessInfo.processInfo.environment["X_AI_API_KEY"] ?? "", 1)
 
-// Create a simple async function to test
+/// Create a simple async function to test
 @main
 struct TestGrok {
     static func main() async {

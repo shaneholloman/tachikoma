@@ -4,10 +4,9 @@ import Testing
 @testable import Tachikoma
 @testable import TachikomaMCP
 
-@Suite("Type Conversion Tests")
 struct TypeConversionTests {
-    @Test("AnyAgentToolValue to JSON conversion")
-    func anyAgentToolValueToJSON() throws {
+    @Test
+    func `AnyAgentToolValue to JSON conversion`() throws {
         // String
         let stringVal = AnyAgentToolValue(string: "hello")
         let stringJSON = try stringVal.toJSON()
@@ -50,8 +49,8 @@ struct TypeConversionTests {
         #expect(objectJSON?["count"] as? Int == 5)
     }
 
-    @Test("Any to AnyAgentToolValue conversion")
-    func anyToAnyAgentToolValue() throws {
+    @Test
+    func `Any to AnyAgentToolValue conversion`() {
         // String
         let stringVal = AnyAgentToolValue.from("hello")
         #expect(stringVal.stringValue == "hello")
@@ -99,8 +98,8 @@ struct TypeConversionTests {
         #expect(dateVal.stringValue != nil)
     }
 
-    @Test("AnyAgentToolValue to Value conversion")
-    func anyAgentToolValueToValue() {
+    @Test
+    func `AnyAgentToolValue to Value conversion`() {
         // String
         let stringVal = AnyAgentToolValue(string: "hello")
         let stringValue = stringVal.toValue()
@@ -151,8 +150,8 @@ struct TypeConversionTests {
         }
     }
 
-    @Test("Value to AnyAgentToolValue conversion")
-    func valueToAnyAgentToolValue() {
+    @Test
+    func `Value to AnyAgentToolValue conversion`() {
         // String
         let stringValue = Value.string("hello")
         let stringVal = stringValue.toAnyAgentToolValue()
@@ -203,8 +202,8 @@ struct TypeConversionTests {
         }
     }
 
-    @Test("ToolArguments initialization from AgentToolArguments")
-    func toolArgumentsFromAgentToolArguments() throws {
+    @Test
+    func `ToolArguments initialization from AgentToolArguments`() {
         let agentArgs = AgentToolArguments([
             "text": AnyAgentToolValue(string: "hello"),
             "number": AnyAgentToolValue(int: 42),
@@ -229,8 +228,8 @@ struct TypeConversionTests {
         }
     }
 
-    @Test("ToolResponse to AnyAgentToolValue conversion via toAgentToolResult")
-    func toolResponseToAgentToolResult() {
+    @Test
+    func `ToolResponse to AnyAgentToolValue conversion via toAgentToolResult`() {
         // Text response
         let textResponse = ToolResponse.text("Success message")
         let textResult = textResponse.toAgentToolResult()
@@ -257,8 +256,8 @@ struct TypeConversionTests {
         #expect(emptyResult.stringValue == "Success")
     }
 
-    @Test("ToolResponse to AnyAgentToolValue conversion")
-    func toolResponseToAnyAgentToolValue() {
+    @Test
+    func `ToolResponse to AnyAgentToolValue conversion`() {
         // Single text content
         let textResponse = ToolResponse.text("Hello")
         let textVal = textResponse.toAnyAgentToolValue()
@@ -298,7 +297,7 @@ struct TypeConversionTests {
                     "content",
                     uri: "https://example.com",
                     mimeType: "text/html",
-                )
+                ),
             ),
         ])
         let resourceVal = resourceResponse.toAnyAgentToolValue()
@@ -334,8 +333,8 @@ struct TypeConversionTests {
         }
     }
 
-    @Test("Round-trip conversions")
-    func roundTripConversions() throws {
+    @Test
+    func `Round-trip conversions`() throws {
         // AnyAgentToolValue -> Value -> AnyAgentToolValue
         let originalVal = AnyAgentToolValue(object: [
             "string": AnyAgentToolValue(string: "test"),

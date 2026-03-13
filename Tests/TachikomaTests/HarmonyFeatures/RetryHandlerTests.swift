@@ -1,9 +1,8 @@
 import Testing
 @testable import Tachikoma
 
-@Suite("Retry Handler")
 struct RetryHandlerTests {
-    // Helper actor for thread-safe counting
+    /// Helper actor for thread-safe counting
     actor CallCounter {
         private(set) var count = 0
 
@@ -16,8 +15,8 @@ struct RetryHandlerTests {
         }
     }
 
-    @Test("RetryPolicy default values")
-    func retryPolicyDefaults() {
+    @Test
+    func `RetryPolicy default values`() {
         let policy = RetryPolicy()
         #expect(policy.maxAttempts == 3)
         #expect(policy.baseDelay == 1.0)
@@ -26,8 +25,8 @@ struct RetryHandlerTests {
         #expect(policy.jitterRange == 0.9...1.1)
     }
 
-    @Test("RetryPolicy aggressive configuration")
-    func retryPolicyAggressive() {
+    @Test
+    func `RetryPolicy aggressive configuration`() {
         let policy = RetryPolicy.aggressive
         #expect(policy.maxAttempts == 5)
         #expect(policy.baseDelay == 0.5)
@@ -35,8 +34,8 @@ struct RetryHandlerTests {
         #expect(policy.exponentialBase == 1.5)
     }
 
-    @Test("RetryPolicy conservative configuration")
-    func retryPolicyConservative() {
+    @Test
+    func `RetryPolicy conservative configuration`() {
         let policy = RetryPolicy.conservative
         #expect(policy.maxAttempts == 2)
         #expect(policy.baseDelay == 2.0)
@@ -44,8 +43,8 @@ struct RetryHandlerTests {
         #expect(policy.exponentialBase == 2.0)
     }
 
-    @Test("RetryPolicy delay calculation")
-    func retryPolicyDelayCalculation() {
+    @Test
+    func `RetryPolicy delay calculation`() {
         let policy = RetryPolicy(
             baseDelay: 1.0,
             maxDelay: 10.0,
@@ -74,8 +73,8 @@ struct RetryHandlerTests {
         #expect(delay4 == 10.0) // 1.0 * 2^4 = 16.0, clamped to 10.0
     }
 
-    @Test("RetryPolicy delay with jitter")
-    func retryPolicyDelayWithJitter() {
+    @Test
+    func `RetryPolicy delay with jitter`() {
         let policy = RetryPolicy(
             baseDelay: 1.0,
             exponentialBase: 2.0,
@@ -88,8 +87,8 @@ struct RetryHandlerTests {
         #expect(delay <= 1.5) // 1.0 * 1.5
     }
 
-    @Test("RetryPolicy default shouldRetry for rate limits")
-    func retryPolicyDefaultShouldRetryRateLimits() {
+    @Test
+    func `RetryPolicy default shouldRetry for rate limits`() {
         let shouldRetry = RetryPolicy.defaultShouldRetry
 
         // Should retry rate limits
@@ -100,8 +99,8 @@ struct RetryHandlerTests {
         #expect(shouldRetry(rateLimitNoRetryAfter) == true)
     }
 
-    @Test("RetryPolicy default shouldRetry for network errors")
-    func retryPolicyDefaultShouldRetryNetworkErrors() {
+    @Test
+    func `RetryPolicy default shouldRetry for network errors`() {
         let shouldRetry = RetryPolicy.defaultShouldRetry
 
         // Should retry network errors
@@ -109,8 +108,8 @@ struct RetryHandlerTests {
         #expect(shouldRetry(networkError) == true)
     }
 
-    @Test("RetryPolicy default shouldRetry for API errors")
-    func retryPolicyDefaultShouldRetryAPIErrors() {
+    @Test
+    func `RetryPolicy default shouldRetry for API errors`() {
         let shouldRetry = RetryPolicy.defaultShouldRetry
 
         // Should retry specific API errors
@@ -125,8 +124,8 @@ struct RetryHandlerTests {
         #expect(shouldRetry(TachikomaError.apiError("Model not found")) == false)
     }
 
-    @Test("RetryPolicy default shouldRetry for non-retryable errors")
-    func retryPolicyDefaultShouldRetryNonRetryableErrors() {
+    @Test
+    func `RetryPolicy default shouldRetry for non-retryable errors`() {
         let shouldRetry = RetryPolicy.defaultShouldRetry
 
         // Should not retry authentication failures
@@ -139,8 +138,8 @@ struct RetryHandlerTests {
         #expect(shouldRetry(TachikomaError.unsupportedOperation("Not implemented")) == false)
     }
 
-    @Test("RetryHandler execute with success")
-    func retryHandlerExecuteSuccess() async throws {
+    @Test
+    func `RetryHandler execute with success`() async throws {
         let handler = RetryHandler()
         let callCounter = CallCounter()
 
@@ -153,8 +152,8 @@ struct RetryHandlerTests {
         #expect(await callCounter.count == 1) // Should succeed on first try
     }
 
-    @Test("RetryHandler execute with retries")
-    func retryHandlerExecuteWithRetries() async throws {
+    @Test
+    func `RetryHandler execute with retries`() async throws {
         let policy = RetryPolicy(
             maxAttempts: 3,
             baseDelay: 0.01,
@@ -190,8 +189,8 @@ struct RetryHandlerTests {
         }
     }
 
-    @Test("RetryHandler execute exhausts retries")
-    func retryHandlerExecuteExhaustsRetries() async throws {
+    @Test
+    func `RetryHandler execute exhausts retries`() async throws {
         let policy = RetryPolicy(
             maxAttempts: 2,
             baseDelay: 0.01,
@@ -210,8 +209,8 @@ struct RetryHandlerTests {
         #expect(await callCounter.count == 2) // Should try maxAttempts times
     }
 
-    @Test("RetryHandler execute with non-retryable error")
-    func retryHandlerExecuteNonRetryableError() async throws {
+    @Test
+    func `RetryHandler execute with non-retryable error`() async throws {
         let handler = RetryHandler()
         let callCounter = CallCounter()
 
@@ -225,8 +224,8 @@ struct RetryHandlerTests {
         #expect(await callCounter.count == 1) // Should not retry
     }
 
-    @Test("RetryHandler executeStream success")
-    func retryHandlerExecuteStreamSuccess() async throws {
+    @Test
+    func `RetryHandler executeStream success`() async throws {
         let handler = RetryHandler()
         let callCounter = CallCounter()
 
@@ -248,8 +247,8 @@ struct RetryHandlerTests {
         #expect(await callCounter.count == 1)
     }
 
-    @Test("RetryHandler from GenerationSettings")
-    func retryHandlerFromGenerationSettings() {
+    @Test
+    func `RetryHandler from GenerationSettings`() {
         // High effort uses aggressive policy
         let highSettings = GenerationSettings(reasoningEffort: .high)
         let highHandler = RetryHandler.from(settings: highSettings)

@@ -74,7 +74,7 @@ public struct ProviderConfiguration: Sendable {
         self.customHeaders = customHeaders
     }
 
-    // Common configurations for providers
+    /// Common configurations for providers
     public static let openAI = ProviderConfiguration(
         maxTokens: 4096,
         maxContextLength: 128_000,
@@ -111,10 +111,21 @@ public final class ProviderAdapter: EnhancedModelProvider {
     private let baseProvider: ModelProvider
     public let configuration: ProviderConfiguration
 
-    public var modelId: String { self.baseProvider.modelId }
-    public var baseURL: String? { self.baseProvider.baseURL }
-    public var apiKey: String? { self.baseProvider.apiKey }
-    public var capabilities: ModelCapabilities { self.baseProvider.capabilities }
+    public var modelId: String {
+        self.baseProvider.modelId
+    }
+
+    public var baseURL: String? {
+        self.baseProvider.baseURL
+    }
+
+    public var apiKey: String? {
+        self.baseProvider.apiKey
+    }
+
+    public var capabilities: ModelCapabilities {
+        self.baseProvider.capabilities
+    }
 
     public init(provider: ModelProvider, configuration: ProviderConfiguration) {
         self.baseProvider = provider

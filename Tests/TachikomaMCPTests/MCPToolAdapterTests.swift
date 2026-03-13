@@ -3,10 +3,9 @@ import Tachikoma
 import Testing
 @testable import TachikomaMCP
 
-@Suite("MCP Tool Adapter Tests")
 struct MCPToolAdapterTests {
-    @Test("ToolArguments getString")
-    func toolArgumentsGetString() {
+    @Test
+    func `ToolArguments getString`() {
         let args = ToolArguments(raw: [
             "name": "Alice",
             "count": 42,
@@ -21,8 +20,8 @@ struct MCPToolAdapterTests {
         #expect(args.getString("missing") == nil)
     }
 
-    @Test("ToolArguments getNumber")
-    func toolArgumentsGetNumber() {
+    @Test
+    func `ToolArguments getNumber`() {
         let args = ToolArguments(raw: [
             "int": 42,
             "double": 3.14,
@@ -37,8 +36,8 @@ struct MCPToolAdapterTests {
         #expect(args.getNumber("missing") == nil)
     }
 
-    @Test("ToolArguments getInt")
-    func toolArgumentsGetInt() {
+    @Test
+    func `ToolArguments getInt`() {
         let args = ToolArguments(raw: [
             "int": 42,
             "double": 3.14,
@@ -53,8 +52,8 @@ struct MCPToolAdapterTests {
         #expect(args.getInt("missing") == nil)
     }
 
-    @Test("ToolArguments getBool")
-    func toolArgumentsGetBool() {
+    @Test
+    func `ToolArguments getBool`() {
         let args = ToolArguments(raw: [
             "bool": true,
             "stringTrue": "true",
@@ -75,8 +74,8 @@ struct MCPToolAdapterTests {
         #expect(args.getBool("missing") == nil)
     }
 
-    @Test("ToolArguments getStringArray")
-    func toolArgumentsGetStringArray() {
+    @Test
+    func `ToolArguments getStringArray`() {
         let args = ToolArguments(raw: [
             "array": ["a", "b", "c"],
             "mixed": ["string", 123, true],
@@ -89,8 +88,8 @@ struct MCPToolAdapterTests {
         #expect(args.getStringArray("missing") == nil)
     }
 
-    @Test("ToolArguments isEmpty")
-    func toolArgumentsIsEmpty() {
+    @Test
+    func `ToolArguments isEmpty`() {
         let emptyArgs = ToolArguments(raw: [:])
         #expect(emptyArgs.isEmpty == true)
 
@@ -98,8 +97,8 @@ struct MCPToolAdapterTests {
         #expect(nonEmptyArgs.isEmpty == false)
     }
 
-    @Test("ToolResponse text creation")
-    func toolResponseText() {
+    @Test
+    func `ToolResponse text creation`() {
         let response = ToolResponse.text("Hello, world!")
 
         #expect(response.isError == false)
@@ -111,8 +110,8 @@ struct MCPToolAdapterTests {
         }
     }
 
-    @Test("ToolResponse error creation")
-    func toolResponseError() {
+    @Test
+    func `ToolResponse error creation`() {
         let response = ToolResponse.error("Something went wrong")
 
         #expect(response.isError == true)
@@ -124,8 +123,8 @@ struct MCPToolAdapterTests {
         }
     }
 
-    @Test("ToolResponse image creation")
-    func toolResponseImage() {
+    @Test
+    func `ToolResponse image creation`() {
         let imageData = Data([0xFF, 0xD8, 0xFF]) // JPEG header
         let response = ToolResponse.image(data: imageData, mimeType: "image/jpeg")
 

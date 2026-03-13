@@ -194,7 +194,7 @@ enum AnthropicContent: Codable {
             try Self.encodeAnyDict(self.input, to: inputEncoder)
         }
 
-        // Helper methods for encoding/decoding [String: Any]
+        /// Helper methods for encoding/decoding [String: Any]
         private static func decodeAnyDict(from decoder: Decoder) throws -> [String: Any] {
             let container = try decoder.singleValueContainer()
             return try container.decode([String: JSONValue].self).mapValues { $0.value }

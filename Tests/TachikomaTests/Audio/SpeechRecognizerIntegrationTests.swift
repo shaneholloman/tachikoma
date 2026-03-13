@@ -3,14 +3,12 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Audio System Integration Tests")
-struct AudioSystemIntegrationTests {
+enum AudioSystemIntegrationTests {
     // MARK: - Basic Audio Function Tests
 
-    @Suite("Basic Audio Function Tests")
     struct BasicAudioFunctionTests {
-        @Test("Audio transcription functions are available")
-        func audioTranscriptionFunctionsAvailable() async throws {
+        @Test
+        func `Audio transcription functions are available`() async throws {
             // Test that core audio transcription functions exist and work
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { _ in
                 let audioData = AudioData(data: Data([0x01, 0x02, 0x03, 0x04]), format: .wav)
@@ -23,8 +21,8 @@ struct AudioSystemIntegrationTests {
             }
         }
 
-        @Test("Audio speech generation functions are available")
-        func audioSpeechGenerationFunctionsAvailable() async throws {
+        @Test
+        func `Audio speech generation functions are available`() async throws {
             // Test that core speech generation functions exist and work
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { _ in
                 // Test basic speech generation function exists
@@ -36,8 +34,8 @@ struct AudioSystemIntegrationTests {
             }
         }
 
-        @Test("Audio model types work correctly")
-        func audioModelTypesWork() {
+        @Test
+        func `Audio model types work correctly`() {
             // Test that audio model enums work as expected
             let transcriptionModel = TranscriptionModel.openai(.whisper1)
             #expect(transcriptionModel.modelId == "whisper-1")
@@ -50,8 +48,8 @@ struct AudioSystemIntegrationTests {
             #expect(speechModel.supportedFormats.contains(.mp3))
         }
 
-        @Test("Audio data types work correctly")
-        func audioDataTypesWork() throws {
+        @Test
+        func `Audio data types work correctly`() {
             // Test that audio data types work as expected
             let testData = Data([0x01, 0x02, 0x03, 0x04])
             let audioData = AudioData(data: testData, format: .wav, sampleRate: 44100, channels: 2, duration: 5.0)
@@ -73,8 +71,8 @@ struct AudioSystemIntegrationTests {
             #expect(VoiceOption.default == .alloy)
         }
 
-        @Test("AbortSignal functionality works")
-        func abortSignalFunctionality() async throws {
+        @Test
+        func `AbortSignal functionality works`() async throws {
             let signal = AbortSignal()
 
             #expect(signal.cancelled == false)
@@ -96,10 +94,9 @@ struct AudioSystemIntegrationTests {
 
     // MARK: - Provider Integration Tests
 
-    @Suite("Provider Integration Tests")
     struct ProviderIntegrationTests {
-        @Test("Transcription provider factory works")
-        func transcriptionProviderFactoryWorks() async throws {
+        @Test
+        func `Transcription provider factory works`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { _ in
                 let provider = try TranscriptionProviderFactory.createProvider(for: .openai(.whisper1))
 
@@ -109,8 +106,8 @@ struct AudioSystemIntegrationTests {
             }
         }
 
-        @Test("Speech provider factory works")
-        func speechProviderFactoryWorks() async throws {
+        @Test
+        func `Speech provider factory works`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { _ in
                 let provider = try SpeechProviderFactory.createProvider(for: .openai(.tts1))
 
@@ -120,8 +117,8 @@ struct AudioSystemIntegrationTests {
             }
         }
 
-        @Test("Provider factory fails without API key")
-        func providerFactoryFailsWithoutAPIKey() async throws {
+        @Test
+        func `Provider factory fails without API key`() async throws {
             try await TestHelpers.withEmptyTestConfiguration { _ in
                 #expect(throws: TachikomaError.self) {
                     _ = try TranscriptionProviderFactory.createProvider(for: .openai(.whisper1))
@@ -136,10 +133,9 @@ struct AudioSystemIntegrationTests {
 
     // MARK: - Error Handling Tests
 
-    @Suite("Error Handling Tests")
     struct ErrorHandlingTests {
-        @Test("Audio error types are defined")
-        func audioErrorTypesAreDefined() {
+        @Test
+        func `Audio error types are defined`() {
             let operationCancelled = TachikomaError.operationCancelled
             let noAudioData = TachikomaError.noAudioData
             let unsupportedFormat = TachikomaError.unsupportedAudioFormat
@@ -154,8 +150,8 @@ struct AudioSystemIntegrationTests {
             #expect(speechFailed.localizedDescription.contains("Speech"))
         }
 
-        @Test("Empty audio data is handled")
-        func emptyAudioDataIsHandled() async throws {
+        @Test
+        func `Empty audio data is handled`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { _ in
                 let emptyAudioData = AudioData(data: Data(), format: .wav)
 
@@ -165,8 +161,8 @@ struct AudioSystemIntegrationTests {
             }
         }
 
-        @Test("Empty text for speech generation is handled")
-        func emptyTextForSpeechGenerationIsHandled() async throws {
+        @Test
+        func `Empty text for speech generation is handled`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { _ in
                 await #expect(throws: TachikomaError.self) {
                     _ = try await generateSpeech("", using: .openai(.tts1))
@@ -177,10 +173,9 @@ struct AudioSystemIntegrationTests {
 
     // MARK: - File I/O Tests
 
-    @Suite("File I/O Tests")
     struct FileIOTests {
-        @Test("AudioData file operations work")
-        func audioDataFileOperationsWork() throws {
+        @Test
+        func `AudioData file operations work`() throws {
             // Test creating AudioData from file
             let tempDir = FileManager.default.temporaryDirectory
             let testFile = tempDir.appendingPathComponent("test_audio.wav")
@@ -204,8 +199,8 @@ struct AudioSystemIntegrationTests {
             try? FileManager.default.removeItem(at: outputFile)
         }
 
-        @Test("AudioData handles unknown file extensions")
-        func audioDataHandlesUnknownExtensions() throws {
+        @Test
+        func `AudioData handles unknown file extensions`() throws {
             let tempDir = FileManager.default.temporaryDirectory
             let testFile = tempDir.appendingPathComponent("test_audio.unknown")
             let testData = Data([0x01, 0x02])
@@ -221,10 +216,9 @@ struct AudioSystemIntegrationTests {
 
     // MARK: - SpeechRecognizer Integration Tests
 
-    @Suite("SpeechRecognizer Integration Tests")
     struct SpeechRecognizerIntegrationTests {
-        @Test("SpeechRecognizer can be created with Tachikoma integration")
-        func speechRecognizerCanBeCreatedWithTachikomaIntegration() async throws {
+        @Test
+        func `SpeechRecognizer can be created with Tachikoma integration`() async throws {
             try await TestHelpers.withStandardTestConfiguration { _ in
                 // Test creating SpeechRecognizer with Tachikoma backend
                 let recognizer = SpeechRecognizer()
@@ -242,8 +236,8 @@ struct AudioSystemIntegrationTests {
             }
         }
 
-        @Test("SpeechRecognizer modes have correct properties")
-        func speechRecognizerModesHaveCorrectProperties() {
+        @Test
+        func `SpeechRecognizer modes have correct properties`() {
             // Test that recognition modes have proper descriptions and requirements
             #expect(RecognitionMode.native.description.contains("Native"))
             #expect(RecognitionMode.whisper.description.contains("Whisper"))
@@ -257,8 +251,8 @@ struct AudioSystemIntegrationTests {
             #expect(RecognitionMode.direct.requiresOpenAIKey == true)
         }
 
-        @Test("SpeechRecognizer native mode works without API key")
-        func speechRecognizerNativeModeWorksWithoutAPIKey() async throws {
+        @Test
+        func `SpeechRecognizer native mode works without API key`() async throws {
             try await TestHelpers.withEmptyTestConfiguration { _ in
                 let recognizer = SpeechRecognizer()
                 recognizer.recognitionMode = .native
@@ -283,8 +277,8 @@ struct AudioSystemIntegrationTests {
             }
         }
 
-        @Test("SpeechRecognizer Whisper mode requires API key")
-        func speechRecognizerWhisperModeRequiresAPIKey() async throws {
+        @Test
+        func `SpeechRecognizer Whisper mode requires API key`() async throws {
             try await TestHelpers.withEmptyTestConfiguration { _ in
                 let recognizer = SpeechRecognizer()
                 recognizer.recognitionMode = .whisper
@@ -304,8 +298,8 @@ struct AudioSystemIntegrationTests {
             }
         }
 
-        @Test("SpeechRecognizer Tachikoma mode integrates with audio system")
-        func speechRecognizerTachikomaModeIntegratesWithAudioSystem() async throws {
+        @Test
+        func `SpeechRecognizer Tachikoma mode integrates with audio system`() async throws {
             try await TestHelpers.withStandardTestConfiguration { _ in
                 let recognizer = SpeechRecognizer()
                 recognizer.recognitionMode = .tachikoma
@@ -330,8 +324,8 @@ struct AudioSystemIntegrationTests {
             }
         }
 
-        @Test("SpeechRecognizer direct mode works with audio processing")
-        func speechRecognizerDirectModeWorksWithAudioProcessing() async throws {
+        @Test
+        func `SpeechRecognizer direct mode works with audio processing`() async throws {
             try await TestHelpers.withStandardTestConfiguration { _ in
                 let recognizer = SpeechRecognizer()
                 recognizer.recognitionMode = .direct
@@ -364,8 +358,8 @@ struct AudioSystemIntegrationTests {
             }
         }
 
-        @Test("SpeechRecognizer error handling works correctly")
-        func speechRecognizerErrorHandlingWorksCorrectly() async throws {
+        @Test
+        func `SpeechRecognizer error handling works correctly`() async throws {
             let recognizer = SpeechRecognizer()
 
             // Test initial state
@@ -385,8 +379,8 @@ struct AudioSystemIntegrationTests {
             }
         }
 
-        @Test("SpeechRecognizer integrates with Tachikoma transcription")
-        func speechRecognizerIntegratesWithTachikomaTranscription() async throws {
+        @Test
+        func `SpeechRecognizer integrates with Tachikoma transcription`() async throws {
             try await TestHelpers.withStandardTestConfiguration { _ in
                 // Test that we can use the same audio data with both systems
                 let testAudioData = AudioData(data: Data([0x01, 0x02, 0x03, 0x04]), format: .wav, duration: 1.0)
@@ -405,8 +399,8 @@ struct AudioSystemIntegrationTests {
             }
         }
 
-        @Test("SpeechRecognizer state management works correctly")
-        func speechRecognizerStateManagementWorksCorrectly() async throws {
+        @Test
+        func `SpeechRecognizer state management works correctly`() {
             let recognizer = SpeechRecognizer()
 
             // Test initial state
@@ -430,8 +424,8 @@ struct AudioSystemIntegrationTests {
             #expect(recognizer.recognitionMode == .direct)
         }
 
-        @Test("SpeechRecognizer handles multiple start/stop cycles")
-        func speechRecognizerHandlesMultipleStartStopCycles() async throws {
+        @Test
+        func `SpeechRecognizer handles multiple start/stop cycles`() async throws {
             try await TestHelpers.withStandardTestConfiguration { _ in
                 let recognizer = SpeechRecognizer()
                 recognizer.recognitionMode = .native
@@ -458,8 +452,8 @@ struct AudioSystemIntegrationTests {
             }
         }
 
-        @Test("SpeechRecognizer works with different audio formats")
-        func speechRecognizerWorksWithDifferentAudioFormats() async throws {
+        @Test
+        func `SpeechRecognizer works with different audio formats`() async throws {
             try await TestHelpers.withStandardTestConfiguration { _ in
                 // Test that audio system supports formats that SpeechRecognizer might use
                 let wavAudio = AudioData(data: Data([0x01, 0x02]), format: .wav)

@@ -126,7 +126,7 @@ public final class Conversation: @unchecked Sendable {
         )
 
         // Create a new stream to process the response and update the conversation
-        let processedStream = AsyncThrowingStream<String, Error> { continuation in
+        return AsyncThrowingStream<String, Error> { continuation in
             Task {
                 var fullResponse = ""
                 do {
@@ -151,8 +151,6 @@ public final class Conversation: @unchecked Sendable {
                 }
             }
         }
-
-        return processedStream
     }
 }
 

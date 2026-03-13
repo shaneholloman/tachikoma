@@ -2,7 +2,6 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Grok Model Catalog Tests")
 struct GrokModelCatalogTests {
     private static let catalog: [Model.Grok] = [
         .grok4,
@@ -26,15 +25,15 @@ struct GrokModelCatalogTests {
         }
     }
 
-    @Test("CaseIterable reflects the official Grok catalog")
-    func catalogAlignment() {
+    @Test
+    func `CaseIterable reflects the official Grok catalog`() {
         self.requireModernPlatforms {
             #expect(Model.Grok.allCases == Self.catalog)
         }
     }
 
-    @Test("ModelSelector parses every Grok model identifier")
-    func selectorParsesCatalog() throws {
+    @Test
+    func `ModelSelector parses every Grok model identifier`() throws {
         try self.requireModernPlatforms {
             for model in Self.catalog {
                 let parsed = try ModelSelector.parseModel(model.modelId)
@@ -43,8 +42,8 @@ struct GrokModelCatalogTests {
         }
     }
 
-    @Test("Available-model CLI listing matches catalog IDs")
-    func availableModelListingMatchesCatalog() {
+    @Test
+    func `Available-model CLI listing matches catalog IDs`() {
         self.requireModernPlatforms {
             let listed = Set(ModelSelector.availableModels(for: "grok"))
             let expected = Set(Self.catalog.map(\.modelId))
@@ -52,8 +51,8 @@ struct GrokModelCatalogTests {
         }
     }
 
-    @Test("Vision capability only flips on for vision/image Grok models")
-    func visionCapabilityMatchesModelType() {
+    @Test
+    func `Vision capability only flips on for vision/image Grok models`() {
         self.requireModernPlatforms {
             let visionModels: Set<Model.Grok> = [.grok2Vision, .grok2Image, .grokVisionBeta]
 

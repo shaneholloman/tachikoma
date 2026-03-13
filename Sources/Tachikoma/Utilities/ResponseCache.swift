@@ -547,10 +547,21 @@ public struct CacheAwareProvider<Base: ModelProvider>: ModelProvider {
     let provider: Base
     let cache: ResponseCache
 
-    public var modelId: String { self.provider.modelId }
-    public var baseURL: String? { self.provider.baseURL }
-    public var apiKey: String? { self.provider.apiKey }
-    public var capabilities: ModelCapabilities { self.provider.capabilities }
+    public var modelId: String {
+        self.provider.modelId
+    }
+
+    public var baseURL: String? {
+        self.provider.baseURL
+    }
+
+    public var apiKey: String? {
+        self.provider.apiKey
+    }
+
+    public var capabilities: ModelCapabilities {
+        self.provider.capabilities
+    }
 
     public func generateText(request: ProviderRequest) async throws -> ProviderResponse {
         // Check cache with smart TTL based on request type

@@ -4,14 +4,14 @@ import Foundation
 
 // swift-sh Tachikoma ~> 1.0.0
 
-/// This demo script shows how to use Tachikoma in a real application
-/// Run with: swift-sh DemoScript.swift
-/// Or: swift run DemoScript (if added to Package.swift)
+// This demo script shows how to use Tachikoma in a real application
+// Run with: swift-sh DemoScript.swift
+// Or: swift run DemoScript (if added to Package.swift)
 
 print("🕷️  Tachikoma Demo Script")
 print("=" * 40)
 
-// Check environment variables directly
+/// Check environment variables directly
 let env = ProcessInfo.processInfo.environment
 print("Environment check:")
 for key in ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "X_AI_API_KEY"] {

@@ -3,14 +3,12 @@ import Testing
 @testable import Tachikoma
 @testable import TachikomaAudio
 
-@Suite("Audio Functions Tests")
-struct AudioFunctionsTests {
+enum AudioFunctionsTests {
     // MARK: - Basic Transcription Function Tests
 
-    @Suite("Basic Transcription Functions Tests")
     struct BasicTranscriptionFunctionsTests {
-        @Test("transcribe() convenience function works")
-        func transcribeConvenienceFunctionWorks() async throws {
+        @Test
+        func `transcribe() convenience function works`() async throws {
             try await TestHelpers.withMockProviderEnvironment {
                 try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                     let audioData = TestHelpers.sampleAudioData(configuration: config)
@@ -20,8 +18,8 @@ struct AudioFunctionsTests {
             }
         }
 
-        @Test("transcribe() with full model specification works")
-        func transcribeWithFullModelSpecificationWorks() async throws {
+        @Test
+        func `transcribe() with full model specification works`() async throws {
             try await TestHelpers.withMockProviderEnvironment {
                 try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                     let audioData = TestHelpers.sampleAudioData(configuration: config)
@@ -43,8 +41,8 @@ struct AudioFunctionsTests {
             }
         }
 
-        @Test("transcribe() from file URL works")
-        func transcribeFromFileURLWorks() async throws {
+        @Test
+        func `transcribe() from file URL works`() async throws {
             try await TestHelpers.withMockProviderEnvironment {
                 try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                     let audioData = TestHelpers.sampleAudioData(configuration: config)
@@ -68,8 +66,8 @@ struct AudioFunctionsTests {
             }
         }
 
-        @Test("transcribe() with timestamps")
-        func transcribeWithTimestamps() async throws {
+        @Test
+        func `transcribe() with timestamps`() async {
             await TestHelpers.withMockProviderEnvironment {
                 await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                     let audioData = TestHelpers.sampleAudioData(configuration: config)
@@ -95,8 +93,8 @@ struct AudioFunctionsTests {
             }
         }
 
-        @Test("transcribe() with abort signal")
-        func transcribeWithAbortSignal() async throws {
+        @Test
+        func `transcribe() with abort signal`() async {
             await TestHelpers.withMockProviderEnvironment {
                 await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                     let audioData = TestHelpers.sampleAudioData(configuration: config)
@@ -120,10 +118,9 @@ struct AudioFunctionsTests {
 
     // MARK: - Basic Speech Generation Function Tests
 
-    @Suite("Basic Speech Generation Functions Tests")
     struct BasicSpeechGenerationFunctionsTests {
-        @Test("generateSpeech() convenience function works")
-        func generateSpeechConvenienceFunctionWorks() async throws {
+        @Test
+        func `generateSpeech() convenience function works`() async throws {
             try await TestHelpers.withMockProviderEnvironment {
                 try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                     let audioData = try await generateSpeech("Hello, world!", configuration: config)
@@ -133,8 +130,8 @@ struct AudioFunctionsTests {
             }
         }
 
-        @Test("generateSpeech() with voice selection")
-        func generateSpeechWithVoiceSelection() async throws {
+        @Test
+        func `generateSpeech() with voice selection`() async throws {
             try await TestHelpers.withMockProviderEnvironment {
                 try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                     let audioData = try await generateSpeech("Hello, world!", voice: .nova, configuration: config)
@@ -144,8 +141,8 @@ struct AudioFunctionsTests {
             }
         }
 
-        @Test("generateSpeech() with full model specification works")
-        func generateSpeechWithFullModelSpecificationWorks() async throws {
+        @Test
+        func `generateSpeech() with full model specification works`() async throws {
             try await TestHelpers.withMockProviderEnvironment {
                 try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                     let result = try await generateSpeech(
@@ -162,8 +159,8 @@ struct AudioFunctionsTests {
             }
         }
 
-        @Test("generateSpeech() direct to file using convenience function")
-        func generateSpeechDirectToFile() async throws {
+        @Test
+        func `generateSpeech() direct to file using convenience function`() async throws {
             try await TestHelpers.withMockProviderEnvironment {
                 try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                     let tempDir = FileManager.default.temporaryDirectory
@@ -187,8 +184,8 @@ struct AudioFunctionsTests {
             }
         }
 
-        @Test("generateSpeech() with abort signal")
-        func generateSpeechWithAbortSignal() async throws {
+        @Test
+        func `generateSpeech() with abort signal`() async {
             await TestHelpers.withMockProviderEnvironment {
                 await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                     let abortSignal = AbortSignal()
@@ -211,10 +208,9 @@ struct AudioFunctionsTests {
 
     // MARK: - Batch Operations Tests
 
-    @Suite("Batch Operations Tests")
     struct BatchOperationsTests {
-        @Test("transcribeBatch() function works")
-        func transcribeBatchFunctionWorks() async throws {
+        @Test
+        func `transcribeBatch() function works`() async throws {
             try await TestHelpers.withMockProviderEnvironment {
                 try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                     let audioData = TestHelpers.sampleAudioData(configuration: config)
@@ -246,8 +242,8 @@ struct AudioFunctionsTests {
             }
         }
 
-        @Test("generateSpeechBatch() function works")
-        func generateSpeechBatchFunctionWorks() async throws {
+        @Test
+        func `generateSpeechBatch() function works`() async throws {
             try await TestHelpers.withMockProviderEnvironment {
                 try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                     let texts = ["Hello", "World"]
@@ -267,24 +263,23 @@ struct AudioFunctionsTests {
 
     // MARK: - Utility Functions Tests
 
-    @Suite("Utility Functions Tests")
     struct UtilityFunctionsTests {
-        @Test("availableTranscriptionModels() returns models")
-        func availableTranscriptionModelsReturnsModels() {
+        @Test
+        func `availableTranscriptionModels() returns models`() {
             let models = availableTranscriptionModels()
             #expect(!models.isEmpty)
             #expect(models.contains { $0.description == TranscriptionModel.openai(.whisper1).description })
         }
 
-        @Test("availableSpeechModels() returns models")
-        func availableSpeechModelsReturnsModels() {
+        @Test
+        func `availableSpeechModels() returns models`() {
             let models = availableSpeechModels()
             #expect(!models.isEmpty)
             #expect(models.contains { $0.description == SpeechModel.openai(.tts1).description })
         }
 
-        @Test("capabilities() for transcription models")
-        func capabilitiesForTranscriptionModels() throws {
+        @Test
+        func `capabilities() for transcription models`() throws {
             let config = TestHelpers.createTestConfiguration(apiKeys: ["openai": "test-key"])
             let capabilities = try capabilities(for: TranscriptionModel.openai(.whisper1), configuration: config)
             #expect(capabilities.supportsTimestamps == true)
@@ -292,8 +287,8 @@ struct AudioFunctionsTests {
             #expect(capabilities.supportedFormats.contains(.wav))
         }
 
-        @Test("capabilities() for speech models")
-        func capabilitiesForSpeechModels() throws {
+        @Test
+        func `capabilities() for speech models`() throws {
             let config = TestHelpers.createTestConfiguration(apiKeys: ["openai": "test-key"])
             let capabilities = try capabilities(for: SpeechModel.openai(.tts1), configuration: config)
             #expect(capabilities.supportsSpeedControl == true)
@@ -304,10 +299,9 @@ struct AudioFunctionsTests {
 
     // MARK: - Error Handling Tests
 
-    @Suite("Error Handling Tests")
     struct ErrorHandlingTests {
-        @Test("transcribe() handles empty audio data")
-        func transcribeHandlesEmptyAudioData() async throws {
+        @Test
+        func `transcribe() handles empty audio data`() async {
             await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let emptyAudioData = AudioData(data: Data(), format: .wav)
 
@@ -317,8 +311,8 @@ struct AudioFunctionsTests {
             }
         }
 
-        @Test("generateSpeech() handles empty text")
-        func generateSpeechHandlesEmptyText() async throws {
+        @Test
+        func `generateSpeech() handles empty text`() async {
             await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 await #expect(throws: TachikomaError.self) {
                     _ = try await generateSpeech("", using: .openai(.tts1), configuration: config)
@@ -326,8 +320,8 @@ struct AudioFunctionsTests {
             }
         }
 
-        @Test("functions handle missing API keys")
-        func functionsHandleMissingAPIKeys() async throws {
+        @Test
+        func `functions handle missing API keys`() async {
             guard TestHelpers.isMockAPIKey(ProcessInfo.processInfo.environment["OPENAI_API_KEY"]) else { return }
             await TestHelpers.withEmptyTestConfiguration { config in
                 let audioData = AudioData(data: Data([0x01, 0x02]), format: .wav)
@@ -345,10 +339,9 @@ struct AudioFunctionsTests {
 
     // MARK: - Integration Tests
 
-    @Suite("Integration Tests")
     struct IntegrationTests {
-        @Test("transcribe and generate speech pipeline")
-        func transcribeAndGenerateSpeechPipeline() async throws {
+        @Test
+        func `transcribe and generate speech pipeline`() async {
             await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let originalAudioData = TestHelpers.sampleAudioData(configuration: config)
 
@@ -368,8 +361,8 @@ struct AudioFunctionsTests {
             }
         }
 
-        @Test("multiple provider integration")
-        func multipleProviderIntegration() async throws {
+        @Test
+        func `multiple provider integration`() async throws {
             try await TestHelpers.withStandardTestConfiguration { config in
                 let audioData = TestHelpers.sampleAudioData(configuration: config)
 

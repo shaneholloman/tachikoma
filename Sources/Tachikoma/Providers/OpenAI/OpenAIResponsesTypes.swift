@@ -11,7 +11,7 @@ struct OpenAIResponsesRequest: Encodable {
     let topP: Double?
     let maxOutputTokens: Int?
 
-    // Response format and text configuration
+    /// Response format and text configuration
     let text: TextConfig? // GPT-5 text configuration with verbosity
 
     // Tool configuration
@@ -28,13 +28,13 @@ struct OpenAIResponsesRequest: Encodable {
     let serviceTier: String?
     let include: [String]?
 
-    // Reasoning configuration (for o3/o4/GPT-5)
+    /// Reasoning configuration (for o3/o4/GPT-5)
     let reasoning: ReasoningConfig?
 
-    // Truncation for long inputs
+    /// Truncation for long inputs
     let truncation: String?
 
-    // Streaming support
+    /// Streaming support
     let stream: Bool?
 
     enum CodingKeys: String, CodingKey {
@@ -62,7 +62,7 @@ struct OpenAIResponsesRequest: Encodable {
 
 /// Text verbosity levels for GPT-5
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
-enum TextVerbosity: String, Codable, Sendable {
+enum TextVerbosity: String, Codable {
     case low
     case medium
     case high
@@ -70,7 +70,7 @@ enum TextVerbosity: String, Codable, Sendable {
 
 /// Internal reasoning effort levels for OpenAI responses provider
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
-enum OpenAIReasoningEffort: String, Codable, Sendable {
+enum OpenAIReasoningEffort: String, Codable {
     case minimal
     case low
     case medium
@@ -79,7 +79,7 @@ enum OpenAIReasoningEffort: String, Codable, Sendable {
 
 /// Reasoning summary modes for reasoning models
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
-enum ReasoningSummary: String, Codable, Sendable {
+enum ReasoningSummary: String, Codable {
     case concise
     case detailed
     case auto
@@ -87,13 +87,13 @@ enum ReasoningSummary: String, Codable, Sendable {
 
 /// Text configuration for GPT-5 models
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
-struct TextConfig: Codable, Sendable {
+struct TextConfig: Codable {
     let verbosity: TextVerbosity?
 }
 
 /// Reasoning configuration for reasoning models
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
-struct ReasoningConfig: Codable, Sendable {
+struct ReasoningConfig: Codable {
     let effort: OpenAIReasoningEffort?
     let summary: ReasoningSummary?
 }
@@ -186,11 +186,11 @@ struct JSONSchemaFormat: Codable {
 
 /// Message format for Responses API
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
-struct ResponsesMessage: Codable, Sendable {
+struct ResponsesMessage: Codable {
     let role: String
     let content: ResponsesContent
 
-    enum ResponsesContent: Codable, Sendable {
+    enum ResponsesContent: Codable {
         case text(String)
         case parts([ResponsesContentPart])
 
@@ -218,7 +218,7 @@ struct ResponsesMessage: Codable, Sendable {
 
 /// Content part for multimodal messages
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
-struct ResponsesContentPart: Codable, Sendable {
+struct ResponsesContentPart: Codable {
     let type: String
     let text: String?
     /// OpenAI Responses API (GPT‑5.x) accepts `image_url` only as a string (URL or data URL).
@@ -226,7 +226,7 @@ struct ResponsesContentPart: Codable, Sendable {
     /// avoid 400s ("expected an image URL, but got an object instead").
     let imageUrl: ImageURL?
 
-    struct ImageURL: Codable, Sendable {
+    struct ImageURL: Codable {
         let url: String
         let detail: String?
     }
@@ -271,12 +271,12 @@ struct ResponsesContentPart: Codable, Sendable {
 
 /// Heterogeneous input entries supported by the Responses API
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
-enum ResponsesInputItem: Encodable, Sendable {
+enum ResponsesInputItem: Encodable {
     case message(ResponsesMessage)
     case functionCall(FunctionCall)
     case functionCallOutput(FunctionCallOutput)
 
-    struct FunctionCall: Encodable, Sendable {
+    struct FunctionCall: Encodable {
         let type: String = "function_call"
         let callId: String
         let name: String
@@ -290,7 +290,7 @@ enum ResponsesInputItem: Encodable, Sendable {
         }
     }
 
-    struct FunctionCallOutput: Encodable, Sendable {
+    struct FunctionCallOutput: Encodable {
         let type: String = "function_call_output"
         let callId: String
         let output: String
@@ -473,7 +473,7 @@ struct ResponsesTool: Codable {
 
 /// Response from OpenAI Responses API (GPT-5 format)
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
-struct OpenAIResponsesResponse: Codable, Sendable {
+struct OpenAIResponsesResponse: Codable {
     let id: String
     let object: String?
     let createdAt: Int? // GPT-5 uses created_at
@@ -491,8 +491,8 @@ struct OpenAIResponsesResponse: Codable, Sendable {
         case created
     }
 
-    // GPT-5 output format
-    struct ResponsesOutput: Codable, Sendable {
+    /// GPT-5 output format
+    struct ResponsesOutput: Codable {
         let id: String
         let type: String
         let status: String?
@@ -510,7 +510,7 @@ struct OpenAIResponsesResponse: Codable, Sendable {
             case toolCall = "tool_call"
         }
 
-        struct OutputContent: Codable, Sendable {
+        struct OutputContent: Codable {
             let type: String
             let text: String?
             let toolCall: ResponsesToolCall?
@@ -523,8 +523,8 @@ struct OpenAIResponsesResponse: Codable, Sendable {
         }
     }
 
-    // O3 choices format (kept for compatibility)
-    struct ResponsesChoice: Codable, Sendable {
+    /// O3 choices format (kept for compatibility)
+    struct ResponsesChoice: Codable {
         let index: Int
         let message: ResponsesOutputMessage
         let finishReason: String?
@@ -538,7 +538,7 @@ struct OpenAIResponsesResponse: Codable, Sendable {
         }
     }
 
-    struct ResponsesOutputMessage: Codable, Sendable {
+    struct ResponsesOutputMessage: Codable {
         let role: String
         let content: String?
         let toolCalls: [ResponsesToolCall]?
@@ -552,18 +552,18 @@ struct OpenAIResponsesResponse: Codable, Sendable {
         }
     }
 
-    struct ResponsesToolCall: Codable, Sendable {
+    struct ResponsesToolCall: Codable {
         let id: String
         let type: String
         let function: ResponsesToolFunction
 
-        struct ResponsesToolFunction: Codable, Sendable {
+        struct ResponsesToolFunction: Codable {
             let name: String
             let arguments: String
         }
     }
 
-    struct ResponsesUsage: Codable, Sendable {
+    struct ResponsesUsage: Codable {
         let inputTokens: Int?
         let outputTokens: Int?
         let totalTokens: Int?
@@ -584,7 +584,7 @@ struct OpenAIResponsesResponse: Codable, Sendable {
             case outputTokensDetails = "output_tokens_details"
         }
 
-        struct TokenDetails: Codable, Sendable {
+        struct TokenDetails: Codable {
             let cachedTokens: Int?
 
             enum CodingKeys: String, CodingKey {
@@ -592,7 +592,7 @@ struct OpenAIResponsesResponse: Codable, Sendable {
             }
         }
 
-        struct OutputTokenDetails: Codable, Sendable {
+        struct OutputTokenDetails: Codable {
             let reasoningTokens: Int?
 
             enum CodingKeys: String, CodingKey {
@@ -601,7 +601,7 @@ struct OpenAIResponsesResponse: Codable, Sendable {
         }
     }
 
-    struct ResponsesMetadata: Codable, Sendable {
+    struct ResponsesMetadata: Codable {
         let responseId: String?
         let reasoningItemIds: [String]?
 
@@ -616,14 +616,14 @@ struct OpenAIResponsesResponse: Codable, Sendable {
 
 /// Server-sent event for streaming responses (O3 and older models)
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
-struct OpenAIResponsesStreamChunk: Codable, Sendable {
+struct OpenAIResponsesStreamChunk: Codable {
     let id: String
     let object: String
     let created: Int
     let model: String
     let choices: [StreamChoice]
 
-    struct StreamChoice: Codable, Sendable {
+    struct StreamChoice: Codable {
         let index: Int
         let delta: StreamDelta
         let finishReason: String?
@@ -635,7 +635,7 @@ struct OpenAIResponsesStreamChunk: Codable, Sendable {
         }
     }
 
-    struct StreamDelta: Codable, Sendable {
+    struct StreamDelta: Codable {
         let role: String?
         let content: String?
         let toolCalls: [StreamToolCall]?
@@ -647,13 +647,13 @@ struct OpenAIResponsesStreamChunk: Codable, Sendable {
         }
     }
 
-    struct StreamToolCall: Codable, Sendable {
+    struct StreamToolCall: Codable {
         let index: Int
         let id: String?
         let type: String?
         let function: StreamToolFunction?
 
-        struct StreamToolFunction: Codable, Sendable {
+        struct StreamToolFunction: Codable {
             let name: String?
             let arguments: String?
         }

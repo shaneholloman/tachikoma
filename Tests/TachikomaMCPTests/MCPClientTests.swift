@@ -4,10 +4,9 @@ import Testing
 @testable import Tachikoma
 @testable import TachikomaMCP
 
-@Suite("MCP Client Tests")
 struct MCPClientTests {
-    @Test("MCPServerConfig initialization with all parameters")
-    func serverConfigFullInit() {
+    @Test
+    func `MCPServerConfig initialization with all parameters`() {
         let config = MCPServerConfig(
             transport: "stdio",
             command: "npx",
@@ -29,8 +28,8 @@ struct MCPClientTests {
         #expect(config.description == "Test server")
     }
 
-    @Test("MCPServerConfig initialization with minimal parameters")
-    func serverConfigMinimalInit() {
+    @Test
+    func `MCPServerConfig initialization with minimal parameters`() {
         let config = MCPServerConfig(command: "test")
 
         #expect(config.transport == "stdio")
@@ -43,8 +42,8 @@ struct MCPClientTests {
         #expect(config.description == nil)
     }
 
-    @Test("MCPClient initialization")
-    func clientInit() {
+    @Test
+    func `MCPClient initialization`() {
         let config = MCPServerConfig(
             command: "test-command",
             args: ["arg1"],
@@ -54,8 +53,8 @@ struct MCPClientTests {
         _ = MCPClient(name: "test-client", config: config)
     }
 
-    @Test("MCPError descriptions")
-    func errorDescriptions() {
+    @Test
+    func `MCPError descriptions`() {
         #expect(MCPError.serverDisabled.errorDescription == "MCP server is disabled")
         #expect(MCPError.notConnected.errorDescription == "MCP client is not connected")
         #expect(MCPError.invalidResponse.errorDescription == "Invalid response from MCP server")
@@ -64,8 +63,8 @@ struct MCPClientTests {
         #expect(MCPError.executionFailed("error").errorDescription == "Execution failed: error")
     }
 
-    @Test("ToolArguments convenience methods")
-    func toolArgumentsConvenienceMethods() {
+    @Test
+    func `ToolArguments convenience methods`() {
         let args = ToolArguments(raw: [
             "text": "hello",
             "number": 42,
@@ -106,8 +105,8 @@ struct MCPClientTests {
         #expect(emptyArgs.isEmpty == true)
     }
 
-    @Test("ToolArguments from Value")
-    func toolArgumentsFromValue() {
+    @Test
+    func `ToolArguments from Value`() {
         let value = Value.object([
             "name": .string("test"),
             "count": .int(42),
@@ -121,8 +120,8 @@ struct MCPClientTests {
         #expect(args.getBool("active") == true)
     }
 
-    @Test("ToolArguments raw dictionary preserves nested structures")
-    func toolArgumentsRawDictionary() {
+    @Test
+    func `ToolArguments raw dictionary preserves nested structures`() {
         let value = Value.object([
             "text": .string("hello"),
             "number": .int(5),
@@ -167,8 +166,8 @@ struct MCPClientTests {
         #expect(dictionary["none"] is NSNull)
     }
 
-    @Test("ToolResponse creation methods")
-    func toolResponseCreation() {
+    @Test
+    func `ToolResponse creation methods`() {
         // Text response
         let textResponse = ToolResponse.text("Success")
         #expect(textResponse.content.count == 1)
@@ -207,8 +206,8 @@ struct MCPClientTests {
         #expect(multiResponse.content.count == 2)
     }
 
-    @Test("ToolResponse with metadata")
-    func toolResponseWithMetadata() {
+    @Test
+    func `ToolResponse with metadata`() {
         let meta = Value.object([
             "executionTime": .double(1.5),
             "status": .string("ok"),
@@ -225,15 +224,15 @@ struct MCPClientTests {
         }
     }
 
-    @Test("MCPToolProvider initialization")
-    func toolProviderInit() {
+    @Test
+    func `MCPToolProvider initialization`() {
         let config = MCPServerConfig(command: "test")
         let client = MCPClient(name: "test", config: config)
         _ = MCPToolProvider(client: client)
     }
 
-    @Test("MCPToolProvider as DynamicToolProvider")
-    func toolProviderAsDynamicToolProvider() {
+    @Test
+    func `MCPToolProvider as DynamicToolProvider`() {
         let config = MCPServerConfig(command: "test")
         let client = MCPClient(name: "test-server", config: config)
         let provider = MCPToolProvider(client: client)
@@ -242,8 +241,8 @@ struct MCPClientTests {
         _ = provider as DynamicToolProvider
     }
 
-    @Test("Tool metadata structure")
-    func toolMetadata() {
+    @Test
+    func `Tool metadata structure`() {
         let tool = MCP.Tool(
             name: "test-tool",
             description: "A test tool",
@@ -269,8 +268,8 @@ struct MCPClientTests {
         }
     }
 
-    @Test("Value encoding and decoding")
-    func valueEncodingDecoding() throws {
+    @Test
+    func `Value encoding and decoding`() throws {
         let originalValue = Value.object([
             "string": .string("test"),
             "number": .int(42),
@@ -292,8 +291,8 @@ struct MCPClientTests {
         #expect(originalValue == decodedValue)
     }
 
-    @Test("ToolArguments decoding")
-    func toolArgumentsDecoding() throws {
+    @Test
+    func `ToolArguments decoding`() throws {
         struct TestArgs: Decodable {
             let name: String
             let count: Int
@@ -341,10 +340,9 @@ private struct MockMCPTool: MCPTool {
     }
 }
 
-@Suite("Mock Tool Tests")
 struct MockToolTests {
-    @Test("Mock tool execution with valid arguments")
-    func mockToolValidExecution() async throws {
+    @Test
+    func `Mock tool execution with valid arguments`() async throws {
         let tool = MockMCPTool()
 
         let args = ToolArguments(raw: ["message": "Hello World"])
@@ -358,8 +356,8 @@ struct MockToolTests {
         }
     }
 
-    @Test("Mock tool execution with missing arguments")
-    func mockToolMissingArguments() async throws {
+    @Test
+    func `Mock tool execution with missing arguments`() async throws {
         let tool = MockMCPTool()
 
         let args = ToolArguments(raw: [:])
@@ -373,8 +371,8 @@ struct MockToolTests {
         }
     }
 
-    @Test("Mock tool schema validation")
-    func mockToolSchema() {
+    @Test
+    func `Mock tool schema validation`() {
         let tool = MockMCPTool()
 
         #expect(tool.name == "mock_tool")

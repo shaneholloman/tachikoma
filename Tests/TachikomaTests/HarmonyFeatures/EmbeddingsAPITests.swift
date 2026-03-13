@@ -1,10 +1,9 @@
 import Testing
 @testable import Tachikoma
 
-@Suite("Embeddings API")
 struct EmbeddingsAPITests {
-    @Test("EmbeddingModel enum cases")
-    func embeddingModelCases() {
+    @Test
+    func `EmbeddingModel enum cases`() {
         // OpenAI models
         let ada = EmbeddingModel.openai(.ada002)
         let small3 = EmbeddingModel.openai(.small3)
@@ -43,58 +42,58 @@ struct EmbeddingsAPITests {
         }
     }
 
-    @Test("OpenAI embedding model raw values")
-    func openAIEmbeddingModelRawValues() {
+    @Test
+    func `OpenAI embedding model raw values`() {
         #expect(EmbeddingModel.OpenAIEmbedding.ada002.rawValue == "text-embedding-ada-002")
         #expect(EmbeddingModel.OpenAIEmbedding.small3.rawValue == "text-embedding-3-small")
         #expect(EmbeddingModel.OpenAIEmbedding.large3.rawValue == "text-embedding-3-large")
     }
 
-    @Test("Cohere embedding model raw values")
-    func cohereEmbeddingModelRawValues() {
+    @Test
+    func `Cohere embedding model raw values`() {
         #expect(EmbeddingModel.CohereEmbedding.english3.rawValue == "embed-english-v3.0")
         #expect(EmbeddingModel.CohereEmbedding.multilingual3.rawValue == "embed-multilingual-v3.0")
         #expect(EmbeddingModel.CohereEmbedding.englishLight3.rawValue == "embed-english-light-v3.0")
         #expect(EmbeddingModel.CohereEmbedding.multilingualLight3.rawValue == "embed-multilingual-light-v3.0")
     }
 
-    @Test("Voyage embedding model raw values")
-    func voyageEmbeddingModelRawValues() {
+    @Test
+    func `Voyage embedding model raw values`() {
         #expect(EmbeddingModel.VoyageEmbedding.voyage2.rawValue == "voyage-2")
         #expect(EmbeddingModel.VoyageEmbedding.voyage2Code.rawValue == "voyage-code-2")
         #expect(EmbeddingModel.VoyageEmbedding.voyage2Large.rawValue == "voyage-large-2")
     }
 
-    @Test("EmbeddingInput text variant")
-    func embeddingInputText() {
+    @Test
+    func `EmbeddingInput text variant`() {
         let input = EmbeddingInput.text("Hello, world!")
         #expect(input.asTexts == ["Hello, world!"])
     }
 
-    @Test("EmbeddingInput texts variant")
-    func embeddingInputTexts() {
+    @Test
+    func `EmbeddingInput texts variant`() {
         let texts = ["First text", "Second text", "Third text"]
         let input = EmbeddingInput.texts(texts)
         #expect(input.asTexts == texts)
     }
 
-    @Test("EmbeddingInput tokens variant")
-    func embeddingInputTokens() {
+    @Test
+    func `EmbeddingInput tokens variant`() {
         let tokens = [1234, 5678, 9012]
         let input = EmbeddingInput.tokens(tokens)
         #expect(input.asTexts.isEmpty) // Tokens don't convert to texts
     }
 
-    @Test("EmbeddingSettings default values")
-    func embeddingSettingsDefaults() {
+    @Test
+    func `EmbeddingSettings default values`() {
         let settings = EmbeddingSettings.default
         #expect(settings.dimensions == nil)
         #expect(settings.normalizeEmbeddings == true)
         #expect(settings.truncate == nil)
     }
 
-    @Test("EmbeddingSettings custom values")
-    func embeddingSettingsCustom() {
+    @Test
+    func `EmbeddingSettings custom values`() {
         let settings = EmbeddingSettings(
             dimensions: 512,
             normalizeEmbeddings: false,
@@ -106,15 +105,15 @@ struct EmbeddingsAPITests {
         #expect(settings.truncate == .end)
     }
 
-    @Test("EmbeddingSettings truncation strategies")
-    func embeddingSettingsTruncationStrategies() {
+    @Test
+    func `EmbeddingSettings truncation strategies`() {
         #expect(EmbeddingSettings.TruncationStrategy.start.rawValue == "start")
         #expect(EmbeddingSettings.TruncationStrategy.end.rawValue == "end")
         #expect(EmbeddingSettings.TruncationStrategy.none.rawValue == "none")
     }
 
-    @Test("EmbeddingResult properties")
-    func embeddingResultProperties() {
+    @Test
+    func `EmbeddingResult properties`() {
         let embeddings = [
             [0.1, 0.2, 0.3],
             [0.4, 0.5, 0.6],
@@ -133,8 +132,8 @@ struct EmbeddingsAPITests {
         #expect(result.metadata?.normalizedL2 == true)
     }
 
-    @Test("EmbeddingResult convenience properties")
-    func embeddingResultConvenienceProperties() {
+    @Test
+    func `EmbeddingResult convenience properties`() {
         let embeddings = [[0.1, 0.2, 0.3, 0.4]]
 
         let result = EmbeddingResult(
@@ -149,8 +148,8 @@ struct EmbeddingsAPITests {
         #expect(result.dimensions == 4)
     }
 
-    @Test("EmbeddingResult with empty embeddings")
-    func embeddingResultEmpty() {
+    @Test
+    func `EmbeddingResult with empty embeddings`() {
         let result = EmbeddingResult(
             embeddings: [],
             model: "test-model",
@@ -160,8 +159,8 @@ struct EmbeddingsAPITests {
         #expect(result.dimensions == nil)
     }
 
-    @Test("EmbeddingMetadata properties")
-    func embeddingMetadata() {
+    @Test
+    func `EmbeddingMetadata properties`() {
         let metadata1 = EmbeddingMetadata(truncated: true, normalizedL2: false)
         #expect(metadata1.truncated == true)
         #expect(metadata1.normalizedL2 == false)
@@ -171,8 +170,8 @@ struct EmbeddingsAPITests {
         #expect(metadata2.normalizedL2 == false)
     }
 
-    @Test("EmbeddingSettings Codable")
-    func embeddingSettingsCodable() throws {
+    @Test
+    func `EmbeddingSettings Codable`() throws {
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
 
@@ -190,8 +189,8 @@ struct EmbeddingsAPITests {
         #expect(decoded.truncate == original.truncate)
     }
 
-    @Test("EmbeddingMetadata Codable")
-    func embeddingMetadataCodable() throws {
+    @Test
+    func `EmbeddingMetadata Codable`() throws {
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
 
@@ -204,8 +203,8 @@ struct EmbeddingsAPITests {
         #expect(decoded.normalizedL2 == original.normalizedL2)
     }
 
-    @Test("EmbeddingModel to LanguageModel conversion")
-    func embeddingModelToLanguageModel() {
+    @Test
+    func `EmbeddingModel to LanguageModel conversion`() {
         let openaiModel = EmbeddingModel.openai(.small3)
         let languageModel = openaiModel.toLanguageModel()
 
@@ -226,8 +225,8 @@ struct EmbeddingsAPITests {
         }
     }
 
-    @Test("EmbeddingRequest structure")
-    func embeddingRequest() {
+    @Test
+    func `EmbeddingRequest structure`() {
         let request = EmbeddingRequest(
             input: .text("Test input"),
             settings: EmbeddingSettings(dimensions: 128),
@@ -237,8 +236,8 @@ struct EmbeddingsAPITests {
         #expect(request.settings.dimensions == 128)
     }
 
-    @Test("EmbeddingProviderFactory produces expected providers")
-    func embeddingProviderFactoryProducesExpectedProviders() throws {
+    @Test
+    func `EmbeddingProviderFactory produces expected providers`() throws {
         let configuration = TachikomaConfiguration()
 
         let openAIProvider = try EmbeddingProviderFactory.createProvider(

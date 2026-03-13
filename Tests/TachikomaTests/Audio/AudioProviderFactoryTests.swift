@@ -7,10 +7,10 @@ import Testing
 @testable import Tachikoma
 @testable import TachikomaAudio
 
-@Suite("Audio Provider Factories", .serialized)
+@Suite(.serialized)
 struct AudioProviderFactoryTests {
-    @Test("TranscriptionProviderFactory returns mock provider in test mode")
-    func transcriptionFactoryReturnsMockInTestMode() throws {
+    @Test
+    func `TranscriptionProviderFactory returns mock provider in test mode`() throws {
         let previousTestMode = getenv("TACHIKOMA_TEST_MODE").flatMap { String(cString: $0) }
         setenv("TACHIKOMA_TEST_MODE", "mock", 1)
         defer {
@@ -32,8 +32,8 @@ struct AudioProviderFactoryTests {
         #expect(provider is MockTranscriptionProvider)
     }
 
-    @Test("TranscriptionProviderFactory requires API key in test mode")
-    func transcriptionFactoryRequiresAPIKeyInTestMode() {
+    @Test
+    func `TranscriptionProviderFactory requires API key in test mode`() {
         let previousTestMode = getenv("TACHIKOMA_TEST_MODE").flatMap { String(cString: $0) }
         setenv("TACHIKOMA_TEST_MODE", "mock", 1)
         defer {
@@ -57,8 +57,8 @@ struct AudioProviderFactoryTests {
         }
     }
 
-    @Test("SpeechProviderFactory returns mock provider in test mode")
-    func speechFactoryReturnsMockInTestMode() throws {
+    @Test
+    func `SpeechProviderFactory returns mock provider in test mode`() throws {
         let previousTestMode = getenv("TACHIKOMA_TEST_MODE").flatMap { String(cString: $0) }
         setenv("TACHIKOMA_TEST_MODE", "mock", 1)
         defer {
@@ -80,8 +80,8 @@ struct AudioProviderFactoryTests {
         #expect(provider is MockSpeechProvider)
     }
 
-    @Test("AudioConfiguration reads configuration keys before environment")
-    func audioConfigurationPrefersExplicitConfiguration() {
+    @Test
+    func `AudioConfiguration reads configuration keys before environment`() {
         let previousOpenAIKey = getenv("OPENAI_API_KEY").flatMap { String(cString: $0) }
         unsetenv("OPENAI_API_KEY")
         defer {
@@ -97,8 +97,8 @@ struct AudioProviderFactoryTests {
         #expect(resolvedKey == "configured-key")
     }
 
-    @Test("AudioConfiguration falls back to environment variable")
-    func audioConfigurationFallsBackToEnvironment() {
+    @Test
+    func `AudioConfiguration falls back to environment variable`() {
         let previousOpenAIKey = getenv("OPENAI_API_KEY").flatMap { String(cString: $0) }
         setenv("OPENAI_API_KEY", "env-key-123", 1)
         defer {

@@ -275,7 +275,7 @@ public protocol AudioStreamPipelineDelegate: AnyObject {
     func audioStreamPipeline(didEncounterError error: Error) async
 }
 
-// Default implementation for optional methods
+/// Default implementation for optional methods
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 extension AudioStreamPipelineDelegate {
     // Pipeline started

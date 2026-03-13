@@ -3,25 +3,24 @@ import Testing
 @testable import Tachikoma
 @testable import TachikomaAgent
 
-@Suite("TachikomaConfiguration Tests", .serialized)
+@Suite(.serialized)
 struct TachikomaConfigurationTests {
-    @Suite("Instance Creation Tests")
     struct InstanceCreationTests {
-        @Test("Default constructor loads from environment")
-        func defaultConstructorLoadsEnvironment() async throws {
+        @Test
+        func `Default constructor loads from environment`() {
             let config = TachikomaConfiguration()
             // Should not crash and create valid instance
             #expect(config.configuredProviders.isEmpty || !config.configuredProviders.isEmpty) // Either is fine
         }
 
-        @Test("Constructor with loadFromEnvironment=false")
-        func constructorWithoutEnvironmentLoading() async throws {
+        @Test
+        func `Constructor with loadFromEnvironment=false`() {
             let config = TachikomaConfiguration(loadFromEnvironment: false)
             #expect(config.configuredProviders.isEmpty)
         }
 
-        @Test("Convenience constructor with API keys")
-        func convenienceConstructorWithAPIKeys() async throws {
+        @Test
+        func `Convenience constructor with API keys`() {
             let config = TachikomaConfiguration(
                 apiKeys: [
                     "openai": "test-openai-key",
@@ -34,8 +33,8 @@ struct TachikomaConfigurationTests {
             #expect(config.getAPIKey(for: .groq) == nil)
         }
 
-        @Test("Convenience constructor with API keys and base URLs")
-        func convenienceConstructorWithAPIKeysAndBaseURLs() async throws {
+        @Test
+        func `Convenience constructor with API keys and base URLs`() {
             let config = TachikomaConfiguration(
                 apiKeys: ["openai": "test-key"],
                 baseURLs: ["openai": "https://custom.openai.com"],
@@ -46,10 +45,9 @@ struct TachikomaConfigurationTests {
         }
     }
 
-    @Suite("Type-Safe API Tests")
     struct TypeSafeAPITests {
-        @Test("Set and get API key with Provider enum")
-        func setAndGetAPIKeyTypeSafe() async throws {
+        @Test
+        func `Set and get API key with Provider enum`() {
             let config = TachikomaConfiguration(loadFromEnvironment: false)
 
             config.setAPIKey("test-openai-key", for: .openai)
@@ -62,8 +60,8 @@ struct TachikomaConfigurationTests {
             #expect(config.getAPIKey(for: .groq) == nil)
         }
 
-        @Test("Has API key checks")
-        func hasAPIKeyChecks() async throws {
+        @Test
+        func `Has API key checks`() {
             let config = TachikomaConfiguration(loadFromEnvironment: false)
 
             #expect(!config.hasAPIKey(for: .openai))
@@ -75,8 +73,8 @@ struct TachikomaConfigurationTests {
             #expect(config.hasConfiguredAPIKey(for: .openai))
         }
 
-        @Test("Remove API key")
-        func removeAPIKey() async throws {
+        @Test
+        func `Remove API key`() {
             let config = TachikomaConfiguration(loadFromEnvironment: false)
 
             config.setAPIKey("test-key", for: .anthropic)
@@ -86,8 +84,8 @@ struct TachikomaConfigurationTests {
             #expect(!config.hasAPIKey(for: .anthropic))
         }
 
-        @Test("Set and get base URL")
-        func setAndGetBaseURL() async throws {
+        @Test
+        func `Set and get base URL`() {
             let config = TachikomaConfiguration(loadFromEnvironment: false)
 
             // Test custom base URL
@@ -101,8 +99,8 @@ struct TachikomaConfigurationTests {
             #expect(config.getBaseURL(for: .custom("test")) == nil)
         }
 
-        @Test("Remove base URL falls back to default")
-        func removeBaseURLFallback() async throws {
+        @Test
+        func `Remove base URL falls back to default`() {
             let config = TachikomaConfiguration(loadFromEnvironment: false)
 
             // Set custom URL
@@ -115,10 +113,9 @@ struct TachikomaConfigurationTests {
         }
     }
 
-    @Suite("String-Based Compatibility API Tests")
     struct StringBasedAPITests {
-        @Test("String-based API delegates to type-safe API")
-        func stringBasedAPIDelegation() async throws {
+        @Test
+        func `String-based API delegates to type-safe API`() {
             let config = TachikomaConfiguration(loadFromEnvironment: false)
 
             // Set via string API
@@ -135,8 +132,8 @@ struct TachikomaConfigurationTests {
             #expect(config.hasAPIKey(for: "openai"))
         }
 
-        @Test("String-based API handles custom providers")
-        func stringBasedCustomProviders() async throws {
+        @Test
+        func `String-based API handles custom providers`() {
             let config = TachikomaConfiguration(loadFromEnvironment: false)
 
             config.setAPIKey("custom-key", for: "my-custom-provider")
@@ -147,8 +144,8 @@ struct TachikomaConfigurationTests {
             #expect(config.hasAPIKey(for: "my-custom-provider"))
         }
 
-        @Test("String-based API case insensitive")
-        func stringBasedCaseInsensitive() async throws {
+        @Test
+        func `String-based API case insensitive`() {
             let config = TachikomaConfiguration(loadFromEnvironment: false)
 
             config.setAPIKey("test-key", for: "OpenAI")
@@ -159,10 +156,9 @@ struct TachikomaConfigurationTests {
         }
     }
 
-    @Suite("Environment Variable Loading Tests")
     struct EnvironmentVariableTests {
-        @Test("Environment vs configured key priority")
-        func environmentVsConfiguredPriority() async throws {
+        @Test
+        func `Environment vs configured key priority`() {
             // Create config that loads from environment
             let config = TachikomaConfiguration()
 
@@ -177,8 +173,8 @@ struct TachikomaConfigurationTests {
             // Environment key availability depends on actual environment
         }
 
-        @Test("Environment detection methods")
-        func environmentDetectionMethods() async throws {
+        @Test
+        func `Environment detection methods`() {
             _ = TachikomaConfiguration()
 
             // Provider enum should detect environment independently
@@ -192,10 +188,9 @@ struct TachikomaConfigurationTests {
         }
     }
 
-    @Suite("Configuration State Tests")
     struct ConfigurationStateTests {
-        @Test("Configured providers list")
-        func configuredProvidersList() async throws {
+        @Test
+        func `Configured providers list`() {
             let config = TachikomaConfiguration(loadFromEnvironment: false)
 
             #expect(config.configuredProviders.isEmpty)
@@ -211,8 +206,8 @@ struct TachikomaConfigurationTests {
             #expect(providers.contains(.custom("test")))
         }
 
-        @Test("Clear all configuration")
-        func clearAllConfiguration() async throws {
+        @Test
+        func `Clear all configuration`() {
             let config = TachikomaConfiguration(loadFromEnvironment: false)
 
             config.setAPIKey("key1", for: .openai)
@@ -228,8 +223,8 @@ struct TachikomaConfigurationTests {
             #expect(config.getBaseURL(for: .openai) == "https://api.openai.com/v1") // Falls back to default
         }
 
-        @Test("Configuration summary")
-        func configurationSummary() async throws {
+        @Test
+        func `Configuration summary`() {
             let config = TachikomaConfiguration(loadFromEnvironment: false)
 
             config.setAPIKey("anthropic-key", for: .anthropic)
@@ -241,10 +236,9 @@ struct TachikomaConfigurationTests {
         }
     }
 
-    @Suite("Thread Safety Tests")
     struct ThreadSafetyTests {
-        @Test("Concurrent access is thread-safe")
-        func concurrentAccess() async throws {
+        @Test
+        func `Concurrent access is thread-safe`() async {
             let config = TachikomaConfiguration(loadFromEnvironment: false)
 
             // Test concurrent reads and writes
@@ -271,10 +265,9 @@ struct TachikomaConfigurationTests {
         }
     }
 
-    @Suite("Default Configuration Tests")
     struct DefaultConfigurationTests {
-        @Test("Default configuration usage")
-        func defaultConfigurationUsage() async throws {
+        @Test
+        func `Default configuration usage`() {
             // Clear any existing default
             TachikomaConfiguration.default = nil
 
@@ -296,8 +289,8 @@ struct TachikomaConfigurationTests {
             TachikomaConfiguration.default = nil
         }
 
-        @Test("Resolve helper function")
-        func resolveHelperFunction() async throws {
+        @Test
+        func `Resolve helper function`() {
             // Clear any existing default
             TachikomaConfiguration.default = nil
 
@@ -325,8 +318,8 @@ struct TachikomaConfigurationTests {
             TachikomaConfiguration.default = nil
         }
 
-        @Test("Auto instance is singleton")
-        func autoInstanceIsSingleton() async throws {
+        @Test
+        func `Auto instance is singleton`() async throws {
             // Clear any existing default
             TachikomaConfiguration.default = nil
 
@@ -346,7 +339,7 @@ struct TachikomaConfigurationTests {
             }
 
             // All should be the same instance
-            let first = instances.first!
+            let first = try #require(instances.first)
             for instance in instances {
                 #expect(instance === first)
             }
@@ -355,8 +348,8 @@ struct TachikomaConfigurationTests {
             TachikomaConfiguration.default = nil
         }
 
-        @Test("Generation functions with different configurations")
-        func generationFunctionsWithConfigs() async throws {
+        @Test
+        func `Generation functions with different configurations`() {
             // Clear any existing default
             TachikomaConfiguration.default = nil
 
@@ -410,8 +403,8 @@ struct TachikomaConfigurationTests {
             TachikomaConfiguration.default = nil
         }
 
-        @Test("Conversation uses provided configuration")
-        func conversationUsesProvidedConfig() async throws {
+        @Test
+        func `Conversation uses provided configuration`() {
             // Clear any existing default
             TachikomaConfiguration.default = nil
 
@@ -445,8 +438,8 @@ struct TachikomaConfigurationTests {
             TachikomaConfiguration.default = nil
         }
 
-        @Test("Thread safety stress test")
-        func threadSafetyStressTest() async throws {
+        @Test
+        func `Thread safety stress test`() async {
             // Clear any existing default
             TachikomaConfiguration.default = nil
 
@@ -492,10 +485,9 @@ struct TachikomaConfigurationTests {
         }
     }
 
-    @Suite("Instance Isolation Tests")
     struct InstanceIsolationTests {
-        @Test("Multiple instances are isolated")
-        func multipleInstancesIsolated() async throws {
+        @Test
+        func `Multiple instances are isolated`() {
             let config1 = TachikomaConfiguration(loadFromEnvironment: false)
             let config2 = TachikomaConfiguration(loadFromEnvironment: false)
 
@@ -510,8 +502,8 @@ struct TachikomaConfigurationTests {
             #expect(config2.getAPIKey(for: .openai) == "key2") // Should be unaffected
         }
 
-        @Test("Instance isolation with same provider keys")
-        func instanceIsolationSameProviders() async throws {
+        @Test
+        func `Instance isolation with same provider keys`() {
             let config1 = TachikomaConfiguration(apiKeys: ["openai": "config1-key"])
             let config2 = TachikomaConfiguration(apiKeys: ["openai": "config2-key"])
 
@@ -525,10 +517,9 @@ struct TachikomaConfigurationTests {
         }
     }
 
-    @Suite("Configuration Priority Tests")
     struct ConfigurationPriorityTests {
-        @Test("Configuration priority chain")
-        func configurationPriorityChain() async throws {
+        @Test
+        func `Configuration priority chain`() {
             // Clear any existing default
             TachikomaConfiguration.default = nil
 
@@ -555,10 +546,9 @@ struct TachikomaConfigurationTests {
         }
     }
 
-    @Suite("Provider Factory Override Tests")
     struct ProviderFactoryOverrideTests {
-        @Test("Custom factory override takes precedence")
-        func customFactoryOverrideTakesPrecedence() async throws {
+        @Test
+        func `Custom factory override takes precedence`() throws {
             let config = TachikomaConfiguration(loadFromEnvironment: false)
             config.setAPIKey("mock-key", for: .openai)
 
@@ -574,8 +564,8 @@ struct TachikomaConfigurationTests {
             #expect(capturedModel == .openai(.gpt4o))
         }
 
-        @Test("makeProvider falls back to real provider without override")
-        func makeProviderUsesRealFactory() async throws {
+        @Test
+        func `makeProvider falls back to real provider without override`() throws {
             let config = TachikomaConfiguration(loadFromEnvironment: false)
             config.setAPIKey("mock-key", for: .openai)
 

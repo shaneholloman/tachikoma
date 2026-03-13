@@ -3,14 +3,13 @@ import Testing
 @testable import Tachikoma
 @testable import TachikomaAudio
 
-@Suite("OpenAI Audio Provider Tests", .serialized)
+@Suite(.serialized)
 struct OpenAIAudioProviderTests {
     // MARK: - OpenAI Transcription Provider Tests
 
-    @Suite("OpenAI Transcription Provider Tests")
     struct OpenAITranscriptionProviderTests {
-        @Test("OpenAI transcription provider initialization")
-        func openAITranscriptionProviderInit() async throws {
+        @Test
+        func `OpenAI transcription provider initialization`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-api-key"]) { config in
                 let provider = try TranscriptionProviderFactory.createProvider(
                     for: .openai(.whisper1),
@@ -25,8 +24,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI transcription provider initialization fails without API key")
-        func openAITranscriptionProviderInitFailsWithoutAPIKey() async throws {
+        @Test
+        func `OpenAI transcription provider initialization fails without API key`() async {
             guard TestHelpers.isMockAPIKey(ProcessInfo.processInfo.environment["OPENAI_API_KEY"]) else { return }
             await TestHelpers.withEmptyTestConfiguration { config in
                 #expect(throws: TachikomaError.self) {
@@ -35,8 +34,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI transcription provider different models")
-        func openAITranscriptionProviderDifferentModels() async throws {
+        @Test
+        func `OpenAI transcription provider different models`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let whisperProvider = try TranscriptionProviderFactory.createProvider(
                     for: .openai(.whisper1),
@@ -52,8 +51,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI transcription provider supported formats")
-        func openAITranscriptionProviderSupportedFormats() async throws {
+        @Test
+        func `OpenAI transcription provider supported formats`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let provider = try TranscriptionProviderFactory.createProvider(
                     for: .openai(.whisper1),
@@ -69,8 +68,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI transcription provider transcribe function")
-        func openAITranscriptionProviderTranscribe() async throws {
+        @Test
+        func `OpenAI transcription provider transcribe function`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let provider = try TranscriptionProviderFactory.createProvider(
                     for: .openai(.whisper1),
@@ -90,8 +89,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI transcription provider with timestamps")
-        func openAITranscriptionProviderTimestamps() async throws {
+        @Test
+        func `OpenAI transcription provider with timestamps`() async throws {
             try await TestHelpers.withMockProviderEnvironment {
                 try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                     let provider = try TranscriptionProviderFactory.createProvider(
@@ -113,8 +112,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI transcription provider with abort signal")
-        func openAITranscriptionProviderAbortSignal() async throws {
+        @Test
+        func `OpenAI transcription provider with abort signal`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let provider = try TranscriptionProviderFactory.createProvider(
                     for: .openai(.whisper1),
@@ -133,8 +132,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI transcription provider request validation")
-        func openAITranscriptionProviderRequestValidation() async throws {
+        @Test
+        func `OpenAI transcription provider request validation`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let provider = try TranscriptionProviderFactory.createProvider(
                     for: .openai(.whisper1),
@@ -163,10 +162,9 @@ struct OpenAIAudioProviderTests {
 
     // MARK: - OpenAI Speech Provider Tests
 
-    @Suite("OpenAI Speech Provider Tests")
     struct OpenAISpeechProviderTests {
-        @Test("OpenAI speech provider initialization")
-        func openAISpeechProviderInit() async throws {
+        @Test
+        func `OpenAI speech provider initialization`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-api-key"]) { config in
                 let provider = try SpeechProviderFactory.createProvider(for: .openai(.tts1), configuration: config)
 
@@ -177,8 +175,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI speech provider initialization fails without API key")
-        func openAISpeechProviderInitFailsWithoutAPIKey() async throws {
+        @Test
+        func `OpenAI speech provider initialization fails without API key`() async {
             guard TestHelpers.isMockAPIKey(ProcessInfo.processInfo.environment["OPENAI_API_KEY"]) else { return }
             await TestHelpers.withEmptyTestConfiguration { config in
                 #expect(throws: TachikomaError.self) {
@@ -187,8 +185,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI speech provider different models")
-        func openAISpeechProviderDifferentModels() async throws {
+        @Test
+        func `OpenAI speech provider different models`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let tts1Provider = try SpeechProviderFactory.createProvider(for: .openai(.tts1), configuration: config)
                 let tts1HDProvider = try SpeechProviderFactory.createProvider(
@@ -211,8 +209,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI speech provider supported voices")
-        func openAISpeechProviderSupportedVoices() async throws {
+        @Test
+        func `OpenAI speech provider supported voices`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let provider = try SpeechProviderFactory.createProvider(for: .openai(.tts1), configuration: config)
 
@@ -223,8 +221,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI speech provider generate speech function")
-        func openAISpeechProviderGenerateSpeech() async throws {
+        @Test
+        func `OpenAI speech provider generate speech function`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let provider = try SpeechProviderFactory.createProvider(for: .openai(.tts1), configuration: config)
                 let request = SpeechRequest(
@@ -244,8 +242,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI speech provider with different voices")
-        func openAISpeechProviderDifferentVoices() async throws {
+        @Test
+        func `OpenAI speech provider with different voices`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let provider = try SpeechProviderFactory.createProvider(for: .openai(.tts1), configuration: config)
 
@@ -269,8 +267,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI speech provider with speed control")
-        func openAISpeechProviderSpeedControl() async throws {
+        @Test
+        func `OpenAI speech provider with speed control`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let provider = try SpeechProviderFactory.createProvider(for: .openai(.tts1), configuration: config)
 
@@ -295,8 +293,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI speech provider with voice instructions")
-        func openAISpeechProviderVoiceInstructions() async throws {
+        @Test
+        func `OpenAI speech provider with voice instructions`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let provider = try SpeechProviderFactory.createProvider(for: .openai(.tts1HD), configuration: config)
                 let request = SpeechRequest(
@@ -315,8 +313,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI speech provider with abort signal")
-        func openAISpeechProviderAbortSignal() async throws {
+        @Test
+        func `OpenAI speech provider with abort signal`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let provider = try SpeechProviderFactory.createProvider(for: .openai(.tts1), configuration: config)
                 let abortSignal = AbortSignal()
@@ -335,8 +333,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI speech provider request validation")
-        func openAISpeechProviderRequestValidation() async throws {
+        @Test
+        func `OpenAI speech provider request validation`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let provider = try SpeechProviderFactory.createProvider(
                     for: .openai(.tts1),
@@ -367,8 +365,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI speech provider different output formats")
-        func openAISpeechProviderDifferentFormats() async throws {
+        @Test
+        func `OpenAI speech provider different output formats`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let provider = try SpeechProviderFactory.createProvider(
                     for: .openai(.tts1),
@@ -393,10 +391,9 @@ struct OpenAIAudioProviderTests {
 
     // MARK: - OpenAI API Configuration Tests
 
-    @Suite("OpenAI API Configuration Tests")
     struct OpenAIAPIConfigurationTests {
-        @Test("OpenAI API key configuration from environment")
-        func openAIAPIKeyFromEnvironment() async throws {
+        @Test
+        func `OpenAI API key configuration from environment`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "env-test-key"]) { config in
                 let provider = try TranscriptionProviderFactory.createProvider(
                     for: .openai(.whisper1),
@@ -407,8 +404,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI custom base URL configuration")
-        func openAICustomBaseURL() async throws {
+        @Test
+        func `OpenAI custom base URL configuration`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 // Set custom base URL via environment
                 setenv("OPENAI_BASE_URL", "https://custom-openai-api.example.com", 1)
@@ -424,8 +421,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI organization ID configuration")
-        func openAIOrganizationID() async throws {
+        @Test
+        func `OpenAI organization ID configuration`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 // Set organization ID via environment
                 setenv("OPENAI_ORGANIZATION", "org-test-12345", 1)
@@ -441,8 +438,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI request timeout configuration")
-        func openAIRequestTimeout() async throws {
+        @Test
+        func `OpenAI request timeout configuration`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let provider = try TranscriptionProviderFactory.createProvider(
                     for: .openai(.whisper1),
@@ -469,10 +466,9 @@ struct OpenAIAudioProviderTests {
 
     // MARK: - OpenAI Error Handling Tests
 
-    @Suite("OpenAI Error Handling Tests")
     struct OpenAIErrorHandlingTests {
-        @Test("OpenAI provider handles network errors")
-        func openAIProviderNetworkErrors() async throws {
+        @Test
+        func `OpenAI provider handles network errors`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "invalid-key"]) { config in
                 let provider = try TranscriptionProviderFactory.createProvider(
                     for: .openai(.whisper1),
@@ -493,8 +489,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI provider handles unsupported formats gracefully")
-        func openAIProviderUnsupportedFormats() async throws {
+        @Test
+        func `OpenAI provider handles unsupported formats gracefully`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let provider = try TranscriptionProviderFactory.createProvider(
                     for: .openai(.whisper1),
@@ -517,8 +513,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI provider handles rate limiting")
-        func openAIProviderRateLimiting() async throws {
+        @Test
+        func `OpenAI provider handles rate limiting`() async throws {
             try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
                 let provider = try TranscriptionProviderFactory.createProvider(
                     for: .openai(.whisper1),
@@ -549,8 +545,8 @@ struct OpenAIAudioProviderTests {
             }
         }
 
-        @Test("OpenAI provider error message formatting")
-        func openAIProviderErrorMessageFormatting() async throws {
+        @Test
+        func `OpenAI provider error message formatting`() async {
             await TestHelpers.withEmptyTestConfiguration { config in
                 let originalKey = getenv("OPENAI_API_KEY").flatMap { String(cString: $0) }
                 unsetenv("OPENAI_API_KEY")

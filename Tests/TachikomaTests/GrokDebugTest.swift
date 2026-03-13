@@ -2,8 +2,8 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Test("Debug Grok streaming issue")
-func grokStreamingDebug() async throws {
+@Test
+func `Debug Grok streaming issue`() async throws {
     guard ProcessInfo.processInfo.environment["RUN_GROK_DEBUG_TESTS"] == "1" else {
         print("Skipping Grok debug stream: RUN_GROK_DEBUG_TESTS not set")
         return

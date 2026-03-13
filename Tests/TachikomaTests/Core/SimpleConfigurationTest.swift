@@ -2,23 +2,22 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Simple Configuration Tests")
 struct SimpleConfigurationTests {
-    @Test("Provider enum basic functionality")
-    func providerEnumBasics() {
+    @Test
+    func `Provider enum basic functionality`() {
         #expect(Provider.openai.identifier == "openai")
         #expect(Provider.anthropic.identifier == "anthropic")
         #expect(Provider.custom("test").identifier == "test")
     }
 
-    @Test("Provider factory method")
-    func providerFactory() {
+    @Test
+    func `Provider factory method`() {
         #expect(Provider.from(identifier: "openai") == .openai)
         #expect(Provider.from(identifier: "custom-provider") == .custom("custom-provider"))
     }
 
-    @Test("Configuration instance basic functionality")
-    func configurationInstance() {
+    @Test
+    func `Configuration instance basic functionality`() {
         let config = TachikomaConfiguration(loadFromEnvironment: false)
 
         // Set keys directly
@@ -32,8 +31,8 @@ struct SimpleConfigurationTests {
         #expect(config.getAPIKey(for: .anthropic) == nil)
     }
 
-    @Test("Multiple configuration instances are isolated")
-    func multipleInstancesIsolated() {
+    @Test
+    func `Multiple configuration instances are isolated`() {
         let config1 = TachikomaConfiguration(loadFromEnvironment: false)
         let config2 = TachikomaConfiguration(loadFromEnvironment: false)
 

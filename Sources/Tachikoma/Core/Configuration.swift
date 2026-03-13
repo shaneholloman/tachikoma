@@ -485,7 +485,6 @@ extension ProviderFactory {
         -> any ModelProvider
     {
         // Create a provider with configuration
-        let provider = try createProvider(for: model, configuration: configuration)
-        return provider
+        try createProvider(for: model, configuration: configuration)
     }
 }

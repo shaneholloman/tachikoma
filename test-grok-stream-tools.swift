@@ -18,7 +18,7 @@ request.httpMethod = "POST"
 request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-// Try with a simpler tool first
+/// Try with a simpler tool first
 let body = """
 {
     "model": "grok-3",

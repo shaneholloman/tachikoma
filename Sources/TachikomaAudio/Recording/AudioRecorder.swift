@@ -88,7 +88,7 @@ public final class AudioRecorder: ObservableObject, AudioRecorderProtocol {
     private let channels: AVAudioChannelCount = 1
     private let bitDepth: Int = 16
 
-    // Maximum recording duration (5 minutes by default)
+    /// Maximum recording duration (5 minutes by default)
     public var maxRecordingDuration: TimeInterval = 300
 
     // MARK: - Initialization
@@ -211,8 +211,7 @@ public final class AudioRecorder: ObservableObject, AudioRecorderProtocol {
             recordingURL = nil
         }
 
-        let audioData = try AudioData(contentsOf: url)
-        return audioData
+        return try AudioData(contentsOf: url)
     }
 
     /// Cancel recording without returning data
@@ -418,9 +417,17 @@ private let logger = Logger(label: "tachikoma.audio.recorder")
 public final class AudioRecorder: AudioRecorderProtocol {
     public init() {}
 
-    public var isRecording: Bool { false }
-    public var isAvailable: Bool { false }
-    public var recordingDuration: TimeInterval { 0 }
+    public var isRecording: Bool {
+        false
+    }
+
+    public var isAvailable: Bool {
+        false
+    }
+
+    public var recordingDuration: TimeInterval {
+        0
+    }
 
     public func startRecording() async throws {
         throw AudioRecordingError.audioEngineError("Audio recording is unavailable on this platform")

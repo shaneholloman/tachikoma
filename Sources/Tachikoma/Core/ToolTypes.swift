@@ -27,9 +27,13 @@ public enum AgentValueType: String, Sendable, Codable, CaseIterable {
 // MARK: - Built-in Type Conformances
 
 extension String: AgentToolValue {
-    public static var agentValueType: AgentValueType { .string }
+    public static var agentValueType: AgentValueType {
+        .string
+    }
 
-    public func toJSON() throws -> Any { self }
+    public func toJSON() throws -> Any {
+        self
+    }
 
     public static func fromJSON(_ json: Any) throws -> Self {
         guard let string = json as? String else {
@@ -40,9 +44,13 @@ extension String: AgentToolValue {
 }
 
 extension Int: AgentToolValue {
-    public static var agentValueType: AgentValueType { .integer }
+    public static var agentValueType: AgentValueType {
+        .integer
+    }
 
-    public func toJSON() throws -> Any { self }
+    public func toJSON() throws -> Any {
+        self
+    }
 
     public static func fromJSON(_ json: Any) throws -> Self {
         if let int = json as? Int {
@@ -56,9 +64,13 @@ extension Int: AgentToolValue {
 }
 
 extension Double: AgentToolValue {
-    public static var agentValueType: AgentValueType { .number }
+    public static var agentValueType: AgentValueType {
+        .number
+    }
 
-    public func toJSON() throws -> Any { self }
+    public func toJSON() throws -> Any {
+        self
+    }
 
     public static func fromJSON(_ json: Any) throws -> Self {
         if let double = json as? Double {
@@ -72,9 +84,13 @@ extension Double: AgentToolValue {
 }
 
 extension Bool: AgentToolValue {
-    public static var agentValueType: AgentValueType { .boolean }
+    public static var agentValueType: AgentValueType {
+        .boolean
+    }
 
-    public func toJSON() throws -> Any { self }
+    public func toJSON() throws -> Any {
+        self
+    }
 
     public static func fromJSON(_ json: Any) throws -> Self {
         guard let bool = json as? Bool else {
@@ -87,11 +103,15 @@ extension Bool: AgentToolValue {
 /// Null value type
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 public struct AgentNullValue: AgentToolValue, Equatable {
-    public static var agentValueType: AgentValueType { .null }
+    public static var agentValueType: AgentValueType {
+        .null
+    }
 
     public init() {}
 
-    public func toJSON() throws -> Any { NSNull() }
+    public func toJSON() throws -> Any {
+        NSNull()
+    }
 
     public static func fromJSON(_ json: Any) throws -> Self {
         if json is NSNull {
@@ -103,7 +123,9 @@ public struct AgentNullValue: AgentToolValue, Equatable {
 
 /// Array conformance
 extension Array: AgentToolValue where Element: AgentToolValue {
-    public static var agentValueType: AgentValueType { .array }
+    public static var agentValueType: AgentValueType {
+        .array
+    }
 
     public func toJSON() throws -> Any {
         try map { try $0.toJSON() }
@@ -119,7 +141,9 @@ extension Array: AgentToolValue where Element: AgentToolValue {
 
 /// Dictionary conformance
 extension Dictionary: AgentToolValue where Key == String, Value: AgentToolValue {
-    public static var agentValueType: AgentValueType { .object }
+    public static var agentValueType: AgentValueType {
+        .object
+    }
 
     public func toJSON() throws -> Any {
         var result: [String: Any] = [:]
@@ -158,7 +182,9 @@ public struct AnyAgentToolValue: AgentToolValue, Equatable, Codable {
         case object([String: AnyAgentToolValue])
     }
 
-    public static var agentValueType: AgentValueType { .object } // Generic type
+    public static var agentValueType: AgentValueType {
+        .object
+    } // Generic type
 
     public init(_ value: some AgentToolValue) throws {
         let json = try value.toJSON()

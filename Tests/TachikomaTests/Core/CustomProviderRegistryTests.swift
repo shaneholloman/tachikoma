@@ -9,10 +9,9 @@ import Darwin
 import Glibc
 #endif
 
-@Suite("Custom Provider Registry")
 struct CustomProviderRegistryTests {
-    @Test("Loads providers from profile config with comments and env vars")
-    func loadProvidersFromProfile() throws {
+    @Test
+    func `Loads providers from profile config with comments and env vars`() throws {
         let fm = FileManager.default
         let tempHome = fm.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try fm.createDirectory(at: tempHome, withIntermediateDirectories: true)

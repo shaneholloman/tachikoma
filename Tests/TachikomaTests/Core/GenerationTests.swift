@@ -2,12 +2,11 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Generation Function Tests")
 struct GenerationTests {
     // MARK: - Basic Generation Tests (Placeholder Providers)
 
-    @Test("Generate Function - OpenAI Provider")
-    func generateFunctionOpenAI() async throws {
+    @Test
+    func `Generate Function - OpenAI Provider`() async throws {
         try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
             let result = try await generate(
                 "What is 2+2?",
@@ -25,8 +24,8 @@ struct GenerationTests {
         }
     }
 
-    @Test("Generate Function - Anthropic Provider")
-    func generateFunctionAnthropic() async throws {
+    @Test
+    func `Generate Function - Anthropic Provider`() async throws {
         try await TestHelpers.withTestConfiguration(apiKeys: ["anthropic": "test-key"]) { config in
             let result = try await generate(
                 "Explain quantum physics",
@@ -42,8 +41,8 @@ struct GenerationTests {
         }
     }
 
-    @Test("Generate Function - Default Model")
-    func generateFunctionDefaultModel() async throws {
+    @Test
+    func `Generate Function - Default Model`() async throws {
         try await TestHelpers.withTestConfiguration(apiKeys: ["anthropic": "test-key"]) { config in
             let result = try await generate("Hello world", configuration: config)
 
@@ -52,8 +51,8 @@ struct GenerationTests {
         }
     }
 
-    @Test("Generate Function - With System Prompt")
-    func generateFunctionWithSystem() async throws {
+    @Test
+    func `Generate Function - With System Prompt`() async throws {
         try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
             let result = try await generate(
                 "Tell me a joke",
@@ -73,8 +72,8 @@ struct GenerationTests {
 
     // MARK: - Streaming Tests
 
-    @Test("Stream Function - Basic Streaming")
-    func streamFunctionBasic() async throws {
+    @Test
+    func `Stream Function - Basic Streaming`() async throws {
         try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
             let stream = try await stream(
                 "Count to 5",
@@ -101,8 +100,8 @@ struct GenerationTests {
         }
     }
 
-    @Test("Stream Function - Anthropic Streaming")
-    func streamFunctionAnthropic() async throws {
+    @Test
+    func `Stream Function - Anthropic Streaming`() async throws {
         try await TestHelpers.withTestConfiguration(apiKeys: ["anthropic": "test-key"]) { config in
             let stream = try await stream(
                 "Write a haiku",
@@ -135,8 +134,8 @@ struct GenerationTests {
 
     // MARK: - Image Analysis Tests
 
-    @Test("Analyze Function - Vision Model")
-    func analyzeFunctionVision() async throws {
+    @Test
+    func `Analyze Function - Vision Model`() async throws {
         try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
             let testImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
             let result = try await analyze(
@@ -154,8 +153,8 @@ struct GenerationTests {
         }
     }
 
-    @Test("Analyze Function - Non-Vision Model Error")
-    func analyzeFunctionNonVisionError() async {
+    @Test
+    func `Analyze Function - Non-Vision Model Error`() async {
         _ = await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
             // GPT-4.1 doesn't support vision
             await #expect(throws: TachikomaError.self) {
@@ -169,8 +168,8 @@ struct GenerationTests {
         }
     }
 
-    @Test("Analyze Function - Default Vision Model")
-    func analyzeFunctionDefaultVision() async throws {
+    @Test
+    func `Analyze Function - Default Vision Model`() async throws {
         try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
             // Use base64 encoded test image (1x1 pixel PNG)
             let testImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
@@ -191,8 +190,8 @@ struct GenerationTests {
 
     // MARK: - Error Handling Tests
 
-    @Test("Generate Function - Missing API Key")
-    func generateFunctionMissingAPIKey() async {
+    @Test
+    func `Generate Function - Missing API Key`() async {
         _ = await TestHelpers.withEmptyTestConfiguration { config in
             await #expect(throws: TachikomaError.self) {
                 try await generate("Test", using: .openai(.gpt4o), configuration: config)
@@ -200,8 +199,8 @@ struct GenerationTests {
         }
     }
 
-    @Test("Generate Function - Invalid Configuration")
-    func generateFunctionInvalidConfig() async throws {
+    @Test
+    func `Generate Function - Invalid Configuration`() async {
         await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
             // Test with invalid base URL format
             config.setBaseURL("not-a-url", for: .openai)
@@ -221,8 +220,8 @@ struct GenerationTests {
 
     // MARK: - Tool Integration Tests
 
-    @Test("Generate Function - Without Tools")
-    func generateFunctionWithoutTools() async throws {
+    @Test
+    func `Generate Function - Without Tools`() async throws {
         try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
             // Test generation without tools
             let result = try await generate(
@@ -235,8 +234,8 @@ struct GenerationTests {
         }
     }
 
-    @Test("Generate Function - With Custom Tools")
-    func generateFunctionWithCustomTools() async throws {
+    @Test
+    func `Generate Function - With Custom Tools`() async throws {
         try await TestHelpers.withTestConfiguration(apiKeys: ["anthropic": "test-key"]) { config in
             // Create a simple test tool
             let testTool = createTool(
@@ -262,8 +261,8 @@ struct GenerationTests {
 
     // MARK: - Image Input Type Tests
 
-    @Test("Image Input Types")
-    func imageInputTypes() {
+    @Test
+    func `Image Input Types`() {
         let base64Image = ImageInput.base64("test-data")
         let urlImage = ImageInput.url("https://example.com/image.jpg")
         let fileImage = ImageInput.filePath("/path/to/image.png")

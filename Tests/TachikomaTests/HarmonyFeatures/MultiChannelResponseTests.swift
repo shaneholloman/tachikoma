@@ -1,10 +1,9 @@
 import Testing
 @testable import Tachikoma
 
-@Suite("Multi-Channel Response System")
 struct MultiChannelResponseTests {
-    @Test("ResponseChannel enum has all expected cases")
-    func responseChannelCases() {
+    @Test
+    func `ResponseChannel enum has all expected cases`() {
         let allCases = ResponseChannel.allCases
         #expect(allCases.count == 4)
         #expect(allCases.contains(.thinking))
@@ -13,16 +12,16 @@ struct MultiChannelResponseTests {
         #expect(allCases.contains(.final))
     }
 
-    @Test("ResponseChannel raw values are correct")
-    func responseChannelRawValues() {
+    @Test
+    func `ResponseChannel raw values are correct`() {
         #expect(ResponseChannel.thinking.rawValue == "thinking")
         #expect(ResponseChannel.analysis.rawValue == "analysis")
         #expect(ResponseChannel.commentary.rawValue == "commentary")
         #expect(ResponseChannel.final.rawValue == "final")
     }
 
-    @Test("ModelMessage supports channel property")
-    func modelMessageChannel() {
+    @Test
+    func `ModelMessage supports channel property`() {
         let message = ModelMessage(
             role: .assistant,
             content: [.text("This is my reasoning")],
@@ -34,8 +33,8 @@ struct MultiChannelResponseTests {
         #expect(message.content.first == .text("This is my reasoning"))
     }
 
-    @Test("ModelMessage supports metadata property")
-    func modelMessageMetadata() {
+    @Test
+    func `ModelMessage supports metadata property`() {
         let metadata = MessageMetadata(
             conversationId: "conv-123",
             turnId: "turn-456",
@@ -53,8 +52,8 @@ struct MultiChannelResponseTests {
         #expect(message.metadata?.customData?["key"] == "value")
     }
 
-    @Test("TextStreamDelta supports channel events")
-    func textStreamDeltaChannelEvents() {
+    @Test
+    func `TextStreamDelta supports channel events`() {
         // Channel information is now passed via the channel property, not event types
         let reasoningDelta = TextStreamDelta(
             type: .reasoning,
@@ -84,8 +83,8 @@ struct MultiChannelResponseTests {
         #expect(textDelta.content == "Reasoning about the problem")
     }
 
-    @Test("MessageMetadata equality")
-    func messageMetadataEquality() {
+    @Test
+    func `MessageMetadata equality`() {
         let metadata1 = MessageMetadata(
             conversationId: "123",
             turnId: "456",
@@ -108,8 +107,8 @@ struct MultiChannelResponseTests {
         #expect(metadata1 != metadata3)
     }
 
-    @Test("Legacy messages work without channel")
-    func legacyMessageCompatibility() {
+    @Test
+    func `Legacy messages work without channel`() {
         // Old API still works
         let message = ModelMessage.user("Hello")
 
@@ -119,8 +118,8 @@ struct MultiChannelResponseTests {
         #expect(message.content.first == .text("Hello"))
     }
 
-    @Test("Convenience initializers preserve nil channel")
-    func convenienceInitializers() {
+    @Test
+    func `Convenience initializers preserve nil channel`() {
         let systemMessage = ModelMessage.system("You are helpful")
         let userMessage = ModelMessage.user("Hello")
         let assistantMessage = ModelMessage.assistant("Hi there")
@@ -130,8 +129,8 @@ struct MultiChannelResponseTests {
         #expect(assistantMessage.channel == nil)
     }
 
-    @Test("Channel-aware message creation")
-    func channelAwareMessageCreation() {
+    @Test
+    func `Channel-aware message creation`() {
         let thinkingMessage = ModelMessage(
             role: .assistant,
             content: [.text("Let me think about this...")],
@@ -155,8 +154,8 @@ struct MultiChannelResponseTests {
         #expect(finalMessage.channel == .final)
     }
 
-    @Test("Codable conformance for ResponseChannel")
-    func responseChannelCodable() throws {
+    @Test
+    func `Codable conformance for ResponseChannel`() throws {
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
 
@@ -171,8 +170,8 @@ struct MultiChannelResponseTests {
         #expect(jsonString == "\"thinking\"")
     }
 
-    @Test("Codable conformance for MessageMetadata")
-    func messageMetadataCodable() throws {
+    @Test
+    func `Codable conformance for MessageMetadata`() throws {
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
 

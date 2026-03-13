@@ -2,10 +2,9 @@ import Testing
 @testable import Tachikoma
 @testable import TachikomaAgent
 
-@Suite("Dynamic Tools System Tests")
 struct DynamicToolsTests {
-    @Test("DynamicTool creates valid AgentTool")
-    func dynamicToolToAgentTool() async throws {
+    @Test
+    func `DynamicTool creates valid AgentTool`() async throws {
         let schema = DynamicSchema(
             type: .object,
             properties: [
@@ -36,8 +35,8 @@ struct DynamicToolsTests {
         #expect(result.stringValue?.contains("Searched for:") == true)
     }
 
-    @Test("DynamicSchema converts to AgentToolParameters")
-    func schemaConversion() throws {
+    @Test
+    func `DynamicSchema converts to AgentToolParameters`() {
         let schema = DynamicSchema(
             type: .object,
             properties: [
@@ -57,8 +56,8 @@ struct DynamicToolsTests {
         #expect(parameters.properties["active"]?.type == .boolean)
     }
 
-    @Test("SchemaProperty handles nested structures")
-    func nestedSchemaProperty() throws {
+    @Test
+    func `SchemaProperty handles nested structures`() {
         let addressSchema = DynamicSchema.SchemaProperty(
             type: .object,
             description: "Address",
@@ -80,8 +79,8 @@ struct DynamicToolsTests {
         #expect(parameters.properties["address"]?.type == .object)
     }
 
-    @Test("DynamicToolRegistry manages tools")
-    func dynamicToolRegistry() async throws {
+    @Test
+    func `DynamicToolRegistry manages tools`() async throws {
         let registry = DynamicToolRegistry()
 
         // Create a mock provider with a tool
@@ -119,8 +118,8 @@ struct DynamicToolsTests {
         #expect(remainingTools.isEmpty)
     }
 
-    @Test("DynamicToolProvider discovers tools")
-    func dynamicToolProvider() async throws {
+    @Test
+    func `DynamicToolProvider discovers tools`() async throws {
         let searchTool = DynamicTool(
             name: "search_web",
             description: "Search the web",
@@ -213,8 +212,8 @@ struct DynamicToolsTests {
          // SchemaBuilder doesn't exist in the expected form
      }*/
 
-    @Test("Box type for recursive schemas")
-    func boxType() throws {
+    @Test
+    func `Box type for recursive schemas`() {
         // Create a recursive structure (like a tree node)
         let nodeSchema = DynamicSchema.SchemaProperty(
             type: .object,
@@ -233,8 +232,8 @@ struct DynamicToolsTests {
         #expect(nodeSchema.type == .object)
     }
 
-    @Test("Non-object schema conversion")
-    func nonObjectSchemaConversion() throws {
+    @Test
+    func `Non-object schema conversion`() {
         // Test conversion of non-object schema
         // Since non-object schemas aren't wrapped, we should test object schemas
         let objectSchema = DynamicSchema(
@@ -249,8 +248,8 @@ struct DynamicToolsTests {
         #expect(parameters.required == ["value"])
     }
 
-    @Test("Clear registry")
-    func clearRegistry() async throws {
+    @Test
+    func `Clear registry`() async throws {
         let registry = DynamicToolRegistry()
 
         // Add multiple tools

@@ -3,10 +3,9 @@ import Testing
 @testable import Tachikoma
 @testable import TachikomaAgent
 
-@Suite("Integration Tests")
 struct IntegrationTests {
-    @Test("End-to-end UI message flow with streaming")
-    func uIMessageFlowWithStreaming() async throws {
+    @Test
+    func `End-to-end UI message flow with streaming`() async {
         // Create UI messages
         let uiMessages = [
             UIMessage(role: .system, content: "You are a helpful assistant"),
@@ -45,8 +44,8 @@ struct IntegrationTests {
         #expect(assistantMessage.content == "The answer is 4")
     }
 
-    @Test("Tool execution with simplified builder and error handling")
-    func toolExecutionWithErrorHandling() async throws {
+    @Test
+    func `Tool execution with simplified builder and error handling`() async throws {
         struct MathInput: Codable, Sendable {
             let operation: String
             let a: Double
@@ -115,8 +114,8 @@ struct IntegrationTests {
         }
     }
 
-    @Test("Async operations with timeout and cancellation")
-    func asyncOperationsWithTimeoutAndCancellation() async throws {
+    @Test
+    func `Async operations with timeout and cancellation`() async throws {
         let token = CancellationToken()
 
         let task = Task {
@@ -143,8 +142,8 @@ struct IntegrationTests {
         #expect(await token.cancelled)
     }
 
-    @Test("Provider with feature parity and caching")
-    func providerWithFeatureParityAndCaching() async throws {
+    @Test
+    func `Provider with feature parity and caching`() async throws {
         // Create a mock provider with limited capabilities
         struct LimitedProvider: ModelProvider {
             let modelId = "limited-model"
@@ -219,8 +218,8 @@ struct IntegrationTests {
         #expect(stats.hits >= 1)
     }
 
-    @Test("Complete tool workflow with context and error recovery")
-    func completeToolWorkflow() async throws {
+    @Test
+    func `Complete tool workflow with context and error recovery`() async throws {
         // Create a contextual tool
         let searchTool = AgentTool.createWithContext(
             name: "contextual_search",

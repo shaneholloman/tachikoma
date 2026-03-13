@@ -3,10 +3,10 @@ import Testing
 @testable import Tachikoma
 @testable import TachikomaAgent
 
-@Suite("Configuration Architecture Tests", .serialized)
+@Suite(.serialized)
 struct ConfigurationArchitectureTests {
-    @Test("Auto instance is a true singleton")
-    func verifyAutoInstanceSingleton() async throws {
+    @Test
+    func `Auto instance is a true singleton`() throws {
         // Clear any existing default
         TachikomaConfiguration.default = nil
 
@@ -16,14 +16,14 @@ struct ConfigurationArchitectureTests {
         }
 
         // All should be exactly the same instance
-        let first = instances.first!
+        let first = try #require(instances.first)
         for instance in instances {
             #expect(instance === first, "All auto instances must be identical")
         }
     }
 
-    @Test("Configuration priority chain")
-    func verifyConfigPriorityChain() async throws {
+    @Test
+    func `Configuration priority chain`() {
         // Clear default
         TachikomaConfiguration.default = nil
 
@@ -50,8 +50,8 @@ struct ConfigurationArchitectureTests {
         TachikomaConfiguration.default = nil
     }
 
-    @Test("README examples work correctly")
-    func verifyREADMEExamples() async throws {
+    @Test
+    func `README examples work correctly`() {
         // Example 1: Zero configuration
         _ = {
             Task {
@@ -95,8 +95,8 @@ struct ConfigurationArchitectureTests {
         TachikomaConfiguration.default = nil
     }
 
-    @Test("Thread safety under high concurrency")
-    func verifyThreadSafety() async throws {
+    @Test
+    func `Thread safety under high concurrency`() async {
         TachikomaConfiguration.default = nil
 
         // Concurrent writes and reads
@@ -128,8 +128,8 @@ struct ConfigurationArchitectureTests {
         TachikomaConfiguration.default = nil
     }
 
-    @Test("Conversation maintains its configuration")
-    func verifyConversationConfig() async throws {
+    @Test
+    func `Conversation maintains its configuration`() {
         TachikomaConfiguration.default = nil
 
         let config1 = TachikomaConfiguration(loadFromEnvironment: false)

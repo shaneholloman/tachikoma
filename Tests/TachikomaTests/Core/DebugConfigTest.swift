@@ -2,10 +2,9 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Debug Configuration Tests")
 struct DebugConfigTests {
-    @Test("Debug configuration behavior")
-    func debugConfiguration() async {
+    @Test
+    func `Debug configuration behavior`() async {
         let config = TachikomaConfiguration(loadFromEnvironment: false)
 
         print("=== Testing instance-based configuration ===")
@@ -31,8 +30,8 @@ struct DebugConfigTests {
         #expect(Bool(true)) // Just to complete the test
     }
 
-    @Test("Multiple configurations isolation")
-    func multipleConfigurationsIsolation() {
+    @Test
+    func `Multiple configurations isolation`() {
         let config1 = TachikomaConfiguration(loadFromEnvironment: false)
         let config2 = TachikomaConfiguration(loadFromEnvironment: false)
 

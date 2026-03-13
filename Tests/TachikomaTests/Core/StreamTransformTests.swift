@@ -1,10 +1,9 @@
 import Testing
 @testable import Tachikoma
 
-@Suite("Stream Transform Pipeline Tests")
 struct StreamTransformTests {
-    @Test("FilterTransform filters elements correctly")
-    func testFilterTransform() async throws {
+    @Test
+    func `FilterTransform filters elements correctly`() async throws {
         let transform = FilterTransform<Int> { $0 % 2 == 0 }
 
         #expect(try await transform.transform(2) == 2)
@@ -13,16 +12,16 @@ struct StreamTransformTests {
         #expect(try await transform.transform(5) == nil)
     }
 
-    @Test("MapTransform transforms elements")
-    func testMapTransform() async throws {
+    @Test
+    func `MapTransform transforms elements`() async throws {
         let transform = MapTransform<Int, String> { "\($0 * 2)" }
 
         #expect(try await transform.transform(5) == "10")
         #expect(try await transform.transform(3) == "6")
     }
 
-    @Test("BufferTransform batches elements")
-    func bufferTransform() async throws {
+    @Test
+    func `BufferTransform batches elements`() async throws {
         let transform = BufferTransform<String>(bufferSize: 3)
 
         // First two elements shouldn't trigger flush
@@ -42,8 +41,8 @@ struct StreamTransformTests {
         #expect(remaining == ["d", "e"])
     }
 
-    @Test("BufferTransform with time interval")
-    func bufferTransformWithInterval() async throws {
+    @Test
+    func `BufferTransform with time interval`() async throws {
         let transform = BufferTransform<Int>(bufferSize: 10, flushInterval: 0.1)
 
         // Add elements
@@ -61,8 +60,8 @@ struct StreamTransformTests {
         #expect(batch?.contains(3) == true)
     }
 
-    @Test("ThrottleTransform limits rate")
-    func throttleTransform() async throws {
+    @Test
+    func `ThrottleTransform limits rate`() async throws {
         let transform = ThrottleTransform<String>(interval: 0.1)
 
         // First element passes through
@@ -78,8 +77,8 @@ struct StreamTransformTests {
         #expect(try await transform.transform("third") == "third")
     }
 
-    @Test("TapTransform adds side effects")
-    func tapTransform() async throws {
+    @Test
+    func `TapTransform adds side effects`() async throws {
         actor SideEffectsCollector {
             var values: [Int] = []
             func append(_ value: Int) {
@@ -97,8 +96,8 @@ struct StreamTransformTests {
         #expect(await collector.values == [1, 2, 3])
     }
 
-    @Test("Stream filter extension works")
-    func streamFilterExtension() async throws {
+    @Test
+    func `Stream filter extension works`() async throws {
         let stream = AsyncThrowingStream<Int, Error> { continuation in
             Task {
                 for i in 1...5 {
@@ -118,8 +117,8 @@ struct StreamTransformTests {
         #expect(results == [2, 4])
     }
 
-    @Test("Stream map extension works")
-    func streamMapExtension() async throws {
+    @Test
+    func `Stream map extension works`() async throws {
         let stream = AsyncThrowingStream<Int, Error> { continuation in
             Task {
                 for i in 1...3 {
@@ -139,8 +138,8 @@ struct StreamTransformTests {
         #expect(results == [1, 4, 9])
     }
 
-    @Test("Stream tap extension works")
-    func streamTapExtension() async throws {
+    @Test
+    func `Stream tap extension works`() async throws {
         actor TapCollector {
             var values: [String] = []
             func append(_ value: String) {
@@ -170,8 +169,8 @@ struct StreamTransformTests {
         #expect(await collector.values == ["a", "b", "c"])
     }
 
-    @Test("Stream buffer extension works")
-    func streamBufferExtension() async throws {
+    @Test
+    func `Stream buffer extension works`() async throws {
         let stream = AsyncThrowingStream<Int, Error> { continuation in
             Task {
                 for i in 1...7 {
@@ -194,8 +193,8 @@ struct StreamTransformTests {
         #expect(batches[2] == [7]) // Remaining element
     }
 
-    @Test("Stream throttle extension works")
-    func streamThrottleExtension() async throws {
+    @Test
+    func `Stream throttle extension works`() async throws {
         let stream = AsyncThrowingStream<Int, Error> { continuation in
             Task {
                 for i in 1...5 {
@@ -218,8 +217,8 @@ struct StreamTransformTests {
         #expect(results.contains(1)) // First element always passes
     }
 
-    @Test("StreamTextResult filter extension works")
-    func streamTextResultFilter() async throws {
+    @Test
+    func `StreamTextResult filter extension works`() async throws {
         let stream = AsyncThrowingStream<TextStreamDelta, Error> { continuation in
             Task {
                 continuation.yield(TextStreamDelta(type: .textDelta, content: "Hello"))
@@ -251,8 +250,8 @@ struct StreamTransformTests {
         #expect(count == 2) // Only text deltas
     }
 
-    @Test("StreamTextResult collectText works")
-    func streamTextResultCollectText() async throws {
+    @Test
+    func `StreamTextResult collectText works`() async throws {
         let stream = AsyncThrowingStream<TextStreamDelta, Error> { continuation in
             Task {
                 continuation.yield(TextStreamDelta(type: .textDelta, content: "Hello"))
@@ -277,8 +276,8 @@ struct StreamTransformTests {
         #expect(texts == ["Hello", " ", "World"])
     }
 
-    @Test("StreamTextResult fullText works")
-    func streamTextResultFullText() async throws {
+    @Test
+    func `StreamTextResult fullText works`() async throws {
         let stream = AsyncThrowingStream<TextStreamDelta, Error> { continuation in
             Task {
                 continuation.yield(TextStreamDelta(type: .textDelta, content: "The"))
@@ -300,8 +299,8 @@ struct StreamTransformTests {
         #expect(fullText == "The quick brown fox")
     }
 
-    @Test("CombinedTransform chains transforms")
-    func combinedTransform() async throws {
+    @Test
+    func `CombinedTransform chains transforms`() async throws {
         let filterTransform = FilterTransform<Int> { $0 % 2 == 0 }
         let mapTransform = MapTransform<Int, String> { "\($0 * 10)" }
 
@@ -315,8 +314,8 @@ struct StreamTransformTests {
         #expect(try await combined.transform(4) == "40")
     }
 
-    @Test("Transform chain with complex pipeline")
-    func complexTransformPipeline() async throws {
+    @Test
+    func `Transform chain with complex pipeline`() async throws {
         let stream = AsyncThrowingStream<Int, Error> { continuation in
             Task {
                 for i in 1...10 {

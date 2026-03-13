@@ -2,12 +2,11 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Stop Conditions Integration Tests")
 struct StopConditionsIntegrationTests {
     // MARK: - Provider Integration Tests
 
-    @Test("Stop conditions passed to OpenAI as native stop sequences")
-    func openAIProviderStopSequences() async throws {
+    @Test
+    func `Stop conditions passed to OpenAI as native stop sequences`() {
         // Create a mock provider that can verify the request
         _ = MockOpenAIProvider()
 
@@ -37,8 +36,8 @@ struct StopConditionsIntegrationTests {
         #expect(extractedComposite.isEmpty) // Current behavior
     }
 
-    @Test("Stop conditions work with generateText end-to-end")
-    func generateTextWithStopConditions() async throws {
+    @Test
+    func `Stop conditions work with generateText end-to-end`() async throws {
         // Use a mock provider that returns specific text
         let mockProvider = MockTextProvider(responseText: "Count: 1 2 3 END 4 5 6")
 
@@ -60,8 +59,8 @@ struct StopConditionsIntegrationTests {
         #expect(response.finishReason == FinishReason.stop)
     }
 
-    @Test("Streaming with multiple stop conditions")
-    func streamingWithMultipleStopConditions() async throws {
+    @Test
+    func `Streaming with multiple stop conditions`() async throws {
         // Create a stream that emits text gradually
         let stream = self.createMockStream(texts: [
             "Hello ",
@@ -94,8 +93,8 @@ struct StopConditionsIntegrationTests {
         #expect(!result.contains("STOP"))
     }
 
-    @Test("Token count stop condition with streaming")
-    func tokenCountStopWithStreaming() async throws {
+    @Test
+    func `Token count stop condition with streaming`() async throws {
         // Create a stream with many tokens
         let longTexts = (1...100).map { "Token \($0) " }
         let stream = self.createMockStream(texts: longTexts)
@@ -118,8 +117,8 @@ struct StopConditionsIntegrationTests {
         #expect(!result.contains("Token 50"))
     }
 
-    @Test("Timeout stop condition with streaming")
-    func timeoutStopWithStreaming() async throws {
+    @Test
+    func `Timeout stop condition with streaming`() async throws {
         // Create a slow stream
         let stream = AsyncThrowingStream<TextStreamDelta, Error> { continuation in
             Task {
@@ -149,8 +148,8 @@ struct StopConditionsIntegrationTests {
         #expect(chunkCount < 10) // Should not have all chunks
     }
 
-    @Test("Regex stop condition with complex patterns")
-    func regexStopConditionWithPatterns() async throws {
+    @Test
+    func `Regex stop condition with complex patterns`() async throws {
         let texts = [
             "Processing item 1...",
             "Processing item 2...",
@@ -173,8 +172,8 @@ struct StopConditionsIntegrationTests {
         #expect(!result.contains("Should not see this"))
     }
 
-    @Test("Predicate stop condition with custom logic")
-    func predicateStopCondition() async throws {
+    @Test
+    func `Predicate stop condition with custom logic`() async throws {
         let stream = self.createMockStream(texts: [
             "Step 1: Initialize",
             "Step 2: Process",
@@ -200,8 +199,8 @@ struct StopConditionsIntegrationTests {
         #expect(!result.contains("Step 4"))
     }
 
-    @Test("Composite stop conditions with ALL logic")
-    func allStopCondition() async throws {
+    @Test
+    func `Composite stop conditions with ALL logic`() async {
         let condition = AllStopCondition([
             PredicateStopCondition { text, _ in text.count > 20 }, // Length check
             PredicateStopCondition { text, _ in text.contains("END") }, // Content check
@@ -214,8 +213,8 @@ struct StopConditionsIntegrationTests {
         #expect(await condition.shouldStop(text: "This is long enough and has END", delta: nil) == true)
     }
 
-    @Test("Stop condition state management with reset")
-    func stopConditionReset() async throws {
+    @Test
+    func `Stop condition state management with reset`() async {
         let condition = TokenCountStopCondition(maxTokens: 10)
 
         // First use
@@ -231,8 +230,8 @@ struct StopConditionsIntegrationTests {
         #expect(await condition.shouldStop(text: "Short", delta: nil) == false)
     }
 
-    @Test("Native provider stop sequence extraction")
-    func stopSequenceExtraction() async throws {
+    @Test
+    func `Native provider stop sequence extraction`() {
         // Test single string condition
         let singleCondition = StringStopCondition("STOP")
         let singleSequences = extractStopSequences(from: singleCondition)
@@ -271,10 +270,21 @@ struct StopConditionsIntegrationTests {
 private struct MockTextProvider: ModelProvider {
     let responseText: String
 
-    var modelId: String { "mock" }
-    var baseURL: String? { nil }
-    var apiKey: String? { nil }
-    var capabilities: ModelCapabilities { ModelCapabilities() }
+    var modelId: String {
+        "mock"
+    }
+
+    var baseURL: String? {
+        nil
+    }
+
+    var apiKey: String? {
+        nil
+    }
+
+    var capabilities: ModelCapabilities {
+        ModelCapabilities()
+    }
 
     func generateText(request: ProviderRequest) async throws -> ProviderResponse {
         var finalText = self.responseText
@@ -316,10 +326,21 @@ private struct MockTextProvider: ModelProvider {
 }
 
 private struct MockOpenAIProvider: ModelProvider {
-    var modelId: String { "gpt-4" }
-    var baseURL: String? { nil }
-    var apiKey: String? { nil }
-    var capabilities: ModelCapabilities { ModelCapabilities() }
+    var modelId: String {
+        "gpt-4"
+    }
+
+    var baseURL: String? {
+        nil
+    }
+
+    var apiKey: String? {
+        nil
+    }
+
+    var capabilities: ModelCapabilities {
+        ModelCapabilities()
+    }
 
     func generateText(request _: ProviderRequest) async throws -> ProviderResponse {
         ProviderResponse(text: "Mock response", usage: nil, finishReason: .stop)
@@ -336,7 +357,7 @@ private struct MockOpenAIProvider: ModelProvider {
     }
 }
 
-// Helper function to extract stop sequences (mimics the internal implementation)
+/// Helper function to extract stop sequences (mimics the internal implementation)
 private func extractStopSequences(from stopCondition: (any StopCondition)?) -> [String] {
     guard let stopCondition else { return [] }
 

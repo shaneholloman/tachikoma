@@ -3,12 +3,11 @@ import Testing
 @testable import Tachikoma
 @testable import TachikomaAgent
 
-@Suite("Minimal Modern API Tests")
 struct MinimalModernAPITests {
     // MARK: - Model Tests
 
-    @Test("Model enum construction")
-    func modelEnumConstruction() {
+    @Test
+    func `Model enum construction`() {
         // Test that model enums can be constructed
         let openaiModel = Model.openai(.gpt4o)
         let anthropicModel = Model.anthropic(.opus45)
@@ -31,8 +30,8 @@ struct MinimalModernAPITests {
         }
     }
 
-    @Test("Model default value")
-    func modelDefaultValue() {
+    @Test
+    func `Model default value`() {
         let defaultModel = Model.default
         // Should compile without errors
         switch defaultModel {
@@ -45,8 +44,8 @@ struct MinimalModernAPITests {
 
     // MARK: - Tool System Tests
 
-    @Test("AgentTool creation")
-    func agentToolCreation() {
+    @Test
+    func `AgentTool creation`() {
         let tool = Tachikoma.createTool(
             name: "test_tool",
             description: "A test tool",
@@ -60,8 +59,8 @@ struct MinimalModernAPITests {
         #expect(tool.description == "A test tool")
     }
 
-    @Test("AgentToolArguments parsing")
-    func agentToolArgumentsParsing() throws {
+    @Test
+    func `AgentToolArguments parsing`() throws {
         let args = AgentToolArguments([
             "name": AnyAgentToolValue(string: "test"),
             "value": AnyAgentToolValue(int: 42),
@@ -73,8 +72,8 @@ struct MinimalModernAPITests {
         #expect(args.optionalStringValue("missing") ?? "default" == "default")
     }
 
-    @Test("Built-in tools exist")
-    func builtInToolsExist() {
+    @Test
+    func `Built-in tools exist`() {
         // Test that built-in tools are available
         #expect(weatherTool.name == "get_weather")
         #expect(timeTool.name == "get_current_time")
@@ -87,8 +86,8 @@ struct MinimalModernAPITests {
 extension MinimalModernAPITests {
     // MARK: - Error Types
 
-    @Test("Tool error types")
-    func toolErrorTypes() {
+    @Test
+    func `Tool error types`() {
         let toolError = AgentToolError.invalidInput("test")
         #expect(toolError.errorDescription != nil)
 
@@ -98,8 +97,8 @@ extension MinimalModernAPITests {
 
     // MARK: - Conversation Tests
 
-    @Test("Conversation basic functionality")
-    func conversationBasic() {
+    @Test
+    func `Conversation basic functionality`() {
         let conversation = Conversation()
         #expect(conversation.messages.isEmpty)
 
@@ -114,8 +113,8 @@ extension MinimalModernAPITests {
 
     // MARK: - Basic Type Tests
 
-    @Test("ConversationMessage basic properties")
-    func conversationMessageBasic() {
+    @Test
+    func `ConversationMessage basic properties`() {
         let message = ConversationMessage(
             id: "test",
             role: .user,

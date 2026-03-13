@@ -12,10 +12,15 @@ struct OpenAIEmbeddingProvider: EmbeddingProvider, ModelProvider {
     let apiKey: String?
     let baseURL: String?
 
-    var modelId: String { self.model.rawValue }
-    var capabilities: ModelCapabilities { ModelCapabilities() }
+    var modelId: String {
+        self.model.rawValue
+    }
 
-    // ModelProvider conformance (not used for embeddings)
+    var capabilities: ModelCapabilities {
+        ModelCapabilities()
+    }
+
+    /// ModelProvider conformance (not used for embeddings)
     func generateText(request _: ProviderRequest) async throws -> ProviderResponse {
         throw TachikomaError.unsupportedOperation("Text generation not supported for embedding models")
     }
@@ -92,17 +97,25 @@ struct OpenAIEmbeddingProvider: EmbeddingProvider, ModelProvider {
     }
 }
 
-// Placeholder providers for other services
+/// Placeholder providers for other services
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 struct CohereEmbeddingProvider: EmbeddingProvider, ModelProvider {
     let model: EmbeddingModel.CohereEmbedding
     let apiKey: String?
 
-    var modelId: String { self.model.rawValue }
-    var baseURL: String? { nil }
-    var capabilities: ModelCapabilities { ModelCapabilities() }
+    var modelId: String {
+        self.model.rawValue
+    }
 
-    // ModelProvider conformance (not used for embeddings)
+    var baseURL: String? {
+        nil
+    }
+
+    var capabilities: ModelCapabilities {
+        ModelCapabilities()
+    }
+
+    /// ModelProvider conformance (not used for embeddings)
     func generateText(request _: ProviderRequest) async throws -> ProviderResponse {
         throw TachikomaError.unsupportedOperation("Text generation not supported for embedding models")
     }
@@ -121,11 +134,19 @@ struct VoyageEmbeddingProvider: EmbeddingProvider, ModelProvider {
     let model: EmbeddingModel.VoyageEmbedding
     let apiKey: String?
 
-    var modelId: String { self.model.rawValue }
-    var baseURL: String? { nil }
-    var capabilities: ModelCapabilities { ModelCapabilities() }
+    var modelId: String {
+        self.model.rawValue
+    }
 
-    // ModelProvider conformance (not used for embeddings)
+    var baseURL: String? {
+        nil
+    }
+
+    var capabilities: ModelCapabilities {
+        ModelCapabilities()
+    }
+
+    /// ModelProvider conformance (not used for embeddings)
     func generateText(request _: ProviderRequest) async throws -> ProviderResponse {
         throw TachikomaError.unsupportedOperation("Text generation not supported for embedding models")
     }

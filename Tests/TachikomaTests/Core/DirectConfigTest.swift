@@ -2,10 +2,9 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Direct Configuration Tests")
 struct DirectConfigTests {
-    @Test("Direct configuration access")
-    func directConfigAccess() {
+    @Test
+    func `Direct configuration access`() {
         let config = TachikomaConfiguration(loadFromEnvironment: false)
 
         // Just test basic access without test helpers
@@ -14,15 +13,15 @@ struct DirectConfigTests {
         #expect(Bool(true)) // If we get here, no infinite loop
     }
 
-    @Test("Provider enum direct access")
-    func providerEnumDirect() {
+    @Test
+    func `Provider enum direct access`() {
         let provider = Provider.openai
         #expect(provider.identifier == "openai")
         #expect(provider.displayName == "OpenAI")
     }
 
-    @Test("Configuration instance creation")
-    func configurationInstanceCreation() {
+    @Test
+    func `Configuration instance creation`() {
         let config1 = TachikomaConfiguration()
         let config2 = TachikomaConfiguration(loadFromEnvironment: false)
         let config3 = TachikomaConfiguration(apiKeys: ["openai": "test"])

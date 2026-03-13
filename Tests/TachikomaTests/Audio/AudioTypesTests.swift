@@ -3,14 +3,12 @@ import Testing
 @testable import Tachikoma
 @testable import TachikomaAudio
 
-@Suite("Audio Types Tests")
 struct AudioTypesTests {
     // MARK: - AudioData Tests
 
-    @Suite("AudioData Tests")
     struct AudioDataTests {
-        @Test("AudioData initialization with basic properties")
-        func audioDataBasicInit() {
+        @Test
+        func `AudioData initialization with basic properties`() {
             let testData = Data([0x01, 0x02, 0x03, 0x04])
             let audioData = AudioData(
                 data: testData,
@@ -28,8 +26,8 @@ struct AudioTypesTests {
             #expect(audioData.size == 4)
         }
 
-        @Test("AudioData initialization with defaults")
-        func audioDataDefaultInit() {
+        @Test
+        func `AudioData initialization with defaults`() {
             let testData = Data([0x01, 0x02])
             let audioData = AudioData(data: testData)
 
@@ -41,8 +39,8 @@ struct AudioTypesTests {
             #expect(audioData.size == 2)
         }
 
-        @Test("AudioData file URL initialization")
-        func audioDataFileInit() throws {
+        @Test
+        func `AudioData file URL initialization`() throws {
             // Create a temporary file
             let tempDir = FileManager.default.temporaryDirectory
             let testFile = tempDir.appendingPathComponent("test_audio-\(UUID().uuidString).mp3")
@@ -61,8 +59,8 @@ struct AudioTypesTests {
             try? FileManager.default.removeItem(at: testFile)
         }
 
-        @Test("AudioData file URL with unknown extension")
-        func audioDataUnknownExtension() throws {
+        @Test
+        func `AudioData file URL with unknown extension`() throws {
             let tempDir = FileManager.default.temporaryDirectory
             let testFile = tempDir.appendingPathComponent("test_audio-\(UUID().uuidString).unknown")
             let testData = Data([0x01, 0x02])
@@ -76,8 +74,8 @@ struct AudioTypesTests {
             try? FileManager.default.removeItem(at: testFile)
         }
 
-        @Test("AudioData write to file")
-        func audioDataWrite() throws {
+        @Test
+        func `AudioData write to file`() throws {
             let testData = Data([0x01, 0x02, 0x03, 0x04])
             let audioData = AudioData(data: testData, format: .flac)
 
@@ -96,10 +94,9 @@ struct AudioTypesTests {
 
     // MARK: - AudioFormat Tests
 
-    @Suite("AudioFormat Tests")
     struct AudioFormatTests {
-        @Test("AudioFormat MIME types")
-        func audioFormatMimeTypes() {
+        @Test
+        func `AudioFormat MIME types`() {
             #expect(AudioFormat.wav.mimeType == "audio/wav")
             #expect(AudioFormat.mp3.mimeType == "audio/mpeg")
             #expect(AudioFormat.flac.mimeType == "audio/flac")
@@ -110,8 +107,8 @@ struct AudioTypesTests {
             #expect(AudioFormat.ogg.mimeType == "audio/ogg")
         }
 
-        @Test("AudioFormat lossless property")
-        func audioFormatLossless() {
+        @Test
+        func `AudioFormat lossless property`() {
             // Lossless formats
             #expect(AudioFormat.wav.isLossless == true)
             #expect(AudioFormat.flac.isLossless == true)
@@ -125,8 +122,8 @@ struct AudioTypesTests {
             #expect(AudioFormat.ogg.isLossless == false)
         }
 
-        @Test("AudioFormat all cases completeness")
-        func audioFormatAllCases() {
+        @Test
+        func `AudioFormat all cases completeness`() {
             let allCases = AudioFormat.allCases
             let expectedCases: [AudioFormat] = [.wav, .mp3, .flac, .opus, .m4a, .aac, .pcm, .ogg]
 
@@ -139,10 +136,9 @@ struct AudioTypesTests {
 
     // MARK: - VoiceOption Tests
 
-    @Suite("VoiceOption Tests")
     struct VoiceOptionTests {
-        @Test("VoiceOption string values")
-        func voiceOptionStringValues() {
+        @Test
+        func `VoiceOption string values`() {
             #expect(VoiceOption.alloy.stringValue == "alloy")
             #expect(VoiceOption.echo.stringValue == "echo")
             #expect(VoiceOption.fable.stringValue == "fable")
@@ -154,8 +150,8 @@ struct AudioTypesTests {
             #expect(customVoice.stringValue == "my-custom-voice")
         }
 
-        @Test("VoiceOption defaults and recommendations")
-        func voiceOptionDefaults() {
+        @Test
+        func `VoiceOption defaults and recommendations`() {
             #expect(VoiceOption.default == .alloy)
 
             let femaleVoices = VoiceOption.female
@@ -171,8 +167,8 @@ struct AudioTypesTests {
             #expect(maleVoices.count == 3)
         }
 
-        @Test("VoiceOption hashable and equatable")
-        func voiceOptionHashableEquatable() {
+        @Test
+        func `VoiceOption hashable and equatable`() {
             let voice1 = VoiceOption.alloy
             let voice2 = VoiceOption.alloy
             let voice3 = VoiceOption.echo
@@ -191,10 +187,9 @@ struct AudioTypesTests {
 
     // MARK: - Result Types Tests
 
-    @Suite("Result Types Tests")
     struct ResultTypesTests {
-        @Test("TranscriptionResult initialization")
-        func transcriptionResultInit() {
+        @Test
+        func `TranscriptionResult initialization`() {
             let segments = [
                 TranscriptionSegment(text: "Hello", start: 0.0, end: 1.0),
                 TranscriptionSegment(text: "world", start: 1.0, end: 2.0),
@@ -218,14 +213,14 @@ struct AudioTypesTests {
             #expect(result.warnings?.first == "Test warning")
         }
 
-        @Test("TranscriptionSegment duration calculation")
-        func transcriptionSegmentDuration() {
+        @Test
+        func `TranscriptionSegment duration calculation`() {
             let segment = TranscriptionSegment(text: "test", start: 1.5, end: 3.7)
             #expect(segment.duration == 2.2)
         }
 
-        @Test("SpeechResult initialization")
-        func speechResultInit() {
+        @Test
+        func `SpeechResult initialization`() {
             let audioData = AudioData(data: Data([0x01, 0x02]), format: .mp3)
             let usage = SpeechUsage(charactersProcessed: 10, cost: 0.05)
 
@@ -243,10 +238,9 @@ struct AudioTypesTests {
 
     // MARK: - Request Types Tests
 
-    @Suite("Request Types Tests")
     struct RequestTypesTests {
-        @Test("TranscriptionRequest initialization")
-        func transcriptionRequestInit() {
+        @Test
+        func `TranscriptionRequest initialization`() {
             let audioData = AudioData(data: Data([0x01]), format: .wav)
             let abortSignal = AbortSignal()
 
@@ -269,8 +263,8 @@ struct AudioTypesTests {
             #expect(request.headers["Custom-Header"] == "value")
         }
 
-        @Test("SpeechRequest initialization")
-        func speechRequestInit() {
+        @Test
+        func `SpeechRequest initialization`() {
             let abortSignal = AbortSignal()
 
             let request = SpeechRequest(
@@ -293,8 +287,8 @@ struct AudioTypesTests {
             #expect(request.headers["API-Version"] == "v1")
         }
 
-        @Test("Request default values")
-        func requestDefaults() {
+        @Test
+        func `Request default values`() {
             let audioData = AudioData(data: Data(), format: .wav)
             let transcriptionRequest = TranscriptionRequest(audio: audioData)
 
@@ -317,10 +311,9 @@ struct AudioTypesTests {
 
     // MARK: - AbortSignal Tests
 
-    @Suite("AbortSignal Tests")
     struct AbortSignalTests {
-        @Test("AbortSignal basic functionality")
-        func abortSignalBasic() {
+        @Test
+        func `AbortSignal basic functionality`() {
             let signal = AbortSignal()
 
             #expect(signal.cancelled == false)
@@ -330,8 +323,8 @@ struct AudioTypesTests {
             #expect(signal.cancelled == true)
         }
 
-        @Test("AbortSignal throwIfCancelled")
-        func abortSignalThrowIfCancelled() throws {
+        @Test
+        func `AbortSignal throwIfCancelled`() throws {
             let signal = AbortSignal()
 
             // Should not throw when not cancelled
@@ -345,8 +338,8 @@ struct AudioTypesTests {
             }
         }
 
-        @Test("AbortSignal timeout functionality")
-        func abortSignalTimeout() async throws {
+        @Test
+        func `AbortSignal timeout functionality`() async throws {
             let signal = AbortSignal.timeout(0.1) // 100ms timeout
 
             #expect(signal.cancelled == false)
@@ -357,8 +350,8 @@ struct AudioTypesTests {
             #expect(signal.cancelled == true)
         }
 
-        @Test("AbortSignal thread safety")
-        func abortSignalThreadSafety() async {
+        @Test
+        func `AbortSignal thread safety`() async {
             let signal = AbortSignal()
 
             // Start multiple concurrent tasks that check and cancel the signal
@@ -379,8 +372,8 @@ struct AudioTypesTests {
 
     // MARK: - Enum Tests
 
-    @Test("TimestampGranularity enum")
-    func timestampGranularityEnum() {
+    @Test
+    func `TimestampGranularity enum`() {
         #expect(TimestampGranularity.word.rawValue == "word")
         #expect(TimestampGranularity.segment.rawValue == "segment")
 
@@ -390,8 +383,8 @@ struct AudioTypesTests {
         #expect(allCases.count == 2)
     }
 
-    @Test("TranscriptionResponseFormat enum")
-    func transcriptionResponseFormatEnum() {
+    @Test
+    func `TranscriptionResponseFormat enum`() {
         #expect(TranscriptionResponseFormat.json.rawValue == "json")
         #expect(TranscriptionResponseFormat.text.rawValue == "text")
         #expect(TranscriptionResponseFormat.srt.rawValue == "srt")
@@ -406,8 +399,8 @@ struct AudioTypesTests {
 
     // MARK: - Error Types Tests
 
-    @Test("Audio error types")
-    func audioErrorTypes() {
+    @Test
+    func `Audio error types`() {
         let operationCancelled = TachikomaError.operationCancelled
         let noAudioData = TachikomaError.noAudioData
         let unsupportedFormat = TachikomaError.unsupportedAudioFormat

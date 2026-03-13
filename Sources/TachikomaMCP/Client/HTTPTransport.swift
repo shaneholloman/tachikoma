@@ -4,7 +4,7 @@ import FoundationNetworking
 #endif
 import Logging
 
-// Actor to manage mutable state for Sendable conformance
+/// Actor to manage mutable state for Sendable conformance
 private actor HTTPTransportState {
     var urlSession: URLSession?
     var baseURL: URL?
@@ -18,10 +18,21 @@ private actor HTTPTransportState {
         self.headers = headers
     }
 
-    func getSession() -> URLSession? { self.urlSession }
-    func getBaseURL() -> URL? { self.baseURL }
-    func getTimeout() -> TimeInterval { self.requestTimeout }
-    func getHeaders() -> [String: String] { self.headers }
+    func getSession() -> URLSession? {
+        self.urlSession
+    }
+
+    func getBaseURL() -> URL? {
+        self.baseURL
+    }
+
+    func getTimeout() -> TimeInterval {
+        self.requestTimeout
+    }
+
+    func getHeaders() -> [String: String] {
+        self.headers
+    }
 }
 
 /// HTTP transport for MCP communication

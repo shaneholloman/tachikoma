@@ -301,8 +301,7 @@ struct AgentCLI: AsyncParsableCommand {
     private func loadMessages(from path: String) async throws -> [ModelMessage] {
         let url = URL(fileURLWithPath: path)
         let data = try Data(contentsOf: url)
-        let messages = try JSONDecoder().decode([ModelMessage].self, from: data)
-        return messages
+        return try JSONDecoder().decode([ModelMessage].self, from: data)
     }
 
     private func saveMessages(_ messages: [ModelMessage], to path: String) async throws {
@@ -546,7 +545,7 @@ enum CLIError: LocalizedError {
     }
 }
 
-// Extension to add provider helpers
+/// Extension to add provider helpers
 extension Provider {
     static var allStandard: [Provider] {
         [.openai, .anthropic, .google, .mistral, .groq, .grok, .ollama]

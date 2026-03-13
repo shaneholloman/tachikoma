@@ -1,12 +1,11 @@
 import Testing
 @testable import Tachikoma
 
-@Suite("Stop Conditions Tests")
 struct StopConditionsTests {
     // MARK: - String Stop Condition Tests
 
-    @Test("StringStopCondition should stop on exact match")
-    func stringStopCondition() async throws {
+    @Test
+    func `StringStopCondition should stop on exact match`() async {
         let condition = StringStopCondition("STOP")
 
         // Should not stop before the stop string
@@ -19,8 +18,8 @@ struct StopConditionsTests {
         #expect(await condition.shouldStop(text: "Hello", delta: "STOP") == true)
     }
 
-    @Test("StringStopCondition case-insensitive matching")
-    func stringStopConditionCaseInsensitive() async throws {
+    @Test
+    func `StringStopCondition case-insensitive matching`() async {
         let condition = StringStopCondition("stop", caseSensitive: false)
 
         // Should match regardless of case
@@ -31,8 +30,8 @@ struct StopConditionsTests {
 
     // MARK: - Regex Stop Condition Tests
 
-    @Test("RegexStopCondition should match patterns")
-    func regexStopCondition() async throws {
+    @Test
+    func `RegexStopCondition should match patterns`() async {
         let condition = RegexStopCondition(pattern: "END.*SESSION")
 
         // Should not match without pattern
@@ -48,8 +47,8 @@ struct StopConditionsTests {
 
     // MARK: - Token Count Stop Condition Tests
 
-    @Test("TokenCountStopCondition should stop after limit")
-    func tokenCountStopCondition() async throws {
+    @Test
+    func `TokenCountStopCondition should stop after limit`() async {
         let condition = TokenCountStopCondition(maxTokens: 10)
 
         // Reset to start fresh
@@ -70,8 +69,8 @@ struct StopConditionsTests {
 
     // MARK: - Timeout Stop Condition Tests
 
-    @Test("TimeoutStopCondition should stop after duration")
-    func timeoutStopCondition() async throws {
+    @Test
+    func `TimeoutStopCondition should stop after duration`() async throws {
         let condition = TimeoutStopCondition(timeout: 0.1) // 100ms
 
         // Should not stop immediately
@@ -86,8 +85,8 @@ struct StopConditionsTests {
 
     // MARK: - Predicate Stop Condition Tests
 
-    @Test("PredicateStopCondition with custom logic")
-    func predicateStopCondition() async throws {
+    @Test
+    func `PredicateStopCondition with custom logic`() async {
         let condition = PredicateStopCondition { text, _ in
             text.count > 20
         }
@@ -101,8 +100,8 @@ struct StopConditionsTests {
 
     // MARK: - Composite Stop Conditions Tests
 
-    @Test("AnyStopCondition should stop when any condition is met")
-    func anyStopCondition() async throws {
+    @Test
+    func `AnyStopCondition should stop when any condition is met`() async {
         let conditions: [any StopCondition] = [
             StringStopCondition("STOP"),
             TokenCountStopCondition(maxTokens: 100),
@@ -117,8 +116,8 @@ struct StopConditionsTests {
         #expect(await anyCondition.shouldStop(text: "Hello world", delta: nil) == false)
     }
 
-    @Test("AllStopCondition should stop only when all conditions are met")
-    func allStopCondition() async throws {
+    @Test
+    func `AllStopCondition should stop only when all conditions are met`() async {
         let conditions: [any StopCondition] = [
             StringStopCondition("END"),
             PredicateStopCondition { text, _ in text.count > 10 },
@@ -135,8 +134,8 @@ struct StopConditionsTests {
 
     // MARK: - Integration Tests with Generation
 
-    @Test("Stop conditions in generateText")
-    func stopConditionsInGenerateText() async throws {
+    @Test
+    func `Stop conditions in generateText`() {
         // Create a mock provider that returns text with a stop marker
         let mockText = "This is the response. STOP HERE. This should be truncated."
         _ = createMockProvider(responseText: mockText)
@@ -151,8 +150,8 @@ struct StopConditionsTests {
         #expect(settings.stopConditions != nil)
     }
 
-    @Test("Stop conditions with streaming")
-    func stopConditionsInStreamText() async throws {
+    @Test
+    func `Stop conditions with streaming`() async throws {
         // Create a simple text stream
         let stream = AsyncThrowingStream<TextStreamDelta, Error> { continuation in
             Task {
@@ -183,8 +182,8 @@ struct StopConditionsTests {
 
     // MARK: - Builder Pattern Tests
 
-    @Test("StopConditionBuilder creates correct conditions")
-    func stopConditionBuilder() async throws {
+    @Test
+    func `StopConditionBuilder creates correct conditions`() async {
         let condition = StopConditionBuilder()
             .whenContains("END")
             .afterTokens(100)
@@ -198,8 +197,8 @@ struct StopConditionsTests {
         #expect(await condition.shouldStop(text: "Test END", delta: nilDelta) == true)
     }
 
-    @Test("GenerationSettings with stop conditions factory")
-    func generationSettingsWithStopConditions() {
+    @Test
+    func `GenerationSettings with stop conditions factory`() {
         let settings = GenerationSettings.withStopConditions(
             StringStopCondition("STOP"),
             TokenCountStopCondition(maxTokens: 100),
@@ -214,8 +213,8 @@ struct StopConditionsTests {
 
     // MARK: - Pattern Detection Tests
 
-    @Test("ConsecutivePatternStopCondition detects repeating patterns")
-    func consecutivePatternStopCondition() async throws {
+    @Test
+    func `ConsecutivePatternStopCondition detects repeating patterns`() async {
         let condition = ConsecutivePatternStopCondition(pattern: "loop", count: 3)
 
         await condition.reset()
@@ -230,8 +229,8 @@ struct StopConditionsTests {
         #expect(await condition.shouldStop(text: "loop loop loop", delta: "loop") == true)
     }
 
-    @Test("RepetitionStopCondition detects repeating content")
-    func repetitionStopCondition() async throws {
+    @Test
+    func `RepetitionStopCondition detects repeating content`() async {
         let condition = RepetitionStopCondition(
             windowSize: 50, // Increased to ensure we don't hit the window limit
             threshold: 0.8,
@@ -259,8 +258,8 @@ struct StopConditionsTests {
 
     // MARK: - Edge Cases
 
-    @Test("Empty text and nil delta handling")
-    func emptyAndNilHandling() async throws {
+    @Test
+    func `Empty text and nil delta handling`() async {
         let condition = StringStopCondition("STOP")
 
         // Empty text with nil delta
@@ -273,8 +272,8 @@ struct StopConditionsTests {
         #expect(await condition.shouldStop(text: "", delta: "STOP") == true)
     }
 
-    @Test("Reset functionality")
-    func resetFunctionality() async throws {
+    @Test
+    func `Reset functionality`() async {
         let condition = TokenCountStopCondition(maxTokens: 5)
 
         // Add tokens until stop
@@ -300,14 +299,25 @@ private func createMockProvider(responseText: String) -> ModelProvider {
     StopConditionTestMockProvider(responseText: responseText)
 }
 
-// Mock provider for testing (simplified)
+/// Mock provider for testing (simplified)
 private struct StopConditionTestMockProvider: ModelProvider {
     let responseText: String
 
-    var modelId: String { "mock-model" }
-    var baseURL: String? { nil }
-    var apiKey: String? { nil }
-    var capabilities: ModelCapabilities { ModelCapabilities() }
+    var modelId: String {
+        "mock-model"
+    }
+
+    var baseURL: String? {
+        nil
+    }
+
+    var apiKey: String? {
+        nil
+    }
+
+    var capabilities: ModelCapabilities {
+        ModelCapabilities()
+    }
 
     func generateText(request _: ProviderRequest) async throws -> ProviderResponse {
         ProviderResponse(text: self.responseText)

@@ -1,10 +1,9 @@
 import Testing
 @testable import Tachikoma
 
-@Suite("Enhanced Tool System")
 struct EnhancedToolSystemTests {
-    @Test("AgentToolCall supports namespace and recipient")
-    func toolCallNamespaceRecipient() {
+    @Test
+    func `AgentToolCall supports namespace and recipient`() {
         let toolCall = AgentToolCall(
             id: "call-123",
             name: "search",
@@ -20,8 +19,8 @@ struct EnhancedToolSystemTests {
         #expect(toolCall.arguments["query"]?.stringValue == "test")
     }
 
-    @Test("AgentToolCall works without namespace and recipient")
-    func toolCallWithoutNamespaceRecipient() {
+    @Test
+    func `AgentToolCall works without namespace and recipient`() {
         let toolCall = AgentToolCall(
             name: "calculate",
             arguments: ["expression": AnyAgentToolValue(string: "2+2")],
@@ -32,8 +31,8 @@ struct EnhancedToolSystemTests {
         #expect(toolCall.name == "calculate")
     }
 
-    @Test("AgentTool supports namespace and recipient")
-    func agentToolNamespaceRecipient() {
+    @Test
+    func `AgentTool supports namespace and recipient`() {
         let tool = AgentTool(
             name: "readFile",
             description: "Read file contents",
@@ -59,8 +58,8 @@ struct EnhancedToolSystemTests {
         #expect(tool.description == "Read file contents")
     }
 
-    @Test("AgentTool works without namespace and recipient")
-    func agentToolWithoutNamespaceRecipient() {
+    @Test
+    func `AgentTool works without namespace and recipient`() {
         let tool = AgentTool(
             name: "echo",
             description: "Echo input",
@@ -72,8 +71,8 @@ struct EnhancedToolSystemTests {
         #expect(tool.name == "echo")
     }
 
-    @Test("Tool organization by namespace")
-    func toolOrganizationByNamespace() {
+    @Test
+    func `Tool organization by namespace`() {
         let tools = [
             AgentTool(
                 name: "readFile",
@@ -112,8 +111,8 @@ struct EnhancedToolSystemTests {
         #expect(toolsByNamespace["web"]?.count == 1)
     }
 
-    @Test("Tool routing by recipient")
-    func toolRoutingByRecipient() {
+    @Test
+    func `Tool routing by recipient`() {
         let tools = [
             AgentTool(
                 name: "query",
@@ -141,8 +140,8 @@ struct EnhancedToolSystemTests {
         #expect(replicaTool?.name == "query")
     }
 
-    @Test("AgentToolCall Codable with namespace and recipient")
-    func toolCallCodableWithNamespaceRecipient() throws {
+    @Test
+    func `AgentToolCall Codable with namespace and recipient`() throws {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
         let decoder = JSONDecoder()
@@ -165,8 +164,8 @@ struct EnhancedToolSystemTests {
         #expect(decoded.arguments["query"] == original.arguments["query"])
     }
 
-    @Test("AgentToolCall Codable without namespace and recipient")
-    func toolCallCodableWithoutNamespaceRecipient() throws {
+    @Test
+    func `AgentToolCall Codable without namespace and recipient`() throws {
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
 
@@ -183,11 +182,13 @@ struct EnhancedToolSystemTests {
         #expect(decoded.name == "calculate")
     }
 
-    @Test("Tool execution with namespace context")
-    func toolExecutionWithNamespaceContext() async throws {
+    @Test
+    func `Tool execution with namespace context`() async throws {
         actor NamespaceCapture {
             var namespace: String?
-            func set(_ value: String) { self.namespace = value }
+            func set(_ value: String) {
+                self.namespace = value
+            }
         }
 
         let capture = NamespaceCapture()
@@ -210,8 +211,8 @@ struct EnhancedToolSystemTests {
         #expect(await capture.namespace == "test-namespace")
     }
 
-    @Test("Multiple tools with same name but different namespaces")
-    func multipleToolsSameNameDifferentNamespaces() {
+    @Test
+    func `Multiple tools with same name but different namespaces`() {
         let webSearch = AgentTool(
             name: "search",
             description: "Web search",

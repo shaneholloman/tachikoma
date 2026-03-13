@@ -12,7 +12,9 @@ public final class GoogleProvider: ModelProvider {
     public let capabilities: ModelCapabilities
 
     private let model: LanguageModel.Google
-    private var apiModelName: String { self.model.apiModelId }
+    private var apiModelName: String {
+        self.model.apiModelId
+    }
 
     public init(model: LanguageModel.Google, configuration: TachikomaConfiguration) throws {
         self.model = model

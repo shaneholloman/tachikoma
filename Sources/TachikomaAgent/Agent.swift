@@ -124,7 +124,7 @@ public final class Agent<Context>: @unchecked Sendable {
         )
 
         // Track final message in conversation (this is approximate for streaming)
-        let trackedStream = AsyncThrowingStream<TextStreamDelta, Error> { continuation in
+        return AsyncThrowingStream<TextStreamDelta, Error> { continuation in
             Task {
                 do {
                     var assistantText = ""
@@ -151,8 +151,6 @@ public final class Agent<Context>: @unchecked Sendable {
                 }
             }
         }
-
-        return trackedStream
     }
 
     /// Reset the agent's conversation history

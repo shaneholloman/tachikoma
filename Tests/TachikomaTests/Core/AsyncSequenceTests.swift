@@ -1,10 +1,9 @@
 import Testing
 @testable import Tachikoma
 
-@Suite("AsyncSequence Conformance Tests")
 struct AsyncSequenceTests {
-    @Test("StreamTextResult conforms to AsyncSequence")
-    func streamTextResultAsyncSequence() async throws {
+    @Test
+    func `StreamTextResult conforms to AsyncSequence`() async throws {
         // Create a test stream
         let testStream = AsyncThrowingStream<TextStreamDelta, Error> { continuation in
             Task {
@@ -33,8 +32,8 @@ struct AsyncSequenceTests {
         #expect(contents == ["Hello", " ", "World"])
     }
 
-    @Test("StreamTextResult can be iterated multiple ways")
-    func multipleIterationStyles() async throws {
+    @Test
+    func `StreamTextResult can be iterated multiple ways`() async throws {
         let testStream = AsyncThrowingStream<TextStreamDelta, Error> { continuation in
             Task {
                 for i in 1...3 {
@@ -59,8 +58,8 @@ struct AsyncSequenceTests {
         #expect(count == 4) // 3 text deltas + 1 done
     }
 
-    @Test("StreamObjectResult conforms to AsyncSequence")
-    func streamObjectResultAsyncSequence() async throws {
+    @Test
+    func `StreamObjectResult conforms to AsyncSequence`() async throws {
         struct TestData: Codable, Sendable, Equatable {
             let value: Int
         }
@@ -101,8 +100,8 @@ struct AsyncSequenceTests {
         #expect(deltaTypes == [.start, .partial, .partial, .complete, .done])
     }
 
-    @Test("AsyncSequence works with standard operators")
-    func asyncSequenceOperators() async throws {
+    @Test
+    func `AsyncSequence works with standard operators`() async throws {
         let testStream = AsyncThrowingStream<TextStreamDelta, Error> { continuation in
             Task {
                 for i in 1...5 {
@@ -137,8 +136,8 @@ struct AsyncSequenceTests {
         #expect(numbers == 15) // 1+2+3+4+5
     }
 
-    @Test("AsyncSequence handles errors properly")
-    func asyncSequenceErrorHandling() async throws {
+    @Test
+    func `AsyncSequence handles errors properly`() async throws {
         struct TestError: Error {}
 
         let testStream = AsyncThrowingStream<TextStreamDelta, Error> { continuation in
@@ -166,8 +165,8 @@ struct AsyncSequenceTests {
         #expect(receivedError)
     }
 
-    @Test("AsyncSequence can be cancelled mid-iteration")
-    func asyncSequenceCancellation() async throws {
+    @Test
+    func `AsyncSequence can be cancelled mid-iteration`() async {
         let testStream = AsyncThrowingStream<TextStreamDelta, Error> { continuation in
             Task {
                 for i in 1...100 {
@@ -204,8 +203,8 @@ struct AsyncSequenceTests {
         #expect(count == 5)
     }
 
-    @Test("StreamTextResult extension methods work with AsyncSequence")
-    func streamTextResultExtensions() async throws {
+    @Test
+    func `StreamTextResult extension methods work with AsyncSequence`() async throws {
         let testStream = AsyncThrowingStream<TextStreamDelta, Error> { continuation in
             Task {
                 continuation.yield(TextStreamDelta(type: .textDelta, content: "Hello"))
@@ -234,8 +233,8 @@ struct AsyncSequenceTests {
         #expect(texts.contains(" World")) // From thinking channel
     }
 
-    @Test("StreamObjectResult extension methods work with AsyncSequence")
-    func streamObjectResultExtensions() async throws {
+    @Test
+    func `StreamObjectResult extension methods work with AsyncSequence`() async throws {
         struct TestItem: Codable, Sendable, Equatable {
             let id: Int
             let name: String

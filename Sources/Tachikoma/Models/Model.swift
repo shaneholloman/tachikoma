@@ -31,13 +31,13 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
     // MARK: - Provider Sub-Enums
 
     public enum OpenAI: Sendable, Hashable, CaseIterable {
-        // Latest models (2025)
+        /// Latest models (2025)
         case o4Mini
 
-        // GPT-5.2 Series
+        /// GPT-5.2 Series
         case gpt52 // Flagship GPT-5.2
 
-        // GPT-5.1 Series (November 2025)
+        /// GPT-5.1 Series (November 2025)
         case gpt51 // Flagship GPT-5.1
 
         // GPT-5 Series (August 2025)
@@ -63,7 +63,7 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
         case gpt4Turbo
         case gpt35Turbo
 
-        // Fine-tuned models
+        /// Fine-tuned models
         case custom(String)
 
         public static var allCases: [OpenAI] {
@@ -188,7 +188,7 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
         case sonnet45
         case haiku45
 
-        // Fine-tuned models
+        /// Fine-tuned models
         case custom(String)
 
         public static var allCases: [Anthropic] {
@@ -223,7 +223,9 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
             }
         }
 
-        public var supportsTools: Bool { true } // All Claude models support tools
+        public var supportsTools: Bool {
+            true
+        } // All Claude models support tools
 
         public var supportsAudioInput: Bool {
             // Anthropic has voice features in mobile apps but limited API support as of 2025
@@ -251,7 +253,9 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
         case gemini25Flash = "gemini-2.5-flash"
         case gemini25FlashLite = "gemini-2.5-flash-lite"
 
-        public var apiModelId: String { self.rawValue }
+        public var apiModelId: String {
+            self.rawValue
+        }
 
         public var userFacingModelId: String {
             switch self {
@@ -262,8 +266,13 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
             }
         }
 
-        public var supportsVision: Bool { true }
-        public var supportsTools: Bool { true }
+        public var supportsVision: Bool {
+            true
+        }
+
+        public var supportsTools: Bool {
+            true
+        }
 
         public var supportsAudioInput: Bool {
             switch self {
@@ -274,7 +283,9 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
             }
         }
 
-        public var supportsAudioOutput: Bool { false }
+        public var supportsAudioOutput: Bool {
+            false
+        }
 
         public var contextLength: Int {
             switch self {
@@ -301,10 +312,16 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
             }
         }
 
-        public var supportsTools: Bool { true }
+        public var supportsTools: Bool {
+            true
+        }
 
-        public var supportsAudioInput: Bool { false } // Mistral doesn't support audio yet
-        public var supportsAudioOutput: Bool { false }
+        public var supportsAudioInput: Bool {
+            false
+        } // Mistral doesn't support audio yet
+        public var supportsAudioOutput: Bool {
+            false
+        }
 
         public var contextLength: Int {
             switch self {
@@ -326,11 +343,19 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
         case mixtral8x7b = "mixtral-8x7b"
         case gemma29b = "gemma2-9b"
 
-        public var supportsVision: Bool { false } // Groq models don't support vision yet
-        public var supportsTools: Bool { true }
+        public var supportsVision: Bool {
+            false
+        } // Groq models don't support vision yet
+        public var supportsTools: Bool {
+            true
+        }
 
-        public var supportsAudioInput: Bool { false } // Groq focuses on text inference speed
-        public var supportsAudioOutput: Bool { false }
+        public var supportsAudioInput: Bool {
+            false
+        } // Groq focuses on text inference speed
+        public var supportsAudioOutput: Bool {
+            false
+        }
 
         public var contextLength: Int {
             switch self {
@@ -356,7 +381,7 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
         case grokVisionBeta
         case grokBeta
 
-        // Custom models
+        /// Custom models
         case custom(String)
 
         public static var allCases: [Grok] {
@@ -401,7 +426,9 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
             }
         }
 
-        public var supportsTools: Bool { true }
+        public var supportsTools: Bool {
+            true
+        }
 
         public var supportsAudioInput: Bool {
             // Grok has voice support but limited API access as of 2025
@@ -472,7 +499,7 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
         case firefunction
         case commandR
 
-        // Custom/other models
+        /// Custom/other models
         case custom(String)
 
         public static var allCases: [Ollama] {
@@ -587,9 +614,12 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
             }
         }
 
-        public var supportsAudioInput: Bool { false
+        public var supportsAudioInput: Bool {
+            false
         } // Ollama models run locally and don't support native audio processing
-        public var supportsAudioOutput: Bool { false }
+        public var supportsAudioOutput: Bool {
+            false
+        }
 
         public var contextLength: Int {
             switch self {
@@ -630,10 +660,10 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
         case mistral7B
         case phi3Mini
 
-        // Currently loaded model
+        /// Currently loaded model
         case current
 
-        // Custom model path
+        /// Custom model path
         case custom(String)
 
         public static var allCases: [LMStudio] {
@@ -1227,7 +1257,7 @@ extension LanguageModel {
             return .anthropic(.haiku45)
         }
 
-        let genericClaudeIdentifiers: Set<String> = [
+        let genericClaudeIdentifiers: Set = [
             "claude",
             "claudelatest",
             "claude-latest",
@@ -1265,7 +1295,7 @@ extension LanguageModel {
             return .google(.gemini25Flash)
         }
 
-        let genericGeminiIdentifiers: Set<String> = [
+        let genericGeminiIdentifiers: Set = [
             "gemini",
             "geminiflash",
             "gemini-flash",

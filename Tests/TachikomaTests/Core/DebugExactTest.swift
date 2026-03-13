@@ -2,10 +2,9 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Debug Exact Test")
 struct DebugExactTests {
-    @Test("Replicate failing test exactly")
-    func replicateFailingTest() async throws {
+    @Test
+    func `Replicate failing test exactly`() async {
         print("=== Starting exact replication ===")
 
         await TestHelpers.withEmptyTestConfiguration { config in

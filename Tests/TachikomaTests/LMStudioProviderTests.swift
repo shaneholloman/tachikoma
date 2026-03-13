@@ -2,10 +2,9 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("LMStudio Provider Tests")
 struct LMStudioProviderTests {
-    @Test("Provider initialization")
-    func providerInitialization() async throws {
+    @Test
+    func `Provider initialization`() {
         let provider = LMStudioProvider(
             baseURL: "http://localhost:1234/v1",
             modelId: "gpt-oss-120b",
@@ -25,8 +24,8 @@ struct LMStudioProviderTests {
         #expect(capabilities.supportsStreaming == true)
     }
 
-    @Test("Model enum integration")
-    func modelEnumIntegration() async throws {
+    @Test
+    func `Model enum integration`() {
         let model1 = LanguageModel.lmstudio(.gptOSS120B)
         let model2 = LanguageModel.lmstudio(.gptOSS20B)
         let model3 = LanguageModel.lmstudio(.current)
@@ -39,8 +38,8 @@ struct LMStudioProviderTests {
         #expect(model1.contextLength == 128_000)
     }
 
-    @Test("Convenience properties")
-    func convenienceProperties() async throws {
+    @Test
+    func `Convenience properties`() {
         let model1 = LanguageModel.gptOSS120B // Ollama version
         let model2 = LanguageModel.gptOSS120B_LMStudio // LMStudio version
 
@@ -51,8 +50,8 @@ struct LMStudioProviderTests {
         #expect(model2.modelId == "gpt-oss-120b")
     }
 
-    @Test("Provider factory creation")
-    func providerFactoryCreation() async throws {
+    @Test
+    func `Provider factory creation`() throws {
         let config = TachikomaConfiguration()
 
         // Test LMStudio provider creation
@@ -66,8 +65,8 @@ struct LMStudioProviderTests {
         #expect(provider is LMStudioProvider)
     }
 
-    @Test("Response channel parsing")
-    func responseChannelParsing() async throws {
+    @Test
+    func `Response channel parsing`() {
         let parser = LocalModelResponseParser.self
 
         // Test multi-channel response
@@ -106,8 +105,8 @@ struct LMStudioProviderTests {
         #expect(channels3[.final] == "Here's the answer without a final tag.")
     }
 
-    @Test("Auto-detection (mock)")
-    func autoDetection() async throws {
+    @Test
+    func `Auto-detection (mock)`() async throws {
         // This test would normally try to connect to LMStudio
         // In CI/mock mode, it should handle the failure gracefully
 
@@ -125,8 +124,8 @@ struct LMStudioProviderTests {
         }
     }
 
-    @Test("Request mapping")
-    func requestMapping() async throws {
+    @Test
+    func `Request mapping`() {
         _ = LMStudioProvider() // Just verify it can be created
 
         let request = ProviderRequest(

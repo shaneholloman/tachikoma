@@ -246,7 +246,7 @@ public struct ModelMessage: Sendable, Codable, Equatable {
         self.metadata = metadata
     }
 
-    // Convenience initializers
+    /// Convenience initializers
     public static func system(_ text: String) -> ModelMessage {
         ModelMessage(role: .system, content: [.text(text)])
     }
@@ -366,7 +366,7 @@ public struct GenerationSettings: Sendable {
     public static let `default` = GenerationSettings()
 }
 
-// Manual Codable conformance excluding non-codable stopConditions
+/// Manual Codable conformance excluding non-codable stopConditions
 extension GenerationSettings: Codable {
     enum CodingKeys: String, CodingKey {
         case maxTokens
@@ -508,7 +508,7 @@ public struct TextStreamDelta: Sendable {
         self.finishReason = finishReason
     }
 
-    // Convenience constructors
+    /// Convenience constructors
     public static func text(_ content: String, channel: ResponseChannel? = nil) -> TextStreamDelta {
         TextStreamDelta(type: .textDelta, content: content, channel: channel)
     }

@@ -39,8 +39,13 @@ public enum TranscriptionModel: Sendable, CustomStringConvertible {
         case whisperLargeV3Turbo = "whisper-large-v3-turbo"
         case distilWhisperLargeV3En = "distil-whisper-large-v3-en"
 
-        public var supportsTimestamps: Bool { true }
-        public var supportsLanguageDetection: Bool { true }
+        public var supportsTimestamps: Bool {
+            true
+        }
+
+        public var supportsLanguageDetection: Bool {
+            true
+        }
     }
 
     public enum Deepgram: String, CaseIterable, Sendable {
@@ -49,17 +54,30 @@ public enum TranscriptionModel: Sendable, CustomStringConvertible {
         case enhanced
         case base
 
-        public var supportsTimestamps: Bool { true }
-        public var supportsLanguageDetection: Bool { true }
-        public var supportsSummarization: Bool { true }
+        public var supportsTimestamps: Bool {
+            true
+        }
+
+        public var supportsLanguageDetection: Bool {
+            true
+        }
+
+        public var supportsSummarization: Bool {
+            true
+        }
     }
 
     public enum ElevenLabs: String, CaseIterable, Sendable {
         case scribeV1 = "scribe_v1"
         case scribeV1Experimental = "scribe_v1_experimental"
 
-        public var supportsTimestamps: Bool { false }
-        public var supportsLanguageDetection: Bool { true }
+        public var supportsTimestamps: Bool {
+            false
+        }
+
+        public var supportsLanguageDetection: Bool {
+            true
+        }
     }
 
     // MARK: - Model Properties
@@ -160,8 +178,13 @@ public enum SpeechModel: Sendable, CustomStringConvertible {
         case multilingualV2 = "eleven_multilingual_v2"
         case englishV1 = "eleven_english_v1"
 
-        public var supportsVoiceCloning: Bool { true }
-        public var supportedFormats: [AudioFormat] { [.mp3, .wav, .pcm] }
+        public var supportsVoiceCloning: Bool {
+            true
+        }
+
+        public var supportedFormats: [AudioFormat] {
+            [.mp3, .wav, .pcm]
+        }
     }
 
     // MARK: - Model Properties

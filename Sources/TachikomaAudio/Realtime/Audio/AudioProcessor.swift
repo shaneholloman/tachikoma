@@ -304,9 +304,7 @@ public final class RealtimeAudioProcessor: @unchecked Sendable {
         }
 
         let mantissa = UInt8((s >> (exponent + 3)) & 0x0F)
-        let encoded = ~(sign | (exponent << 4) | mantissa)
-
-        return encoded
+        return ~(sign | (exponent << 4) | mantissa)
     }
 
     private func decodeUlaw(_ ulaw: UInt8) -> Int16 {

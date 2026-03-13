@@ -30,21 +30,21 @@ enum MCPContentBridge {
     static func convert(_ content: MCP.Tool.Content) -> AnyAgentToolValue {
         switch content {
         case let .text(text):
-            return AnyAgentToolValue(string: text)
+            AnyAgentToolValue(string: text)
         case let .image(data, mimeType, _):
-            return AnyAgentToolValue(object: [
+            AnyAgentToolValue(object: [
                 "type": AnyAgentToolValue(string: "image"),
                 "mimeType": AnyAgentToolValue(string: mimeType),
                 "data": AnyAgentToolValue(string: data),
             ])
         case let .resource(resource, annotations, meta):
-            return AnyAgentToolValue(object: self.resourceObject(
+            AnyAgentToolValue(object: self.resourceObject(
                 resource: resource,
                 annotations: annotations,
                 meta: meta,
             ))
         case let .resourceLink(uri, name, title, description, mimeType, annotations):
-            return AnyAgentToolValue(object: self.resourceLinkObject(
+            AnyAgentToolValue(object: self.resourceLinkObject(
                 uri: uri,
                 name: name,
                 title: title,
@@ -53,7 +53,7 @@ enum MCPContentBridge {
                 annotations: annotations,
             ))
         case let .audio(data, mimeType):
-            return AnyAgentToolValue(object: [
+            AnyAgentToolValue(object: [
                 "type": AnyAgentToolValue(string: "audio"),
                 "mimeType": AnyAgentToolValue(string: mimeType),
                 "data": AnyAgentToolValue(string: data),
@@ -65,7 +65,9 @@ enum MCPContentBridge {
         resource: Resource.Content,
         annotations: Resource.Annotations?,
         meta: Metadata?,
-    ) -> [String: AnyAgentToolValue] {
+    )
+        -> [String: AnyAgentToolValue]
+    {
         var resourceDict: [String: AnyAgentToolValue] = [
             "type": AnyAgentToolValue(string: "resource"),
             "uri": AnyAgentToolValue(string: resource.uri),
@@ -105,7 +107,9 @@ enum MCPContentBridge {
         description: String?,
         mimeType: String?,
         annotations: Resource.Annotations?,
-    ) -> [String: AnyAgentToolValue] {
+    )
+        -> [String: AnyAgentToolValue]
+    {
         var resourceDict: [String: AnyAgentToolValue] = [
             "type": AnyAgentToolValue(string: "resourceLink"),
             "uri": AnyAgentToolValue(string: uri),

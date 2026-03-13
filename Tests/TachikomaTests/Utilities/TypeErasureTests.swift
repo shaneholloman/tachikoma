@@ -2,10 +2,9 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Type Erasure Utilities")
 struct TypeErasureTests {
-    @Test("AnyEncodable encodes heterogenous dictionaries")
-    func anyEncodableEncodesHeterogenousDictionary() throws {
+    @Test
+    func `AnyEncodable encodes heterogenous dictionaries`() throws {
         let payload: [String: Any] = [
             "string": "hello",
             "int": 42,
@@ -35,8 +34,8 @@ struct TypeErasureTests {
         #expect(json?["null"] is NSNull)
     }
 
-    @Test("AnyDecodable decodes heterogenous JSON")
-    func anyDecodableDecodesHeterogenousJson() throws {
+    @Test
+    func `AnyDecodable decodes heterogenous JSON`() throws {
         let jsonData = """
         {
             "title": "example",

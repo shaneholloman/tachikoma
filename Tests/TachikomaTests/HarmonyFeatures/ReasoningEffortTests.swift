@@ -1,10 +1,9 @@
 import Testing
 @testable import Tachikoma
 
-@Suite("Reasoning Effort Levels")
 struct ReasoningEffortTests {
-    @Test("ReasoningEffort enum has all expected cases")
-    func reasoningEffortCases() {
+    @Test
+    func `ReasoningEffort enum has all expected cases`() {
         let allCases = ReasoningEffort.allCases
         #expect(allCases.count == 3)
         #expect(allCases.contains(.low))
@@ -12,15 +11,15 @@ struct ReasoningEffortTests {
         #expect(allCases.contains(.high))
     }
 
-    @Test("ReasoningEffort raw values are correct")
-    func reasoningEffortRawValues() {
+    @Test
+    func `ReasoningEffort raw values are correct`() {
         #expect(ReasoningEffort.low.rawValue == "low")
         #expect(ReasoningEffort.medium.rawValue == "medium")
         #expect(ReasoningEffort.high.rawValue == "high")
     }
 
-    @Test("GenerationSettings supports reasoning effort")
-    func generationSettingsReasoningEffort() {
+    @Test
+    func `GenerationSettings supports reasoning effort`() {
         let settings = GenerationSettings(
             maxTokens: 1000,
             temperature: 0.7,
@@ -32,14 +31,14 @@ struct ReasoningEffortTests {
         #expect(settings.temperature == 0.7)
     }
 
-    @Test("GenerationSettings default has nil reasoning effort")
-    func generationSettingsDefaultReasoningEffort() {
+    @Test
+    func `GenerationSettings default has nil reasoning effort`() {
         let settings = GenerationSettings.default
         #expect(settings.reasoningEffort == nil)
     }
 
-    @Test("RetryHandler adapts based on reasoning effort")
-    func retryHandlerReasoningEffortAdaptation() {
+    @Test
+    func `RetryHandler adapts based on reasoning effort`() {
         // High effort should use aggressive policy
         let highSettings = GenerationSettings(reasoningEffort: .high)
         let highHandler = RetryHandler.from(settings: highSettings)
@@ -65,8 +64,8 @@ struct ReasoningEffortTests {
         #expect(Bool(true))
     }
 
-    @Test("Codable conformance for ReasoningEffort")
-    func reasoningEffortCodable() throws {
+    @Test
+    func `Codable conformance for ReasoningEffort`() throws {
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
 
@@ -81,8 +80,8 @@ struct ReasoningEffortTests {
         }
     }
 
-    @Test("GenerationSettings Codable with reasoning effort")
-    func generationSettingsCodableWithReasoningEffort() throws {
+    @Test
+    func `GenerationSettings Codable with reasoning effort`() throws {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
         let decoder = JSONDecoder()
@@ -103,8 +102,8 @@ struct ReasoningEffortTests {
         #expect(decoded.reasoningEffort == original.reasoningEffort)
     }
 
-    @Test("GenerationSettings Codable without reasoning effort")
-    func generationSettingsCodableWithoutReasoningEffort() throws {
+    @Test
+    func `GenerationSettings Codable without reasoning effort`() throws {
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
 
@@ -122,8 +121,8 @@ struct ReasoningEffortTests {
         #expect(decoded.temperature == 0.7)
     }
 
-    @Test("All reasoning effort levels properly ordered")
-    func reasoningEffortOrdering() {
+    @Test
+    func `All reasoning effort levels properly ordered`() {
         // Ensure we have the expected reasoning levels
         let levels: [ReasoningEffort] = [.low, .medium, .high]
 

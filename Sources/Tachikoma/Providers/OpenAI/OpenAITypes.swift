@@ -140,7 +140,7 @@ enum OpenAIChatMessageContent: Codable {
         let url: String
     }
 
-    // Provide custom Codable to match OpenAI schema (flattened objects with type field)
+    /// Provide custom Codable to match OpenAI schema (flattened objects with type field)
     enum CodingKeys: String, CodingKey {
         case type
         case text
@@ -326,8 +326,8 @@ struct OpenAIErrorResponse: Codable {
     }
 }
 
-// Helper type for Either content
-enum Either<Left, Right>: Codable where Left: Codable, Right: Codable {
+/// Helper type for Either content
+enum Either<Left: Codable, Right: Codable>: Codable {
     case left(Left)
     case right(Right)
 

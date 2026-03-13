@@ -1,15 +1,14 @@
 import Foundation
 import Testing
 
-@Suite("Basic Tests")
 struct BasicTests {
-    @Test("Simple math test")
-    func simpleMath() {
+    @Test
+    func `Simple math test`() {
         #expect(2 + 2 == 4)
     }
 
-    @Test("String test")
-    func stringTest() {
+    @Test
+    func `String test`() {
         #expect("hello".uppercased() == "HELLO")
     }
 }

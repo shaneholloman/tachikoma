@@ -189,7 +189,7 @@ public final class TachikomaMCPClientManager {
         return all
     }
 
-    // Execute a tool on a specific server
+    /// Execute a tool on a specific server
     public func executeTool(
         serverName: String,
         toolName: String,
@@ -222,7 +222,9 @@ public final class TachikomaMCPClientManager {
 
     // MARK: Health/Info (lightweight)
 
-    public func getServerNames() -> [String] { Array(self.effectiveConfigs.keys).sorted() }
+    public func getServerNames() -> [String] {
+        Array(self.effectiveConfigs.keys).sorted()
+    }
 
     public func getServerInfo(name: String) async -> (config: MCPServerConfig, connected: Bool)? {
         guard let cfg = effectiveConfigs[name] else { return nil }

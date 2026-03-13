@@ -2,10 +2,9 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Anthropic interleaved defaults")
 struct AnthropicInterleavedDefaultsTests {
-    @Test("Merged beta header includes required interleaved flags")
-    func mergedBetaHeaderIncludesRequiredFlags() {
+    @Test
+    func `Merged beta header includes required interleaved flags`() {
         let header = AnthropicProvider.mergedBetaHeader(existing: nil)
         #expect(header.contains("interleaved-thinking-2025-05-14"))
         #expect(header.contains("fine-grained-tool-streaming-2025-05-14"))
@@ -23,8 +22,8 @@ struct AnthropicInterleavedDefaultsTests {
         #expect(parts.contains("fine-grained-tool-streaming-2025-05-14"))
     }
 
-    @Test("Provider request includes beta header and thinking payload")
-    func providerRequestIncludesBetaHeaderAndThinkingPayload() throws {
+    @Test
+    func `Provider request includes beta header and thinking payload`() throws {
         let config = TachikomaConfiguration(apiKeys: ["anthropic": "test-key"])
         let provider = try AnthropicProvider(model: .opus45, configuration: config)
 
@@ -58,8 +57,8 @@ struct AnthropicInterleavedDefaultsTests {
         #expect(thinking["budget_tokens"] as? Int == 12000)
     }
 
-    @Test("Provider respects custom baseURL")
-    func providerRespectsCustomBaseURL() throws {
+    @Test
+    func `Provider respects custom baseURL`() throws {
         let config = TachikomaConfiguration(
             apiKeys: ["anthropic": "test-key"],
             baseURLs: ["anthropic": "https://entropic.example/v1"],
@@ -71,8 +70,8 @@ struct AnthropicInterleavedDefaultsTests {
         #expect(urlRequest.url?.absoluteString == "https://entropic.example/v1/messages")
     }
 
-    @Test("Stream delta decodes thinking_delta payload")
-    func streamDeltaDecodesThinkingDeltaPayload() throws {
+    @Test
+    func `Stream delta decodes thinking_delta payload`() throws {
         let data = try #require("{\"type\":\"thinking_delta\",\"thinking\":\"ok\"}".data(using: .utf8))
         let delta = try JSONDecoder().decode(AnthropicStreamDelta.self, from: data)
         #expect(delta.type == "thinking_delta")
@@ -80,16 +79,16 @@ struct AnthropicInterleavedDefaultsTests {
         #expect(delta.text == nil)
     }
 
-    @Test("Stream delta decodes signature_delta payload")
-    func streamDeltaDecodesSignatureDeltaPayload() throws {
+    @Test
+    func `Stream delta decodes signature_delta payload`() throws {
         let data = try #require("{\"type\":\"signature_delta\",\"signature\":\"sig\"}".data(using: .utf8))
         let delta = try JSONDecoder().decode(AnthropicStreamDelta.self, from: data)
         #expect(delta.type == "signature_delta")
         #expect(delta.signature == "sig")
     }
 
-    @Test("Signed thinking blocks are preserved for assistant messages")
-    func signedThinkingBlocksArePreservedForAssistantMessages() throws {
+    @Test
+    func `Signed thinking blocks are preserved for assistant messages`() throws {
         let config = TachikomaConfiguration(apiKeys: ["anthropic": "test-key"])
         let provider = try AnthropicProvider(model: .opus45, configuration: config)
 
@@ -125,8 +124,8 @@ struct AnthropicInterleavedDefaultsTests {
         #expect(assistant.first?["signature"] as? String == "sig")
     }
 
-    @Test("Redacted thinking blocks preserve signature without text")
-    func redactedThinkingBlocksPreserveSignatureWithoutText() throws {
+    @Test
+    func `Redacted thinking blocks preserve signature without text`() throws {
         let config = TachikomaConfiguration(apiKeys: ["anthropic": "test-key"])
         let provider = try AnthropicProvider(model: .opus45, configuration: config)
 
@@ -161,8 +160,8 @@ struct AnthropicInterleavedDefaultsTests {
         #expect(assistant.first?["signature"] as? String == "sig-redacted")
     }
 
-    @Test("Thinking stays enabled even without signed history")
-    func thinkingStaysEnabledEvenWithoutSignedHistory() throws {
+    @Test
+    func `Thinking stays enabled even without signed history`() throws {
         let config = TachikomaConfiguration(apiKeys: ["anthropic": "test-key"])
         let provider = try AnthropicProvider(model: .opus45, configuration: config)
 

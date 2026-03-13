@@ -2,12 +2,10 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Model Capabilities Tests")
-struct ModelCapabilitiesTests {
-    @Suite("Capability Detection")
+enum ModelCapabilitiesTests {
     struct CapabilityDetectionTests {
-        @Test("GPT-5 models exclude temperature and topP")
-        func gPT5ExcludesTemperature() {
+        @Test
+        func `GPT-5 models exclude temperature and topP`() {
             let models: [LanguageModel] = [
                 .openai(.gpt52),
                 .openai(.gpt51),
@@ -28,16 +26,16 @@ struct ModelCapabilitiesTests {
             }
         }
 
-        @Test("Gemini 3 Flash supports thinking config options")
-        func gemini3FlashThinkingConfig() {
+        @Test
+        func `Gemini 3 Flash supports thinking config options`() {
             let capabilities = ModelCapabilityRegistry.shared.capabilities(for: .google(.gemini3Flash))
             #expect(capabilities.supportsTopK)
             #expect(capabilities.supportedProviderOptions.supportsThinkingConfig)
             #expect(capabilities.supportedProviderOptions.supportsSafetySettings)
         }
 
-        @Test("Reasoning models have forced temperature")
-        func reasoningModelsFixedTemperature() {
+        @Test
+        func `Reasoning models have forced temperature`() {
             let model = LanguageModel.openai(.o4Mini)
             let capabilities = ModelCapabilityRegistry.shared.capabilities(for: model)
 
@@ -50,8 +48,8 @@ struct ModelCapabilitiesTests {
             #expect(capabilities.supportedProviderOptions.supportsPreviousResponseId)
         }
 
-        @Test("GPT-4 models support standard parameters")
-        func gPT4StandardParameters() {
+        @Test
+        func `GPT-4 models support standard parameters`() {
             let models: [LanguageModel] = [
                 .openai(.gpt4o),
                 .openai(.gpt4oMini),
@@ -73,8 +71,8 @@ struct ModelCapabilitiesTests {
             }
         }
 
-        @Test("Claude models support thinking")
-        func claudeThinkingSupport() {
+        @Test
+        func `Claude models support thinking`() {
             let models: [LanguageModel] = [
                 .anthropic(.opus4),
                 .anthropic(.sonnet4),
@@ -90,8 +88,8 @@ struct ModelCapabilitiesTests {
             }
         }
 
-        @Test("Google models support topK and thinking")
-        func googleCapabilities() {
+        @Test
+        func `Google models support topK and thinking`() {
             let models: [LanguageModel] = [
                 .google(.gemini25Pro),
                 .google(.gemini25Flash),
@@ -107,8 +105,8 @@ struct ModelCapabilitiesTests {
             }
         }
 
-        @Test("Mistral models support safe mode")
-        func mistralCapabilities() {
+        @Test
+        func `Mistral models support safe mode`() {
             let models: [LanguageModel] = [
                 .mistral(.large2),
                 .mistral(.codestral),
@@ -121,8 +119,8 @@ struct ModelCapabilitiesTests {
             }
         }
 
-        @Test("Groq models support speed level")
-        func groqCapabilities() {
+        @Test
+        func `Groq models support speed level`() {
             let models: [LanguageModel] = [
                 .groq(.llama3170b),
                 .groq(.llama370b),
@@ -135,8 +133,8 @@ struct ModelCapabilitiesTests {
             }
         }
 
-        @Test("Grok models support fun mode")
-        func grokCapabilities() {
+        @Test
+        func `Grok models support fun mode`() {
             let models: [LanguageModel] = [
                 .grok(.grok4),
                 .grok(.grok3),
@@ -151,10 +149,9 @@ struct ModelCapabilitiesTests {
         }
     }
 
-    @Suite("Settings Validation")
     struct SettingsValidationTests {
-        @Test("Validate settings for GPT-5.1")
-        func validateGPT51Settings() {
+        @Test
+        func `Validate settings for GPT-5.1`() {
             let settings = GenerationSettings(
                 maxTokens: 1000,
                 temperature: 0.7,
@@ -180,8 +177,8 @@ struct ModelCapabilitiesTests {
             #expect(validated.providerOptions.openai?.previousResponseId == "test-123") // Kept
         }
 
-        @Test("Validate settings for O3 with forced temperature")
-        func validateO3Settings() {
+        @Test
+        func `Validate settings for O3 with forced temperature`() {
             let settings = GenerationSettings(
                 temperature: 0.5,
                 topP: 0.8,
@@ -201,8 +198,8 @@ struct ModelCapabilitiesTests {
             #expect(validated.providerOptions.openai?.verbosity == nil) // Removed
         }
 
-        @Test("Validate settings for GPT-4")
-        func validateGPT4Settings() {
+        @Test
+        func `Validate settings for GPT-4`() {
             let settings = GenerationSettings(
                 maxTokens: 2000,
                 temperature: 0.8,
@@ -232,8 +229,8 @@ struct ModelCapabilitiesTests {
             #expect(validated.providerOptions.openai?.topLogprobs == 3)
         }
 
-        @Test("Validate Anthropic options")
-        func validateAnthropicOptions() {
+        @Test
+        func `Validate Anthropic options`() {
             let settings = GenerationSettings(
                 temperature: 0.7,
                 providerOptions: .init(
@@ -257,10 +254,9 @@ struct ModelCapabilitiesTests {
         }
     }
 
-    @Suite("Custom Model Registration")
     struct CustomModelTests {
-        @Test("Register custom model capabilities")
-        func registerCustomCapabilities() {
+        @Test
+        func `Register custom model capabilities`() {
             let customCaps = ModelParameterCapabilities(
                 supportsTemperature: false,
                 supportsTopP: false,
@@ -282,8 +278,8 @@ struct ModelCapabilitiesTests {
             #expect(retrieved.excludedParameters.contains("temperature"))
         }
 
-        @Test("OpenAI-compatible model registration")
-        func openAICompatibleRegistration() {
+        @Test
+        func `OpenAI-compatible model registration`() {
             let capabilities = ModelParameterCapabilities(
                 supportsTemperature: true,
                 supportsTopK: true,
@@ -307,10 +303,9 @@ struct ModelCapabilitiesTests {
         }
     }
 
-    @Suite("Thread Safety")
     struct ThreadSafetyTests {
-        @Test("Concurrent capability access")
-        func concurrentAccess() async {
+        @Test
+        func `Concurrent capability access`() async {
             let models: [LanguageModel] = [
                 .openai(.gpt51),
                 .openai(.gpt4o),
@@ -347,7 +342,7 @@ struct ModelCapabilitiesTests {
     }
 }
 
-// Helper for testing custom models
+/// Helper for testing custom models
 private struct TestModelProvider: ModelProvider {
     let modelId: String
     let baseURL: String? = nil

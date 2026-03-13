@@ -2,16 +2,15 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Async Ergonomics Tests")
 struct AsyncErgonomicsTests {
-    @Test("Timeout error description")
-    func timeoutErrorDescription() throws {
+    @Test
+    func `Timeout error description`() {
         let error = TimeoutError(timeout: 5.5)
         #expect(error.errorDescription == "Operation timed out after 5.5 seconds")
     }
 
-    @Test("Cancellation token basic operations")
-    func cancellationTokenBasic() async throws {
+    @Test
+    func `Cancellation token basic operations`() async {
         let token = CancellationToken()
 
         #expect(await token.cancelled == false)
@@ -25,8 +24,8 @@ struct AsyncErgonomicsTests {
         #expect(await token.cancelled == true)
     }
 
-    @Test("Cancellation token with handlers")
-    func cancellationTokenHandlers() async throws {
+    @Test
+    func `Cancellation token with handlers`() async throws {
         let token = CancellationToken()
 
         class Flag: @unchecked Sendable {
@@ -49,8 +48,8 @@ struct AsyncErgonomicsTests {
         #expect(flag.value == true)
     }
 
-    @Test("Retry configuration defaults")
-    func retryConfigurationDefaults() throws {
+    @Test
+    func `Retry configuration defaults`() {
         let config = RetryConfiguration.default
 
         #expect(config.maxAttempts == 3)
@@ -60,8 +59,8 @@ struct AsyncErgonomicsTests {
         #expect(config.timeout == nil)
     }
 
-    @Test("Retry configuration presets")
-    func retryConfigurationPresets() throws {
+    @Test
+    func `Retry configuration presets`() {
         let aggressive = RetryConfiguration.aggressive
         #expect(aggressive.maxAttempts == 5)
         #expect(aggressive.delay == 0.5)
@@ -71,8 +70,8 @@ struct AsyncErgonomicsTests {
         #expect(conservative.delay == 2.0)
     }
 
-    @Test("Retry with cancellation - immediate success")
-    func retryWithCancellationImmediateSuccess() async throws {
+    @Test
+    func `Retry with cancellation - immediate success`() async throws {
         let result = try await retryWithCancellation(
             configuration: .init(maxAttempts: 3, delay: 0.01),
         ) {
@@ -82,8 +81,8 @@ struct AsyncErgonomicsTests {
         #expect(result == "Success")
     }
 
-    @Test("With timeout basic functionality")
-    func withTimeoutBasic() async throws {
+    @Test
+    func `With timeout basic functionality`() async throws {
         let result = try await withTimeout(0.1) {
             "Quick result"
         }
@@ -91,8 +90,8 @@ struct AsyncErgonomicsTests {
         #expect(result == "Quick result")
     }
 
-    @Test("With timeout throws on timeout")
-    func withTimeoutThrows() async throws {
+    @Test
+    func `With timeout throws on timeout`() async throws {
         do {
             _ = try await withTimeout(0.01) {
                 try await Task<Never, Never>.sleep(nanoseconds: 1_000_000_000) // 1 second
@@ -104,8 +103,8 @@ struct AsyncErgonomicsTests {
         }
     }
 
-    @Test("Async stream collect basic")
-    func asyncStreamCollectBasic() async throws {
+    @Test
+    func `Async stream collect basic`() async throws {
         let stream = AsyncThrowingStream<Int, Error> { continuation in
             continuation.yield(1)
             continuation.yield(2)
@@ -117,8 +116,8 @@ struct AsyncErgonomicsTests {
         #expect(results == [1, 2, 3])
     }
 
-    @Test("Task group with auto cancellation")
-    func taskGroupAutoCancellation() async throws {
+    @Test
+    func `Task group with auto cancellation`() async throws {
         class Flag: @unchecked Sendable {
             var cancelled = false
         }

@@ -106,7 +106,7 @@ func testRealtimeConfiguration() async throws {
     print("  swift run RealtimeVoiceAssistant --basic")
 }
 
-// Extension for string multiplication
+/// Extension for string multiplication
 extension String {
     static func * (string: String, count: Int) -> String {
         String(repeating: string, count: count)

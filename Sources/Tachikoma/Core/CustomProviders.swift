@@ -17,7 +17,7 @@ public final class CustomProviderRegistry: @unchecked Sendable {
 
     private init() {}
 
-    // Load from ~/.<profile>/config.json customProviders
+    /// Load from ~/.<profile>/config.json customProviders
     public func loadFromProfile() {
         guard let json = Self.loadRawConfigJSON() else { return }
         guard let cp = json["customProviders"] as? [String: Any] else { return }
@@ -60,7 +60,9 @@ public final class CustomProviderRegistry: @unchecked Sendable {
         return "\(home)/\(TachikomaConfiguration.profileDirectoryName)"
     }
 
-    private static func profileConfigPath() -> String { "\(self.profileDirectoryPath())/config.json" }
+    private static func profileConfigPath() -> String {
+        "\(self.profileDirectoryPath())/config.json"
+    }
 
     private static func stripJSONComments(from json: String) -> String {
         var result = ""

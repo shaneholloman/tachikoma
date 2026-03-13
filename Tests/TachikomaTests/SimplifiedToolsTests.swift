@@ -3,10 +3,9 @@ import Testing
 @testable import Tachikoma
 @testable import TachikomaAgent
 
-@Suite("Simplified Tools Tests")
 struct SimplifiedToolsTests {
-    @Test("Create simple tool with schema builder")
-    func toolSchemaBuilder() throws {
+    @Test
+    func `Create simple tool with schema builder`() {
         let schema = ToolSchemaBuilder()
             .string("name", description: "User's name", required: true)
             .integer("age", description: "User's age", required: true)
@@ -20,8 +19,8 @@ struct SimplifiedToolsTests {
         #expect(schema.required.contains("age"))
     }
 
-    @Test("SimplifiedToolBuilder with structured input")
-    func simplifiedToolBuilderWithCodable() async throws {
+    @Test
+    func `SimplifiedToolBuilder with structured input`() async throws {
         struct CalculatorInput: Codable, Sendable {
             let expression: String
         }
@@ -51,8 +50,8 @@ struct SimplifiedToolsTests {
         #expect(result.doubleValue == 42.0 || result.objectValue?["result"]?.doubleValue == 42.0)
     }
 
-    @Test("SimplifiedToolBuilder with context")
-    func testToolWithContext() async throws {
+    @Test
+    func `SimplifiedToolBuilder with context`() async throws {
         struct SearchInput: Codable, Sendable {
             let query: String
         }
@@ -92,8 +91,8 @@ struct SimplifiedToolsTests {
         }
     }
 
-    @Test("Simple tool without structured types")
-    func simpleToolWithoutCodable() async throws {
+    @Test
+    func `Simple tool without structured types`() async throws {
         let tool = SimplifiedToolBuilder.simpleTool(
             "echo",
             description: "Echo the input",
@@ -122,8 +121,8 @@ struct SimplifiedToolsTests {
         #expect(result.objectValue?["echoed"]?.stringValue == "HELLO")
     }
 
-    @Test("AgentTool.create with schema builder")
-    func agentToolCreate() async throws {
+    @Test
+    func `AgentTool.create with schema builder`() async throws {
         let tool = AgentTool.create(
             name: "weather",
             description: "Get weather information",
@@ -159,8 +158,8 @@ struct SimplifiedToolsTests {
         #expect(result.objectValue?["units"]?.stringValue == "fahrenheit")
     }
 
-    @Test("Tool schema builder with all parameter types")
-    func schemaBuilderAllTypes() throws {
+    @Test
+    func `Tool schema builder with all parameter types`() {
         let schema = ToolSchemaBuilder()
             .string("text", description: "Text field")
             .number("price", description: "Price field")
@@ -182,8 +181,8 @@ struct SimplifiedToolsTests {
         #expect(properties["metadata"]?.type == .object)
     }
 
-    @Test("Tool parameter property with enum values")
-    func toolParameterWithEnum() throws {
+    @Test
+    func `Tool parameter property with enum values`() {
         let schema = ToolSchemaBuilder()
             .string("status", description: "Status", required: true, enum: ["active", "inactive", "pending"])
             .build()

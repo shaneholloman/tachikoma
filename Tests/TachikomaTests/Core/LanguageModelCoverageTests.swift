@@ -1,10 +1,9 @@
 import Testing
 @testable import Tachikoma
 
-@Suite("LanguageModel enums")
 struct LanguageModelCoverageTests {
-    @Test("OpenAI enum exposes properties")
-    func openAIProperties() {
+    @Test
+    func `OpenAI enum exposes properties`() {
         let models = LanguageModel.OpenAI.allCases
         #expect(!models.isEmpty)
         for model in models {
@@ -18,8 +17,8 @@ struct LanguageModelCoverageTests {
         }
     }
 
-    @Test("Anthropic enum exposes properties")
-    func anthropicProperties() {
+    @Test
+    func `Anthropic enum exposes properties`() {
         for model in LanguageModel.Anthropic.allCases {
             #expect(!model.modelId.isEmpty)
             _ = model.supportsVision
@@ -27,8 +26,8 @@ struct LanguageModelCoverageTests {
         }
     }
 
-    @Test("Remaining provider enums expose properties")
-    func otherProviders() {
+    @Test
+    func `Remaining provider enums expose properties`() {
         for model in LanguageModel.Google.allCases {
             #expect(!model.rawValue.isEmpty)
             _ = model.supportsVision
@@ -66,8 +65,8 @@ struct LanguageModelCoverageTests {
         }
     }
 
-    @Test("LanguageModel top level switches")
-    func languageModelDescriptions() {
+    @Test
+    func `LanguageModel top level switches`() {
         let baseModels: [LanguageModel] = [
             .openai(.gpt51),
             .anthropic(.opus45),
@@ -100,10 +99,21 @@ struct LanguageModelCoverageTests {
 }
 
 private struct DummyProvider: ModelProvider {
-    var modelId: String { "dummy" }
-    var baseURL: String? { nil }
-    var apiKey: String? { nil }
-    var capabilities: ModelCapabilities { .init() }
+    var modelId: String {
+        "dummy"
+    }
+
+    var baseURL: String? {
+        nil
+    }
+
+    var apiKey: String? {
+        nil
+    }
+
+    var capabilities: ModelCapabilities {
+        .init()
+    }
 
     func generateText(request _: ProviderRequest) async throws -> ProviderResponse {
         .init(text: "dummy")

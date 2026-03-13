@@ -5,8 +5,8 @@ import Testing
 struct UsageTrackingTests {
     // MARK: - Session Management Tests
 
-    @Test("Session Creation and Management")
-    func sessionManagement() {
+    @Test
+    func `Session Creation and Management`() {
         let tracker = UsageTracker(forTesting: true)
 
         // Create a session
@@ -28,8 +28,8 @@ struct UsageTrackingTests {
         #expect(tracker.completedSessions.count == 1)
     }
 
-    @Test("Custom Session ID")
-    func customSessionId() {
+    @Test
+    func `Custom Session ID`() {
         let tracker = UsageTracker(forTesting: true)
 
         let customId = "my-custom-session-123"
@@ -43,8 +43,8 @@ struct UsageTrackingTests {
 
     // MARK: - Usage Recording Tests
 
-    @Test("Usage Recording")
-    func usageRecording() {
+    @Test
+    func `Usage Recording`() {
         let tracker = UsageTracker(forTesting: true)
 
         let sessionId = tracker.startSession()
@@ -78,8 +78,8 @@ struct UsageTrackingTests {
         }
     }
 
-    @Test("Multiple Operations in Session")
-    func multipleOperations() {
+    @Test
+    func `Multiple Operations in Session`() {
         let tracker = UsageTracker(forTesting: true)
 
         let sessionId = tracker.startSession()
@@ -111,8 +111,8 @@ struct UsageTrackingTests {
 
     // MARK: - Cost Calculation Tests
 
-    @Test("Cost Calculation for Different Models")
-    func costCalculation() {
+    @Test
+    func `Cost Calculation for Different Models`() {
         let calculator = ModelCostCalculator()
         let usage = Usage(inputTokens: 1_000_000, outputTokens: 1_000_000) // 1M tokens each for easy calculation
 
@@ -137,8 +137,8 @@ struct UsageTrackingTests {
 
     // MARK: - Total Usage Tests
 
-    @Test("Total Usage Aggregation")
-    func totalUsageAggregation() {
+    @Test
+    func `Total Usage Aggregation`() {
         let tracker = UsageTracker(forTesting: true)
 
         // Create multiple sessions with different providers
@@ -184,8 +184,8 @@ struct UsageTrackingTests {
 
     // MARK: - Report Generation Tests
 
-    @Test("Usage Report Generation")
-    func reportGeneration() {
+    @Test
+    func `Usage Report Generation`() {
         let tracker = UsageTracker(forTesting: true)
 
         let sessionId = tracker.startSession()
@@ -216,8 +216,8 @@ struct UsageTrackingTests {
         #expect(formattedReport.contains("Text Generation"))
     }
 
-    @Test("Date Range Report")
-    func dateRangeReport() {
+    @Test
+    func `Date Range Report`() {
         let tracker = UsageTracker(forTesting: true)
 
         let sessionId = tracker.startSession()
@@ -244,8 +244,8 @@ struct UsageTrackingTests {
 
     // MARK: - Operation Type Tests
 
-    @Test("Operation Type Display Names")
-    func operationTypeDisplayNames() {
+    @Test
+    func `Operation Type Display Names`() {
         #expect(OperationType.textGeneration.displayName == "Text Generation")
         #expect(OperationType.textStreaming.displayName == "Text Streaming")
         #expect(OperationType.imageAnalysis.displayName == "Image Analysis")
@@ -255,8 +255,8 @@ struct UsageTrackingTests {
         #expect(OperationType.speechSynthesis.displayName == "Speech Synthesis")
     }
 
-    @Test("All Operation Types Available")
-    func allOperationTypes() {
+    @Test
+    func `All Operation Types Available`() {
         let allTypes = OperationType.allCases
         #expect(allTypes.count == 8)
         #expect(allTypes.contains(.textGeneration))

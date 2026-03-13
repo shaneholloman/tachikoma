@@ -50,7 +50,7 @@ public final class RealtimeAudioManager: NSObject {
     private let audioSession = AVAudioSession.sharedInstance()
     #endif
 
-    // Audio format for API (24kHz PCM16)
+    /// Audio format for API (24kHz PCM16)
     private let apiFormat = AVAudioFormat(
         commonFormat: .pcmFormatInt16,
         sampleRate: 24000,
@@ -297,7 +297,7 @@ public final class RealtimeAudioManager: NSObject {
         #endif
     }
 
-    /// Set audio input device (macOS only)
+    // Set audio input device (macOS only)
     #if os(macOS)
     public func setInputDevice(_: AudioDeviceID) throws {
         // Note: Setting audio device on macOS requires more complex Core Audio API

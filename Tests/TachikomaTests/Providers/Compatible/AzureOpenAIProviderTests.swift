@@ -32,8 +32,13 @@ private final class AzureTestURLProtocol: URLProtocol {
     }
     """.utf8Data()
 
-    override class func canInit(with _: URLRequest) -> Bool { true }
-    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override class func canInit(with _: URLRequest) -> Bool {
+        true
+    }
+
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
+        request
+    }
 
     override func startLoading() {
         Task { [request] in await AzureTestURLProtocol.storeMedia(request) }
@@ -65,7 +70,7 @@ private final class AzureTestURLProtocol: URLProtocol {
     }
 }
 
-@Suite("Azure OpenAI Provider", .serialized)
+@Suite(.serialized)
 struct AzureOpenAIProviderTests {
     private func makeSession() -> URLSession {
         let configuration = URLSessionConfiguration.ephemeral
@@ -73,8 +78,8 @@ struct AzureOpenAIProviderTests {
         return URLSession(configuration: configuration)
     }
 
-    @Test("Builds Azure chat URL with api-version and api-key header")
-    func buildsAzureURLAndHeaders() async throws {
+    @Test
+    func `Builds Azure chat URL with api-version and api-key header`() async throws {
         let config = TachikomaConfiguration(loadFromEnvironment: false)
         config.setAPIKey("test-key", for: .azureOpenAI)
         await AzureTestURLProtocol.reset()
@@ -106,8 +111,8 @@ struct AzureOpenAIProviderTests {
         #expect(sentRequest?.value(forHTTPHeaderField: "api-key") == "test-key")
     }
 
-    @Test("Prefers bearer token auth and explicit endpoint")
-    func prefersBearerToken() async throws {
+    @Test
+    func `Prefers bearer token auth and explicit endpoint`() async throws {
         setenv("AZURE_OPENAI_BEARER_TOKEN", "bearer-123", 1)
         setenv("AZURE_OPENAI_ENDPOINT", "https://custom.azure.example.com", 1)
         defer {

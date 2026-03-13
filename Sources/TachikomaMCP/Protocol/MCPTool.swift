@@ -19,7 +19,7 @@ public protocol MCPTool: Sendable {
 
 /// Wrapper for tool arguments received from MCP
 public struct ToolArguments: Sendable {
-    // Execute the tool with the given arguments
+    /// Execute the tool with the given arguments
     private let raw: Value
 
     public init(raw: [String: Any]) {
@@ -174,7 +174,7 @@ private func ValueToAny(_ value: Value) -> Any {
     }
 }
 
-// Helper function to convert Any to Value
+/// Helper function to convert Any to Value
 private func convertToValue(_ value: Any) -> Value {
     switch value {
     case let string as String:
@@ -250,5 +250,5 @@ public struct ToolResponse: Sendable {
     }
 }
 
-// Type alias for convenience
+/// Type alias for convenience
 public typealias MCPContent = MCP.Tool.Content

@@ -8,7 +8,7 @@ import Logging
 import MCP
 import Tachikoma
 
-// Actor to manage mutable state for Sendable conformance
+/// Actor to manage mutable state for Sendable conformance
 private actor StdioTransportState {
     var process: Process?
     var inputPipe: Pipe?

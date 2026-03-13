@@ -3,7 +3,7 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Provider Integration Tests", .enabled(if: ProcessInfo.processInfo.environment["INTEGRATION_TESTS"] != nil))
+@Suite(.enabled(if: ProcessInfo.processInfo.environment["INTEGRATION_TESTS"] != nil))
 struct ProviderIntegrationTests {
     // MARK: - Test Configuration
 
@@ -21,22 +21,34 @@ struct ProviderIntegrationTests {
         return !value.isEmpty
     }
 
-    private static var hasOpenAIKey: Bool { hasEnv("OPENAI_API_KEY") }
-    private static var hasAnthropicKey: Bool { hasEnv("ANTHROPIC_API_KEY") }
+    private static var hasOpenAIKey: Bool {
+        hasEnv("OPENAI_API_KEY")
+    }
+
+    private static var hasAnthropicKey: Bool {
+        hasEnv("ANTHROPIC_API_KEY")
+    }
+
     private static var hasGoogleKey: Bool {
         hasEnv("GEMINI_API_KEY") || hasEnv("GOOGLE_API_KEY")
     }
 
-    private static var hasMistralKey: Bool { hasEnv("MISTRAL_API_KEY") }
-    private static var hasGroqKey: Bool { hasEnv("GROQ_API_KEY") }
+    private static var hasMistralKey: Bool {
+        hasEnv("MISTRAL_API_KEY")
+    }
+
+    private static var hasGroqKey: Bool {
+        hasEnv("GROQ_API_KEY")
+    }
+
     private static var hasGrokKey: Bool {
         hasEnv("X_AI_API_KEY") || hasEnv("XAI_API_KEY") || hasEnv("GROK_API_KEY")
     }
 
     // MARK: - OpenAI Integration Tests
 
-    @Test("OpenAI Provider - Real API Call", .enabled(if: Self.hasOpenAIKey))
-    func openAIIntegration() async throws {
+    @Test(.enabled(if: Self.hasOpenAIKey))
+    func `OpenAI Provider - Real API Call`() async throws {
         let model = Model.openai(.gpt4oMini)
         let config = TachikomaConfiguration()
         do {
@@ -58,8 +70,8 @@ struct ProviderIntegrationTests {
         }
     }
 
-    @Test("OpenAI Provider - Tool Calling", .enabled(if: Self.hasOpenAIKey))
-    func openAIToolCalling() async throws {
+    @Test(.enabled(if: Self.hasOpenAIKey))
+    func `OpenAI Provider - Tool Calling`() async throws {
         let model = Model.openai(.gpt4oMini)
         let config = TachikomaConfiguration()
 
@@ -103,8 +115,8 @@ struct ProviderIntegrationTests {
         }
     }
 
-    @Test("OpenAI Provider - Streaming", .enabled(if: Self.hasOpenAIKey))
-    func openAIStreaming() async throws {
+    @Test(.enabled(if: Self.hasOpenAIKey))
+    func `OpenAI Provider - Streaming`() async throws {
         let model = Model.openai(.gpt4oMini)
         let config = TachikomaConfiguration()
 
@@ -150,8 +162,8 @@ struct ProviderIntegrationTests {
 
     // MARK: - Anthropic Integration Tests
 
-    @Test("Anthropic Provider - Real API Call", .enabled(if: Self.hasAnthropicKey))
-    func anthropicIntegration() async throws {
+    @Test(.enabled(if: Self.hasAnthropicKey))
+    func `Anthropic Provider - Real API Call`() async throws {
         let model = Model.anthropic(.sonnet4)
         do {
             let response = try await generate(
@@ -169,8 +181,8 @@ struct ProviderIntegrationTests {
         }
     }
 
-    @Test("Anthropic Provider - Tool Calling", .enabled(if: Self.hasAnthropicKey))
-    func anthropicToolCalling() async throws {
+    @Test(.enabled(if: Self.hasAnthropicKey))
+    func `Anthropic Provider - Tool Calling`() async throws {
         let model = Model.anthropic(.sonnet4)
         let config = TachikomaConfiguration()
 
@@ -213,8 +225,8 @@ struct ProviderIntegrationTests {
 
     // MARK: - Ollama Integration Tests
 
-    @Test("Ollama Provider - Real API Call")
-    func ollamaIntegration() async throws {
+    @Test
+    func `Ollama Provider - Real API Call`() async throws {
         // Check if Ollama is running
         let ollamaRunning = await isOllamaRunning()
         guard ollamaRunning else {
@@ -247,8 +259,8 @@ struct ProviderIntegrationTests {
 
     // MARK: - Grok Integration Tests
 
-    @Test("Grok Provider - Real API Call", .enabled(if: Self.hasGrokKey))
-    func grokIntegration() async throws {
+    @Test(.enabled(if: Self.hasGrokKey))
+    func `Grok Provider - Real API Call`() async throws {
         let model = Model.grok(.grok3)
         do {
             let response = try await generate(
@@ -267,8 +279,8 @@ struct ProviderIntegrationTests {
 
     // MARK: - Google Integration Tests
 
-    @Test("Google Provider - Real API Call", .enabled(if: Self.hasGoogleKey))
-    func googleIntegration() async throws {
+    @Test(.enabled(if: Self.hasGoogleKey))
+    func `Google Provider - Real API Call`() async throws {
         let model = Model.google(.gemini25Flash)
         do {
             let response = try await generate(
@@ -287,8 +299,8 @@ struct ProviderIntegrationTests {
 
     // MARK: - Mistral Integration Tests
 
-    @Test("Mistral Provider - Real API Call", .enabled(if: Self.hasMistralKey))
-    func mistralIntegration() async throws {
+    @Test(.enabled(if: Self.hasMistralKey))
+    func `Mistral Provider - Real API Call`() async throws {
         let model = Model.mistral(.small)
         let response = try await generate(TestConfig.shortMessage, using: model, maxTokens: 50, temperature: 0.0)
 
@@ -298,8 +310,8 @@ struct ProviderIntegrationTests {
 
     // MARK: - Groq Integration Tests
 
-    @Test("Groq Provider - Real API Call", .enabled(if: Self.hasGroqKey))
-    func groqIntegration() async throws {
+    @Test(.enabled(if: Self.hasGroqKey))
+    func `Groq Provider - Real API Call`() async throws {
         let model = Model.groq(.llama38b)
         let response = try await generate(TestConfig.shortMessage, using: model, maxTokens: 50, temperature: 0.0)
 
@@ -309,8 +321,8 @@ struct ProviderIntegrationTests {
 
     // MARK: - Multi-Modal Integration Tests
 
-    @Test("Multi-Modal Provider - Vision Support", .enabled(if: Self.hasOpenAIKey))
-    func multiModalVision() async throws {
+    @Test(.enabled(if: Self.hasOpenAIKey))
+    func `Multi-Modal Provider - Vision Support`() async throws {
         let model = Model.openai(.gpt4o)
         let config = TachikomaConfiguration()
         let provider = try ProviderFactory.createProvider(for: model, configuration: config)

@@ -12,16 +12,16 @@ import Glibc
 #endif
 
 #if os(Linux)
-@Suite("Provider Network E2E Tests", .disabled("URLProtocol mocking unavailable on Linux"))
+@Suite(.disabled("URLProtocol mocking unavailable on Linux"))
 struct ProviderEndToEndTests {}
 #else
 
-@Suite("Provider Network E2E Tests", .serialized, .enabled(if: !_isLiveSuite))
+@Suite(.serialized, .enabled(if: !_isLiveSuite))
 struct ProviderEndToEndTests {
     // MARK: - OpenAI Responses (GPT-5)
 
-    @Test("OpenAI Responses provider returns text")
-    func openAIResponsesProvider() async throws {
+    @Test
+    func `OpenAI Responses provider returns text`() async throws {
         try await NetworkMocking.withMockedNetwork { request in
             self.expectPath(
                 request,
@@ -45,8 +45,8 @@ struct ProviderEndToEndTests {
 
     // MARK: - OpenAI Chat Provider
 
-    @Test("OpenAI chat provider hits /chat/completions")
-    func openAIChatProvider() async throws {
+    @Test
+    func `OpenAI chat provider hits /chat/completions`() async throws {
         try await NetworkMocking.withMockedNetwork { request in
             self.expectPath(request, endsWith: "/chat/completions")
             return NetworkMocking.jsonResponse(
@@ -65,8 +65,8 @@ struct ProviderEndToEndTests {
 
     // MARK: - Anthropic
 
-    @Test("Anthropic provider decodes Claude responses")
-    func anthropicProvider() async throws {
+    @Test
+    func `Anthropic provider decodes Claude responses`() async throws {
         try await NetworkMocking.withMockedNetwork { request in
             self.expectPath(request, endsWith: "/messages")
             return NetworkMocking.jsonResponse(for: request, data: Self.anthropicPayload(text: "Claude says hello"))
@@ -82,8 +82,8 @@ struct ProviderEndToEndTests {
 
     // MARK: - Google Gemini
 
-    @Test("Google provider processes streamed SSE content")
-    func googleProvider() async throws {
+    @Test
+    func `Google provider processes streamed SSE content`() async throws {
         try await NetworkMocking.withMockedNetwork { request in
             #expect(request.url?.path.contains(":streamGenerateContent") == true)
             return NetworkMocking.streamResponse(for: request, data: Self.googleStreamPayload(text: "Gemini streaming"))
@@ -99,23 +99,23 @@ struct ProviderEndToEndTests {
 
     // MARK: - OpenAI-compatible providers
 
-    @Test("Mistral provider uses OpenAI-compatible flow")
-    func mistralProvider() async throws {
+    @Test
+    func `Mistral provider uses OpenAI-compatible flow`() async throws {
         try await self.assertOpenAICompatibleProvider(.mistral(.small), provider: .mistral)
     }
 
-    @Test("Groq provider uses OpenAI-compatible flow")
-    func groqProvider() async throws {
+    @Test
+    func `Groq provider uses OpenAI-compatible flow`() async throws {
         try await self.assertOpenAICompatibleProvider(.groq(.llama38b), provider: .groq)
     }
 
-    @Test("Grok provider uses OpenAI-compatible flow")
-    func grokProvider() async throws {
+    @Test
+    func `Grok provider uses OpenAI-compatible flow`() async throws {
         try await self.assertOpenAICompatibleProvider(.grok(.grok4FastReasoning), provider: .grok)
     }
 
-    @Test("All Grok catalog models share the same OpenAI-compatible flow")
-    func grokCatalogUsesSameFlow() async throws {
+    @Test
+    func `All Grok catalog models share the same OpenAI-compatible flow`() async throws {
         for grokModel in Model.Grok.allCases {
             try await self.assertOpenAICompatibleProvider(.grok(grokModel), provider: .grok)
         }
@@ -123,8 +123,8 @@ struct ProviderEndToEndTests {
 
     // MARK: - Ollama
 
-    @Test("Ollama provider handles local responses")
-    func ollamaProvider() async throws {
+    @Test
+    func `Ollama provider handles local responses`() async throws {
         try await NetworkMocking.withMockedNetwork { request in
             self.expectPath(request, endsWith: "/api/chat")
             return NetworkMocking.jsonResponse(for: request, data: Self.ollamaPayload(text: "Ollama local reply"))
@@ -138,8 +138,8 @@ struct ProviderEndToEndTests {
         }
     }
 
-    @Test("Ollama provider encodes vision images as messages[].images")
-    func ollamaProviderEncodesImages() async throws {
+    @Test
+    func `Ollama provider encodes vision images as messages[].images`() async throws {
         let imageBase64 = Data("test-image".utf8).base64EncodedString()
         let image = ModelMessage.ContentPart.ImageContent(data: imageBase64, mimeType: "image/png")
 
@@ -180,8 +180,8 @@ struct ProviderEndToEndTests {
 
     // MARK: - LMStudio
 
-    @Test("LMStudio provider maps OpenAI-style responses")
-    func lmstudioProvider() async throws {
+    @Test
+    func `LMStudio provider maps OpenAI-style responses`() async throws {
         try await NetworkMocking.withMockedNetwork { request in
             let path = request.url?.path ?? ""
             #expect(path.contains("chat/completions"))
@@ -199,8 +199,8 @@ struct ProviderEndToEndTests {
 
     // MARK: - Aggregators & Compatible Providers
 
-    @Test("OpenRouter provider uses OpenAI-compatible flow")
-    func openRouterProvider() async throws {
+    @Test
+    func `OpenRouter provider uses OpenAI-compatible flow`() async throws {
         try await NetworkMocking.withMockedNetwork { request in
             self.expectPath(request, endsWith: "/chat/completions")
             #expect(request.value(forHTTPHeaderField: "HTTP-Referer") == "https://peekaboo.app")
@@ -216,8 +216,8 @@ struct ProviderEndToEndTests {
         }
     }
 
-    @Test("Together provider uses OpenAI-compatible flow")
-    func togetherProvider() async throws {
+    @Test
+    func `Together provider uses OpenAI-compatible flow`() async throws {
         try await NetworkMocking.withMockedNetwork { request in
             let path = request.url?.path ?? ""
             #expect(path.hasSuffix("/chat/completions"))
@@ -232,8 +232,8 @@ struct ProviderEndToEndTests {
         }
     }
 
-    @Test("Replicate provider uses OpenAI-compatible flow")
-    func replicateProvider() async throws {
+    @Test
+    func `Replicate provider uses OpenAI-compatible flow`() async throws {
         try await NetworkMocking.withMockedNetwork { request in
             let path = request.url?.path ?? ""
             #expect(path.hasSuffix("/chat/completions"))
@@ -251,8 +251,8 @@ struct ProviderEndToEndTests {
         }
     }
 
-    @Test("OpenAI-compatible provider hits custom base URL")
-    func openAICompatibleProvider() async throws {
+    @Test
+    func `OpenAI-compatible provider hits custom base URL`() async throws {
         try await NetworkMocking.withMockedNetwork { request in
             #expect(request.url?.absoluteString == "https://compatible.test/chat/completions")
             return NetworkMocking.jsonResponse(
@@ -273,8 +273,8 @@ struct ProviderEndToEndTests {
         }
     }
 
-    @Test("Anthropic-compatible provider decodes responses")
-    func anthropicCompatibleProvider() async throws {
+    @Test
+    func `Anthropic-compatible provider decodes responses`() async throws {
         try await NetworkMocking.withMockedNetwork { request in
             self.expectPath(request, endsWith: "/messages")
             return NetworkMocking.jsonResponse(for: request, data: Self.anthropicPayload(text: "Compat Claude"))

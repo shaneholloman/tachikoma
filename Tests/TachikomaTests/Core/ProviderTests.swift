@@ -10,7 +10,9 @@ import Testing
 private func withTemporaryEnvironment<T: Sendable>(
     _ updates: [String: String?],
     _ body: @Sendable () throws -> T,
-) async rethrows -> T {
+) async rethrows
+    -> T
+{
     try await TestEnvironmentMutex.shared.withLock {
         let saved = updates.keys.map { key in
             (key, getenv(key).map { String(cString: $0) })
@@ -38,12 +40,10 @@ private func withTemporaryEnvironment<T: Sendable>(
     }
 }
 
-@Suite("Provider Enum Tests")
-struct ProviderTests {
-    @Suite("Provider Properties Tests")
+enum ProviderTests {
     struct ProviderPropertiesTests {
-        @Test("Standard providers have correct identifiers")
-        func standardProviderIdentifiers() {
+        @Test
+        func `Standard providers have correct identifiers`() {
             #expect(Provider.openai.identifier == "openai")
             #expect(Provider.anthropic.identifier == "anthropic")
             #expect(Provider.grok.identifier == "grok")
@@ -54,14 +54,14 @@ struct ProviderTests {
             #expect(Provider.azureOpenAI.identifier == "azure-openai")
         }
 
-        @Test("Custom provider has correct identifier")
-        func customProviderIdentifier() {
+        @Test
+        func `Custom provider has correct identifier`() {
             let customProvider = Provider.custom("my-custom-provider")
             #expect(customProvider.identifier == "my-custom-provider")
         }
 
-        @Test("Display names are human-readable")
-        func displayNames() {
+        @Test
+        func `Display names are human-readable`() {
             #expect(Provider.openai.displayName == "OpenAI")
             #expect(Provider.anthropic.displayName == "Anthropic")
             #expect(Provider.grok.displayName == "Grok")
@@ -73,8 +73,8 @@ struct ProviderTests {
             #expect(Provider.custom("test").displayName == "Test")
         }
 
-        @Test("Environment variables are correct")
-        func environmentVariables() {
+        @Test
+        func `Environment variables are correct`() {
             #expect(Provider.openai.environmentVariable == "OPENAI_API_KEY")
             #expect(Provider.anthropic.environmentVariable == "ANTHROPIC_API_KEY")
             #expect(Provider.grok.environmentVariable == "X_AI_API_KEY")
@@ -86,8 +86,8 @@ struct ProviderTests {
             #expect(Provider.custom("test").environmentVariable.isEmpty)
         }
 
-        @Test("Alternative environment variables")
-        func alternativeEnvironmentVariables() {
+        @Test
+        func `Alternative environment variables`() {
             #expect(Provider.grok.alternativeEnvironmentVariables == ["XAI_API_KEY", "GROK_API_KEY"])
             #expect(Provider.google.alternativeEnvironmentVariables == ["GOOGLE_API_KEY"])
             #expect(Provider.openai.alternativeEnvironmentVariables.isEmpty)
@@ -98,8 +98,8 @@ struct ProviderTests {
             ])
         }
 
-        @Test("Default base URLs")
-        func defaultBaseURLs() {
+        @Test
+        func `Default base URLs`() {
             #expect(Provider.openai.defaultBaseURL == "https://api.openai.com/v1")
             #expect(Provider.anthropic.defaultBaseURL == "https://api.anthropic.com")
             #expect(Provider.grok.defaultBaseURL == "https://api.x.ai/v1")
@@ -111,8 +111,8 @@ struct ProviderTests {
             #expect(Provider.custom("test").defaultBaseURL == nil)
         }
 
-        @Test("API key requirements")
-        func apiKeyRequirements() {
+        @Test
+        func `API key requirements`() {
             #expect(Provider.openai.requiresAPIKey == true)
             #expect(Provider.anthropic.requiresAPIKey == true)
             #expect(Provider.grok.requiresAPIKey == true)
@@ -125,10 +125,9 @@ struct ProviderTests {
         }
     }
 
-    @Suite("Provider Factory Tests")
     struct ProviderFactoryTests {
-        @Test("Create provider from identifier - standard providers")
-        func createStandardProviders() {
+        @Test
+        func `Create provider from identifier - standard providers`() {
             #expect(Provider.from(identifier: "openai") == .openai)
             #expect(Provider.from(identifier: "anthropic") == .anthropic)
             #expect(Provider.from(identifier: "grok") == .grok)
@@ -139,15 +138,15 @@ struct ProviderTests {
             #expect(Provider.from(identifier: "azure-openai") == .azureOpenAI)
         }
 
-        @Test("Create provider from identifier - case insensitive")
-        func createProvidersCase() {
+        @Test
+        func `Create provider from identifier - case insensitive`() {
             #expect(Provider.from(identifier: "OpenAI") == .openai)
             #expect(Provider.from(identifier: "ANTHROPIC") == .anthropic)
             #expect(Provider.from(identifier: "Grok") == .grok)
         }
 
-        @Test("Create provider from identifier - custom providers")
-        func createCustomProviders() {
+        @Test
+        func `Create provider from identifier - custom providers`() {
             let provider1 = Provider.from(identifier: "custom-provider")
             let provider2 = Provider.from(identifier: "unknown-provider")
 
@@ -164,8 +163,8 @@ struct ProviderTests {
             }
         }
 
-        @Test("Standard providers list")
-        func standardProvidersList() {
+        @Test
+        func `Standard providers list`() {
             let expected: [Provider] = [
                 .openai,
                 .anthropic,
@@ -180,31 +179,30 @@ struct ProviderTests {
         }
     }
 
-    @Suite("Environment Variable Loading Tests")
     struct EnvironmentVariableTests {
-        @Test("Load API key from primary environment variable")
-        func loadFromPrimaryEnvironment() {
+        @Test
+        func `Load API key from primary environment variable`() {
             // We can't easily mock ProcessInfo.processInfo.environment in tests,
             // so we'll test the logic indirectly through TachikomaConfiguration
         }
 
-        @Test("Load API key from alternative environment variable")
-        func loadFromAlternativeEnvironment() {
+        @Test
+        func `Load API key from alternative environment variable`() {
             // Test that Grok provider loads from XAI_API_KEY when X_AI_API_KEY is not available
             let provider = Provider.grok
             #expect(provider.environmentVariable == "X_AI_API_KEY")
             #expect(provider.alternativeEnvironmentVariables == ["XAI_API_KEY", "GROK_API_KEY"])
         }
 
-        @Test("Custom providers don't have environment variables")
-        func customProviderNoEnvironment() {
+        @Test
+        func `Custom providers don't have environment variables`() {
             let customProvider = Provider.custom("test")
             #expect(customProvider.environmentVariable.isEmpty)
             #expect(customProvider.alternativeEnvironmentVariables.isEmpty)
         }
 
-        @Test("Google ignores ADC credential paths as API keys")
-        func googleIgnoresADCCredentialPaths() async throws {
+        @Test
+        func `Google ignores ADC credential paths as API keys`() async {
             let resolved = await withTemporaryEnvironment([
                 "GEMINI_API_KEY": nil,
                 "GOOGLE_API_KEY": nil,
@@ -217,10 +215,9 @@ struct ProviderTests {
         }
     }
 
-    @Suite("Codable Tests")
     struct CodableTests {
-        @Test("Provider encodes to identifier string")
-        func providerEncoding() throws {
+        @Test
+        func `Provider encodes to identifier string`() throws {
             let encoder = JSONEncoder()
 
             let openaiData = try encoder.encode(Provider.openai)
@@ -232,8 +229,8 @@ struct ProviderTests {
             #expect(customString == "\"my-provider\"")
         }
 
-        @Test("Provider decodes from identifier string")
-        func providerDecoding() throws {
+        @Test
+        func `Provider decodes from identifier string`() throws {
             let decoder = JSONDecoder()
 
             let openaiData = "\"openai\"".utf8Data()
@@ -250,17 +247,16 @@ struct ProviderTests {
         }
     }
 
-    @Suite("Equality Tests")
     struct EqualityTests {
-        @Test("Standard providers equality")
-        func standardProvidersEquality() {
+        @Test
+        func `Standard providers equality`() {
             #expect(Provider.openai == Provider.openai)
             #expect(Provider.anthropic == Provider.anthropic)
             #expect(Provider.openai != Provider.anthropic)
         }
 
-        @Test("Custom providers equality")
-        func customProvidersEquality() {
+        @Test
+        func `Custom providers equality`() {
             let custom1 = Provider.custom("test")
             let custom2 = Provider.custom("test")
             let custom3 = Provider.custom("different")
@@ -271,10 +267,9 @@ struct ProviderTests {
         }
     }
 
-    @Suite("Hashable Tests")
     struct HashableTests {
-        @Test("Provider hashable implementation")
-        func providerHashable() {
+        @Test
+        func `Provider hashable implementation`() {
             let providers: Set<Provider> = [
                 .openai,
                 .anthropic,

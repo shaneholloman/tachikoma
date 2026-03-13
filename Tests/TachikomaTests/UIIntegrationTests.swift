@@ -2,10 +2,9 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("UI Integration Tests")
 struct UIIntegrationTests {
-    @Test("Convert UIMessage to ModelMessage")
-    func uIMessageToModelMessage() throws {
+    @Test
+    func `Convert UIMessage to ModelMessage`() throws {
         // Create a UIMessage with various content
         let uiMessage = try UIMessage(
             role: .user,
@@ -51,8 +50,8 @@ struct UIIntegrationTests {
         }
     }
 
-    @Test("Convert ModelMessage to UIMessage")
-    func modelMessageToUIMessage() throws {
+    @Test
+    func `Convert ModelMessage to UIMessage`() throws {
         // Create a ModelMessage with various content
         let modelMessage = try ModelMessage(
             role: .assistant,
@@ -80,8 +79,8 @@ struct UIIntegrationTests {
         #expect(uiMessages[0].toolCalls?.count == 1)
     }
 
-    @Test("StreamTextResult to UI Message Stream")
-    func streamToUIMessageStream() async throws {
+    @Test
+    func `StreamTextResult to UI Message Stream`() async {
         // Create a mock stream
         let textStream = AsyncThrowingStream<TextStreamDelta, Error> { continuation in
             Task {
@@ -137,8 +136,8 @@ struct UIIntegrationTests {
         }
     }
 
-    @Test("Collect text from stream")
-    func collectTextFromStream() async throws {
+    @Test
+    func `Collect text from stream`() async throws {
         // Create a mock stream
         let textStream = AsyncThrowingStream<TextStreamDelta, Error> { continuation in
             Task {
@@ -168,8 +167,8 @@ struct UIIntegrationTests {
         #expect(collectedText == "The quick brown fox")
     }
 
-    @Test("UIStreamResponse collect message")
-    func uIStreamResponseCollectMessage() async throws {
+    @Test
+    func `UIStreamResponse collect message`() async {
         let stream = AsyncStream<UIMessageChunk> { continuation in
             continuation.yield(.text("Hello"))
             continuation.yield(.text(" world"))
@@ -195,8 +194,8 @@ struct UIIntegrationTests {
         #expect(message.toolCalls?[0].name == "test")
     }
 
-    @Test("UIAttachment with data URL")
-    func uIAttachmentDataURL() throws {
+    @Test
+    func `UIAttachment with data URL`() {
         let imageData = Data("test image".utf8)
         let attachment = UIAttachment(
             type: .image,
@@ -211,8 +210,8 @@ struct UIIntegrationTests {
         #expect(attachment.name == "test.png")
     }
 
-    @Test("Bidirectional conversion preserves content")
-    func bidirectionalConversion() throws {
+    @Test
+    func `Bidirectional conversion preserves content`() {
         let original = UIMessage(
             role: .user,
             content: "Test message",

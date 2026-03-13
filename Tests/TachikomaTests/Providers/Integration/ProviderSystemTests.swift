@@ -2,12 +2,12 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Provider System Tests", .serialized)
+@Suite(.serialized)
 struct ProviderSystemTests {
     // MARK: - Provider Factory Tests
 
-    @Test("Provider Factory - OpenAI Provider Creation")
-    func providerFactoryOpenAI() async throws {
+    @Test
+    func `Provider Factory - OpenAI Provider Creation`() async throws {
         try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
             let model = Model.openai(.gpt4o)
             let provider = try ProviderFactory.createProvider(for: model, configuration: config)
@@ -19,8 +19,8 @@ struct ProviderSystemTests {
         }
     }
 
-    @Test("Provider Factory - Anthropic Provider Creation")
-    func providerFactoryAnthropic() async throws {
+    @Test
+    func `Provider Factory - Anthropic Provider Creation`() async throws {
         try await TestHelpers.withTestConfiguration(apiKeys: ["anthropic": "test-key"]) { config in
             let model = Model.anthropic(.opus4)
             let provider = try ProviderFactory.createProvider(for: model, configuration: config)
@@ -32,8 +32,8 @@ struct ProviderSystemTests {
         }
     }
 
-    @Test("Provider Factory - Grok Provider Creation")
-    func providerFactoryGrok() async throws {
+    @Test
+    func `Provider Factory - Grok Provider Creation`() async throws {
         try await TestHelpers.withTestConfiguration(apiKeys: ["grok": "test-key"]) { config in
             let model = Model.grok(.grok4FastReasoning)
             let provider = try ProviderFactory.createProvider(for: model, configuration: config)
@@ -44,8 +44,8 @@ struct ProviderSystemTests {
         }
     }
 
-    @Test("Provider Factory - Grok catalog coverage")
-    func providerFactoryGrokCatalog() async throws {
+    @Test
+    func `Provider Factory - Grok catalog coverage`() async throws {
         try await TestHelpers.withTestConfiguration(apiKeys: ["grok": "test-key"]) { config in
             for grokModel in Model.Grok.allCases {
                 let model = Model.grok(grokModel)
@@ -55,8 +55,8 @@ struct ProviderSystemTests {
         }
     }
 
-    @Test("Provider Factory - Ollama Provider Creation")
-    func providerFactoryOllama() async throws {
+    @Test
+    func `Provider Factory - Ollama Provider Creation`() throws {
         // No API key needed for Ollama
         let config = TachikomaConfiguration(loadFromEnvironment: false)
         let model = Model.ollama(.llama33)
@@ -67,8 +67,8 @@ struct ProviderSystemTests {
         #expect(provider.capabilities.supportsStreaming == true)
     }
 
-    @Test("Provider Factory - Missing API Key Error")
-    func providerFactoryMissingAPIKey() async throws {
+    @Test
+    func `Provider Factory - Missing API Key Error`() async {
         await TestHelpers.withEmptyTestConfiguration { config in
             // Test the actual provider constructors directly since ProviderFactory
             // uses MockProvider in test mode to avoid hitting real APIs
@@ -100,8 +100,8 @@ struct ProviderSystemTests {
 
     // MARK: - Model Capabilities Tests
 
-    @Test("Model Capabilities - Vision Support")
-    func modelCapabilitiesVision() {
+    @Test
+    func `Model Capabilities - Vision Support`() {
         #expect(Model.openai(.gpt4o).supportsVision == true)
         #expect(Model.openai(.gpt4oMini).supportsVision == true)
         #expect(Model.openai(.gpt41).supportsVision == false)
@@ -119,8 +119,8 @@ struct ProviderSystemTests {
         #expect(Model.ollama(.custom("qwen2.5vl:latest")).supportsVision == true)
     }
 
-    @Test("Model Capabilities - Tool Support")
-    func modelCapabilitiesTools() {
+    @Test
+    func `Model Capabilities - Tool Support`() {
         #expect(Model.openai(.gpt4o).supportsTools == true)
         #expect(Model.openai(.gpt41).supportsTools == true)
 
@@ -134,8 +134,8 @@ struct ProviderSystemTests {
         #expect(Model.ollama(.custom("qwen2.5vl:latest")).supportsTools == false)
     }
 
-    @Test("Model Capabilities - Streaming Support")
-    func modelCapabilitiesStreaming() {
+    @Test
+    func `Model Capabilities - Streaming Support`() {
         #expect(Model.openai(.gpt4o).supportsStreaming == true)
         #expect(Model.anthropic(.opus4).supportsStreaming == true)
         #expect(Model.grok(.grok4).supportsStreaming == true)
@@ -144,8 +144,8 @@ struct ProviderSystemTests {
 
     // MARK: - Generation Request Tests
 
-    @Test("Generation Request Basic Creation")
-    func generationRequestBasic() {
+    @Test
+    func `Generation Request Basic Creation`() {
         let request = ProviderRequest(
             messages: [ModelMessage(role: .user, content: [.text("Hello world")])],
             tools: nil,
@@ -160,8 +160,8 @@ struct ProviderSystemTests {
         #expect(request.outputFormat == nil)
     }
 
-    @Test("Generation Request With Images")
-    func generationRequestWithImages() {
+    @Test
+    func `Generation Request With Images`() {
         let imageContent = ModelMessage.ContentPart.ImageContent(data: "test-base64-data")
         let request = ProviderRequest(
             messages: [
@@ -186,8 +186,8 @@ struct ProviderSystemTests {
 
     // MARK: - Stream Token Tests
 
-    @Test("Stream Token Types")
-    func streamTokenTypes() {
+    @Test
+    func `Stream Token Types`() {
         let textToken = TextStreamDelta(type: .textDelta, content: "hello")
         #expect(textToken.content == "hello")
         #expect(textToken.type == .textDelta)
@@ -205,8 +205,8 @@ struct ProviderSystemTests {
 
     // MARK: - Usage Statistics Tests
 
-    @Test("Usage Statistics")
-    func usageStatistics() {
+    @Test
+    func `Usage Statistics`() {
         let usage = Usage(inputTokens: 100, outputTokens: 50)
 
         #expect(usage.inputTokens == 100)
@@ -216,8 +216,8 @@ struct ProviderSystemTests {
 
     // MARK: - Finish Reason Tests
 
-    @Test("Finish Reason Cases")
-    func finishReasonCases() {
+    @Test
+    func `Finish Reason Cases`() {
         #expect(FinishReason.stop.rawValue == "stop")
         #expect(FinishReason.length.rawValue == "length")
         #expect(FinishReason.toolCalls.rawValue == "tool_calls")

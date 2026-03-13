@@ -135,7 +135,7 @@ public final class RealtimeConversation: ObservableObject {
     private var audioBuffer = Data()
     private let audioChunkSize = 1024 * 4 // 4KB chunks
 
-    // Background tasks
+    /// Background tasks
     private var eventProcessingTask: Task<Void, Never>?
 
     // MARK: - Initialization

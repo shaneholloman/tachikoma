@@ -2,12 +2,11 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("AgentToolValue Protocol System Tests")
 struct AgentToolValueTests {
     // MARK: - Basic Type Conformance Tests
 
-    @Test("String conforms to AgentToolValue")
-    func stringConformance() throws {
+    @Test
+    func `String conforms to AgentToolValue`() throws {
         let value = "Hello, World!"
         let json = try value.toJSON()
         #expect(json as? String == "Hello, World!")
@@ -17,8 +16,8 @@ struct AgentToolValueTests {
         #expect(String.agentValueType == .string)
     }
 
-    @Test("Int conforms to AgentToolValue")
-    func intConformance() throws {
+    @Test
+    func `Int conforms to AgentToolValue`() throws {
         let value = 42
         let json = try value.toJSON()
         #expect(json as? Int == 42)
@@ -32,8 +31,8 @@ struct AgentToolValueTests {
         #expect(fromDouble == 42)
     }
 
-    @Test("Double conforms to AgentToolValue")
-    func doubleConformance() throws {
+    @Test
+    func `Double conforms to AgentToolValue`() throws {
         let value = 3.141_59
         let json = try value.toJSON()
         #expect(json as? Double == 3.141_59)
@@ -47,8 +46,8 @@ struct AgentToolValueTests {
         #expect(fromInt == 42.0)
     }
 
-    @Test("Bool conforms to AgentToolValue")
-    func boolConformance() throws {
+    @Test
+    func `Bool conforms to AgentToolValue`() throws {
         let value = true
         let json = try value.toJSON()
         #expect(json as? Bool == true)
@@ -58,8 +57,8 @@ struct AgentToolValueTests {
         #expect(Bool.agentValueType == .boolean)
     }
 
-    @Test("AgentNullValue works correctly")
-    func testNullValue() throws {
+    @Test
+    func `AgentNullValue works correctly`() throws {
         let value = AgentNullValue()
         let json = try value.toJSON()
         #expect(json is NSNull)
@@ -69,8 +68,8 @@ struct AgentToolValueTests {
         #expect(AgentNullValue.agentValueType == .null)
     }
 
-    @Test("Array conforms to AgentToolValue")
-    func arrayConformance() throws {
+    @Test
+    func `Array conforms to AgentToolValue`() throws {
         let value = ["apple", "banana", "cherry"]
         let json = try value.toJSON()
         let jsonArray = json as? [Any]
@@ -82,8 +81,8 @@ struct AgentToolValueTests {
         #expect([String].agentValueType == .array)
     }
 
-    @Test("Dictionary conforms to AgentToolValue")
-    func dictionaryConformance() throws {
+    @Test
+    func `Dictionary conforms to AgentToolValue`() throws {
         let value = ["name": "John", "city": "NYC"]
         let json = try value.toJSON()
         let jsonDict = json as? [String: Any]
@@ -97,8 +96,8 @@ struct AgentToolValueTests {
 
     // MARK: - AnyAgentToolValue Tests
 
-    @Test("AnyAgentToolValue wraps basic types")
-    func anyAgentToolValueBasicTypes() throws {
+    @Test
+    func `AnyAgentToolValue wraps basic types`() {
         // String
         let stringValue = AnyAgentToolValue(string: "test")
         #expect(stringValue.stringValue == "test")
@@ -126,8 +125,8 @@ struct AgentToolValueTests {
         #expect(nullValue.stringValue == nil)
     }
 
-    @Test("AnyAgentToolValue wraps complex types")
-    func anyAgentToolValueComplexTypes() throws {
+    @Test
+    func `AnyAgentToolValue wraps complex types`() {
         // Array
         let array = [
             AnyAgentToolValue(string: "a"),
@@ -152,8 +151,8 @@ struct AgentToolValueTests {
         #expect(objectValue.objectValue?["active"]?.boolValue == true)
     }
 
-    @Test("AnyAgentToolValue JSON conversion")
-    func anyAgentToolValueJSON() throws {
+    @Test
+    func `AnyAgentToolValue JSON conversion`() throws {
         // Test fromJSON with various types
         let stringValue = try AnyAgentToolValue.fromJSON("hello")
         #expect(stringValue.stringValue == "hello")
@@ -180,8 +179,8 @@ struct AgentToolValueTests {
         #expect(dictValue.objectValue?["num"]?.intValue == 123)
     }
 
-    @Test("AnyAgentToolValue Codable conformance")
-    func anyAgentToolValueCodable() throws {
+    @Test
+    func `AnyAgentToolValue Codable conformance`() throws {
         struct TestContainer: Codable {
             let value: AnyAgentToolValue
         }
@@ -223,8 +222,8 @@ struct AgentToolValueTests {
 
     // MARK: - AgentToolCall and AgentToolResult Tests
 
-    @Test("AgentToolCall uses AnyAgentToolValue")
-    func agentToolCall() throws {
+    @Test
+    func `AgentToolCall uses AnyAgentToolValue`() {
         let arguments = [
             "prompt": AnyAgentToolValue(string: "Hello"),
             "temperature": AnyAgentToolValue(double: 0.7),
@@ -244,8 +243,8 @@ struct AgentToolValueTests {
         #expect(toolCall.arguments["maxTokens"]?.intValue == 100)
     }
 
-    @Test("AgentToolCall legacy init with Any")
-    func agentToolCallLegacyInit() throws {
+    @Test
+    func `AgentToolCall legacy init with Any`() throws {
         let arguments: [String: Any] = [
             "text": "Hello",
             "count": 42,
@@ -263,8 +262,8 @@ struct AgentToolValueTests {
         #expect(toolCall.arguments["enabled"]?.boolValue == true)
     }
 
-    @Test("AgentToolResult uses AnyAgentToolValue")
-    func agentToolResult() {
+    @Test
+    func `AgentToolResult uses AnyAgentToolValue`() {
         let successResult = AgentToolResult.success(
             toolCallId: "call_123",
             result: AnyAgentToolValue(string: "Success!"),
@@ -286,8 +285,8 @@ struct AgentToolValueTests {
 
     // MARK: - AgentToolArguments Tests
 
-    @Test("AgentToolArguments accessor methods")
-    func agentToolArgumentsAccessors() throws {
+    @Test
+    func `AgentToolArguments accessor methods`() throws {
         let args = AgentToolArguments([
             "string": AnyAgentToolValue(string: "text"),
             "number": AnyAgentToolValue(double: 42.5),
@@ -323,8 +322,8 @@ struct AgentToolValueTests {
         #expect(args.optionalBooleanValue("missing") == nil)
     }
 
-    @Test("AgentToolArguments error handling")
-    func agentToolArgumentsErrors() throws {
+    @Test
+    func `AgentToolArguments error handling`() throws {
         let args = AgentToolArguments([
             "text": AnyAgentToolValue(string: "hello"),
         ])
@@ -342,15 +341,17 @@ struct AgentToolValueTests {
 
     // MARK: - Type-Safe Tool Protocol Tests
 
-    @Test("AgentToolProtocol implementation")
-    func agentToolProtocol() async throws {
+    @Test
+    func `AgentToolProtocol implementation`() async throws {
         // Define a concrete tool
         struct WeatherTool: AgentToolProtocol {
             struct Input: AgentToolValue, Equatable {
                 let location: String
                 let units: String
 
-                static var agentValueType: AgentValueType { .object }
+                static var agentValueType: AgentValueType {
+                    .object
+                }
 
                 func toJSON() throws -> Any {
                     ["location": self.location, "units": self.units]
@@ -372,7 +373,9 @@ struct AgentToolValueTests {
                 let temperature: Double
                 let conditions: String
 
-                static var agentValueType: AgentValueType { .object }
+                static var agentValueType: AgentValueType {
+                    .object
+                }
 
                 func toJSON() throws -> Any {
                     ["temperature": self.temperature, "conditions": self.conditions]
@@ -390,8 +393,14 @@ struct AgentToolValueTests {
                 }
             }
 
-            var name: String { "get_weather" }
-            var description: String { "Get current weather" }
+            var name: String {
+                "get_weather"
+            }
+
+            var description: String {
+                "Get current weather"
+            }
+
             var schema: AgentToolSchema {
                 AgentToolSchema(
                     properties: [
@@ -434,8 +443,8 @@ struct AgentToolValueTests {
 
     // MARK: - Edge Cases and Error Handling
 
-    @Test("Handle integer/double ambiguity")
-    func integerDoubleAmbiguity() throws {
+    @Test
+    func `Handle integer/double ambiguity`() throws {
         // Test that whole numbers can be treated as integers
         let wholeDouble = try AnyAgentToolValue.fromJSON(42.0)
         #expect(wholeDouble.intValue == 42)
@@ -452,8 +461,8 @@ struct AgentToolValueTests {
         #expect(largeInt.intValue == safeInteger)
     }
 
-    @Test("Handle nested structures")
-    func nestedStructures() throws {
+    @Test
+    func `Handle nested structures`() throws {
         let nested = [
             "level1": [
                 "level2": [
@@ -469,8 +478,8 @@ struct AgentToolValueTests {
         #expect(level3?["value"]?.stringValue == "deep")
     }
 
-    @Test("Handle mixed-type arrays")
-    func mixedTypeArrays() throws {
+    @Test
+    func `Handle mixed-type arrays`() throws {
         let mixed: [Any] = ["string", 42, true, NSNull(), ["nested": "object"]]
         let value = try AnyAgentToolValue.fromJSON(mixed)
 

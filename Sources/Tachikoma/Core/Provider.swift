@@ -172,7 +172,7 @@ extension Provider {
             let key = Self.processEnvironmentValue(for: self.environmentVariable),
             !key.isEmpty
         {
-                return key
+            return key
         }
 
         // Check alternative environment variables

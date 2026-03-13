@@ -267,7 +267,7 @@ public struct UsageOperation: Sendable, Codable {
         self.type = type
     }
 
-    // For backward compatibility, provide a computed property to reconstruct model info
+    /// For backward compatibility, provide a computed property to reconstruct model info
     public var modelDescription: String {
         "\(self.providerName)/\(self.modelId)"
     }
@@ -393,10 +393,21 @@ public struct UsageReport: Sendable {
     public let endDate: Date
     public let sessions: [UsageSession]
 
-    public var totalSessions: Int { self.sessions.count }
-    public var totalOperations: Int { self.sessions.reduce(0) { $0 + $1.operations.count } }
-    public var totalTokens: Int { self.sessions.reduce(0) { $0 + $1.totalTokens } }
-    public var totalCost: Double { self.sessions.reduce(0) { $0 + $1.totalCost } }
+    public var totalSessions: Int {
+        self.sessions.count
+    }
+
+    public var totalOperations: Int {
+        self.sessions.reduce(0) { $0 + $1.operations.count }
+    }
+
+    public var totalTokens: Int {
+        self.sessions.reduce(0) { $0 + $1.totalTokens }
+    }
+
+    public var totalCost: Double {
+        self.sessions.reduce(0) { $0 + $1.totalCost }
+    }
 
     public let providerBreakdown: [String: ProviderUsage]
     public let modelBreakdown: [String: ModelUsage]

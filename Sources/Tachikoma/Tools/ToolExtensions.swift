@@ -97,9 +97,17 @@ public struct AnyAgentTool: Sendable {
     private let _schema: AgentToolSchema
     private let _execute: @Sendable (AnyAgentToolValue, ToolExecutionContext) async throws -> AnyAgentToolValue
 
-    public var name: String { self._name }
-    public var description: String { self._description }
-    public var schema: AgentToolSchema { self._schema }
+    public var name: String {
+        self._name
+    }
+
+    public var description: String {
+        self._description
+    }
+
+    public var schema: AgentToolSchema {
+        self._schema
+    }
 
     public init<T: AgentToolProtocol>(_ tool: T) {
         self._name = tool.name

@@ -151,7 +151,7 @@ public struct RecoverySuggestion: Sendable {
         self.helpURL = helpURL
     }
 
-    // Common recovery suggestions
+    /// Common recovery suggestions
     public static let checkAPIKey = RecoverySuggestion(
         suggestion: "Check that your API key is valid and has the necessary permissions",
         actions: [.validateAPIKey, .regenerateAPIKey],

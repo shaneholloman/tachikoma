@@ -111,7 +111,7 @@ public struct AgentToolWrapper: RealtimeExecutableTool {
         }
     }
 
-    // Helper function to convert Any to AnyAgentToolValue
+    /// Helper function to convert Any to AnyAgentToolValue
     private func convertAnyToToolArgument(_ value: Any) -> AnyAgentToolValue {
         do {
             return try AnyAgentToolValue.fromJSON(value)
@@ -121,7 +121,7 @@ public struct AgentToolWrapper: RealtimeExecutableTool {
         }
     }
 
-    // Helper function to convert AnyAgentToolValue to Any
+    /// Helper function to convert AnyAgentToolValue to Any
     private func convertToolArgumentToAny(_ arg: AnyAgentToolValue) -> Any {
         do {
             return try arg.toJSON()

@@ -16,11 +16,22 @@ public actor LMStudioProvider: ModelProvider {
     private let configuredModelId: String
     private let configuredCapabilities: ModelCapabilities
 
-    // Expose as optional for protocol conformance, but it's never actually nil
-    public nonisolated var baseURL: String? { self.actualBaseURL }
-    public nonisolated var apiKey: String? { self.configuredApiKey }
-    public nonisolated var modelId: String { self.configuredModelId }
-    public nonisolated var capabilities: ModelCapabilities { self.configuredCapabilities }
+    /// Expose as optional for protocol conformance, but it's never actually nil
+    public nonisolated var baseURL: String? {
+        self.actualBaseURL
+    }
+
+    public nonisolated var apiKey: String? {
+        self.configuredApiKey
+    }
+
+    public nonisolated var modelId: String {
+        self.configuredModelId
+    }
+
+    public nonisolated var capabilities: ModelCapabilities {
+        self.configuredCapabilities
+    }
 
     private let session: URLSession
     private let encoder = JSONEncoder()

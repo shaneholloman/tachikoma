@@ -6,14 +6,14 @@ import Testing
 @testable import Tachikoma
 
 #if os(Linux)
-@Suite("OpenAI Responses API Tests", .disabled("URLProtocol mocking unavailable on Linux"))
+@Suite(.disabled("URLProtocol mocking unavailable on Linux"))
 struct OpenAIResponsesProviderTests {}
 #else
 
-@Suite("OpenAI Responses API Tests", .serialized)
+@Suite(.serialized)
 struct OpenAIResponsesProviderTests {
-    @Test("GPT-5+ uses Responses API provider")
-    func gPT5UsesResponsesProvider() throws {
+    @Test
+    func `GPT-5+ uses Responses API provider`() throws {
         // Test that GPT-5 models use the OpenAIResponsesProvider
         let config = self.openAIConfig()
 
@@ -38,8 +38,8 @@ struct OpenAIResponsesProviderTests {
         }
     }
 
-    @Test("GPT-5.1 text.verbosity parameter is set correctly")
-    func gPT51TextVerbosityParameter() throws {
+    @Test
+    func `GPT-5.1 text.verbosity parameter is set correctly`() throws {
         // Test that the text.verbosity parameter is properly configured for GPT-5.1
         let config = self.openAIConfig()
 
@@ -69,8 +69,8 @@ struct OpenAIResponsesProviderTests {
         #expect(provider.capabilities.supportsVision == true)
     }
 
-    @Test("Reasoning models use Responses API")
-    func reasoningModelsUseResponsesAPI() throws {
+    @Test
+    func `Reasoning models use Responses API`() throws {
         // Test that reasoning-oriented models also use the OpenAIResponsesProvider
         let config = self.openAIConfig()
 
@@ -96,8 +96,8 @@ struct OpenAIResponsesProviderTests {
         }
     }
 
-    @Test("Legacy models use standard OpenAI provider")
-    func legacyModelsUseStandardProvider() throws {
+    @Test
+    func `Legacy models use standard OpenAI provider`() throws {
         // Test that non-GPT-5/reasoning models use the standard OpenAIProvider
         let config = self.openAIConfig()
 
@@ -116,8 +116,8 @@ struct OpenAIResponsesProviderTests {
         }
     }
 
-    @Test("TextConfig encodes verbosity correctly")
-    func textConfigEncoding() throws {
+    @Test
+    func `TextConfig encodes verbosity correctly`() throws {
         // Test that TextConfig properly encodes the verbosity parameter
         let textConfig = TextConfig(verbosity: .high)
 
@@ -128,8 +128,8 @@ struct OpenAIResponsesProviderTests {
         #expect(json?["verbosity"] as? String == "high")
     }
 
-    @Test("OpenAIResponsesRequest includes text config for GPT-5")
-    func responsesRequestTextConfig() throws {
+    @Test
+    func `OpenAIResponsesRequest includes text config for GPT-5`() throws {
         // Test that the request properly includes text config
         let textConfig = TextConfig(verbosity: .medium)
         let request = OpenAIResponsesRequest(
@@ -165,8 +165,8 @@ struct OpenAIResponsesProviderTests {
         }
     }
 
-    @Test("GPT-5 tool call outputs are parsed")
-    func gpt5ToolCallParsing() throws {
+    @Test
+    func `GPT-5 tool call outputs are parsed`() throws {
         let toolCall = OpenAIResponsesResponse.ResponsesToolCall(
             id: "call_1",
             type: "function",
@@ -208,8 +208,8 @@ struct OpenAIResponsesProviderTests {
         #expect(providerResponse.finishReason == .toolCalls)
     }
 
-    @Test("Responses provider hits /v1/responses and encodes body")
-    func openAIResponsesRequestEncoding() async throws {
+    @Test
+    func `Responses provider hits /v1/responses and encodes body`() async throws {
         let config = TachikomaConfiguration(loadFromEnvironment: false)
         config.setAPIKey("live-openai", for: .openai)
 
@@ -239,8 +239,8 @@ struct OpenAIResponsesProviderTests {
         }
     }
 
-    @Test("Responses payload uses data URL string for images")
-    func openAIResponsesImageDataURL() async throws {
+    @Test
+    func `Responses payload uses data URL string for images`() async throws {
         let config = self.openAIConfig()
 
         try await self.withMockedSession { request in
@@ -271,8 +271,8 @@ struct OpenAIResponsesProviderTests {
         }
     }
 
-    @Test("Responses image_url accepts legacy object and normalizes to string")
-    func openAIResponsesLegacyImageObject() async throws {
+    @Test
+    func `Responses image_url accepts legacy object and normalizes to string`() throws {
         // Craft a legacy-style payload (image_url object) and ensure decoder tolerates it.
         let legacyJSON: [String: Any] = [
             "type": "input_image",
@@ -290,8 +290,8 @@ struct OpenAIResponsesProviderTests {
         #expect(encodedJSON?["image_url"] as? String == "data:image/png;base64,LEGACY")
     }
 
-    @Test("Responses provider emits tool schemas with parameters")
-    func openAIResponsesIncludesToolSchemas() async throws {
+    @Test
+    func `Responses provider emits tool schemas with parameters`() async throws {
         let config = self.openAIConfig()
         let tool = AgentTool(
             name: "app",
@@ -349,8 +349,8 @@ struct OpenAIResponsesProviderTests {
         }
     }
 
-    @Test("Function call history encodes into Responses input")
-    func openAIResponsesEncodesFunctionCalls() async throws {
+    @Test
+    func `Function call history encodes into Responses input`() async throws {
         let config = TachikomaConfiguration(loadFromEnvironment: false)
         config.setAPIKey("live-openai", for: .openai)
 
@@ -399,8 +399,8 @@ struct OpenAIResponsesProviderTests {
         }
     }
 
-    @Test("Responses tool output is emitted even when result is empty")
-    func openAIResponsesEmitsToolOutputForEmptyResult() async throws {
+    @Test
+    func `Responses tool output is emitted even when result is empty`() async throws {
         let config = TachikomaConfiguration(loadFromEnvironment: false)
         config.setAPIKey("live-openai", for: .openai)
 
@@ -441,8 +441,8 @@ struct OpenAIResponsesProviderTests {
         }
     }
 
-    @Test("Responses provider streams accumulated deltas")
-    func openAIResponsesStreaming() async throws {
+    @Test
+    func `Responses provider streams accumulated deltas`() async throws {
         let config = TachikomaConfiguration(loadFromEnvironment: false)
         config.setAPIKey("live-openai", for: .openai)
 
@@ -638,7 +638,7 @@ private final class ResponsesTestURLProtocol: URLProtocol {
     override func stopLoading() {}
 }
 
-// Helper to skip tests when API keys aren't available
+/// Helper to skip tests when API keys aren't available
 struct TestSkipped: Error {
     let message: String
 

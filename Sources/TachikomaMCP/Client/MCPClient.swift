@@ -2,7 +2,7 @@ import Foundation
 import Logging
 import MCP
 
-// Shared JSON-RPC types for HTTP transport
+/// Shared JSON-RPC types for HTTP transport
 struct HTTPJSONRPCRequest<P: Encodable>: Encodable {
     let jsonrpc = "2.0"
     let method: String
@@ -56,7 +56,7 @@ public struct MCPServerConfig: Sendable, Codable {
     }
 }
 
-// Actor to manage mutable state for Sendable conformance
+/// Actor to manage mutable state for Sendable conformance
 private actor MCPClientState {
     var transport: (any MCPTransport)?
     var tools: [Tool] = []
@@ -258,7 +258,7 @@ struct InitializeParams: Codable {
     }
 }
 
-// Some servers use snake_case for protocol_version in initialize
+/// Some servers use snake_case for protocol_version in initialize
 struct InitializeParamsSnake: Codable {
     let protocolVersion: String
     let clientInfo: ClientInfo

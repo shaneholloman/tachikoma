@@ -2,12 +2,10 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Provider Options Tests")
-struct ProviderOptionsTests {
-    @Suite("Provider Options Creation")
+enum ProviderOptionsTests {
     struct CreationTests {
-        @Test("Create OpenAI options")
-        func openAIOptions() {
+        @Test
+        func `Create OpenAI options`() {
             let options = OpenAIOptions(
                 parallelToolCalls: false,
                 responseFormat: .json,
@@ -35,8 +33,8 @@ struct ProviderOptionsTests {
             #expect(options.topLogprobs == 5)
         }
 
-        @Test("Create Anthropic options")
-        func anthropicOptions() {
+        @Test
+        func `Create Anthropic options`() {
             let options = AnthropicOptions(
                 thinking: .enabled(budgetTokens: 5000),
                 cacheControl: .persistent,
@@ -57,8 +55,8 @@ struct ProviderOptionsTests {
             #expect(options.metadata?["key"] == "value")
         }
 
-        @Test("Create Google options")
-        func googleOptions() {
+        @Test
+        func `Create Google options`() {
             let options = GoogleOptions(
                 thinkingConfig: .init(budgetTokens: 3000, includeThoughts: true),
                 safetySettings: .moderate,
@@ -73,8 +71,8 @@ struct ProviderOptionsTests {
             #expect(options.stopSequences == ["###"])
         }
 
-        @Test("Create Mistral options")
-        func mistralOptions() {
+        @Test
+        func `Create Mistral options`() {
             let options = MistralOptions(
                 safeMode: true,
                 randomSeed: 12345,
@@ -84,14 +82,14 @@ struct ProviderOptionsTests {
             #expect(options.randomSeed == 12345)
         }
 
-        @Test("Create Groq options")
-        func groqOptions() {
+        @Test
+        func `Create Groq options`() {
             let options = GroqOptions(speed: .ultraFast)
             #expect(options.speed == .ultraFast)
         }
 
-        @Test("Create Grok options")
-        func grokOptions() {
+        @Test
+        func `Create Grok options`() {
             let options = GrokOptions(
                 funMode: true,
                 includeCurrentEvents: true,
@@ -102,10 +100,9 @@ struct ProviderOptionsTests {
         }
     }
 
-    @Suite("Provider Options Container")
     struct ContainerTests {
-        @Test("Create provider options container")
-        func providerOptionsContainer() {
+        @Test
+        func `Create provider options container`() {
             let options = ProviderOptions(
                 openai: .init(verbosity: .high),
                 anthropic: .init(thinking: .disabled),
@@ -123,8 +120,8 @@ struct ProviderOptionsTests {
             #expect(options.grok?.funMode == false)
         }
 
-        @Test("Empty provider options")
-        func emptyProviderOptions() {
+        @Test
+        func `Empty provider options`() {
             let options = ProviderOptions()
 
             #expect(options.openai == nil)
@@ -136,10 +133,9 @@ struct ProviderOptionsTests {
         }
     }
 
-    @Suite("GenerationSettings Integration")
     struct SettingsIntegrationTests {
-        @Test("Settings with provider options")
-        func settingsWithProviderOptions() {
+        @Test
+        func `Settings with provider options`() {
             let settings = GenerationSettings(
                 maxTokens: 1000,
                 temperature: 0.7,
@@ -157,8 +153,8 @@ struct ProviderOptionsTests {
             #expect(settings.providerOptions.openai?.parallelToolCalls == true)
         }
 
-        @Test("Settings with empty provider options")
-        func settingsWithEmptyProviderOptions() {
+        @Test
+        func `Settings with empty provider options`() {
             let settings = GenerationSettings(
                 maxTokens: 500,
                 temperature: 0.5,
@@ -170,10 +166,9 @@ struct ProviderOptionsTests {
         }
     }
 
-    @Suite("Codable Conformance")
     struct CodableTests {
-        @Test("Encode and decode OpenAI options")
-        func openAIOptionsCodable() throws {
+        @Test
+        func `Encode and decode OpenAI options`() throws {
             let original = OpenAIOptions(
                 parallelToolCalls: true,
                 seed: 42,
@@ -193,8 +188,8 @@ struct ProviderOptionsTests {
             #expect(decoded.seed == original.seed)
         }
 
-        @Test("Encode and decode Anthropic thinking mode")
-        func anthropicThinkingCodable() throws {
+        @Test
+        func `Encode and decode Anthropic thinking mode`() throws {
             let original = AnthropicOptions(
                 thinking: .enabled(budgetTokens: 3000),
             )
@@ -212,8 +207,8 @@ struct ProviderOptionsTests {
             }
         }
 
-        @Test("Encode and decode provider options container")
-        func providerOptionsCodable() throws {
+        @Test
+        func `Encode and decode provider options container`() throws {
             let original = ProviderOptions(
                 openai: .init(verbosity: .low),
                 anthropic: .init(cacheControl: .ephemeral),
@@ -231,8 +226,8 @@ struct ProviderOptionsTests {
             #expect(decoded.google?.safetySettings == .relaxed)
         }
 
-        @Test("Encode and decode GenerationSettings with provider options")
-        func generationSettingsCodable() throws {
+        @Test
+        func `Encode and decode GenerationSettings with provider options`() throws {
             let original = GenerationSettings(
                 maxTokens: 2000,
                 temperature: 0.8,
@@ -257,45 +252,44 @@ struct ProviderOptionsTests {
         }
     }
 
-    @Suite("Enum Value Tests")
     struct EnumValueTests {
-        @Test("OpenAI verbosity values")
-        func openAIVerbosityValues() {
+        @Test
+        func `OpenAI verbosity values`() {
             #expect(OpenAIOptions.Verbosity.low.rawValue == "low")
             #expect(OpenAIOptions.Verbosity.medium.rawValue == "medium")
             #expect(OpenAIOptions.Verbosity.high.rawValue == "high")
         }
 
-        @Test("OpenAI reasoning effort values")
-        func openAIReasoningEffortValues() {
+        @Test
+        func `OpenAI reasoning effort values`() {
             #expect(OpenAIOptions.ReasoningEffort.minimal.rawValue == "minimal")
             #expect(OpenAIOptions.ReasoningEffort.low.rawValue == "low")
             #expect(OpenAIOptions.ReasoningEffort.medium.rawValue == "medium")
             #expect(OpenAIOptions.ReasoningEffort.high.rawValue == "high")
         }
 
-        @Test("OpenAI response format values")
-        func openAIResponseFormatValues() {
+        @Test
+        func `OpenAI response format values`() {
             #expect(OpenAIOptions.ResponseFormat.text.rawValue == "text")
             #expect(OpenAIOptions.ResponseFormat.json.rawValue == "json_object")
             #expect(OpenAIOptions.ResponseFormat.jsonSchema.rawValue == "json_schema")
         }
 
-        @Test("Anthropic cache control values")
-        func anthropicCacheControlValues() {
+        @Test
+        func `Anthropic cache control values`() {
             #expect(AnthropicOptions.CacheControl.ephemeral.rawValue == "ephemeral")
             #expect(AnthropicOptions.CacheControl.persistent.rawValue == "persistent")
         }
 
-        @Test("Google safety settings values")
-        func googleSafetySettingsValues() {
+        @Test
+        func `Google safety settings values`() {
             #expect(GoogleOptions.SafetySettings.strict.rawValue == "strict")
             #expect(GoogleOptions.SafetySettings.moderate.rawValue == "moderate")
             #expect(GoogleOptions.SafetySettings.relaxed.rawValue == "relaxed")
         }
 
-        @Test("Groq speed level values")
-        func groqSpeedLevelValues() {
+        @Test
+        func `Groq speed level values`() {
             #expect(GroqOptions.SpeedLevel.normal.rawValue == "normal")
             #expect(GroqOptions.SpeedLevel.fast.rawValue == "fast")
             #expect(GroqOptions.SpeedLevel.ultraFast.rawValue == "ultra_fast")

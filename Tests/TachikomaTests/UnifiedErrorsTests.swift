@@ -2,10 +2,9 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Unified Errors Tests")
 struct UnifiedErrorsTests {
-    @Test("Create unified error with recovery suggestion")
-    func unifiedErrorWithRecovery() throws {
+    @Test
+    func `Create unified error with recovery suggestion`() {
         let error = TachikomaUnifiedError(
             code: .authenticationFailed,
             message: "Invalid API key provided",
@@ -22,8 +21,8 @@ struct UnifiedErrorsTests {
         #expect(description?.contains("Invalid API key provided") == true)
     }
 
-    @Test("Convert legacy TachikomaError to unified error")
-    func legacyErrorConversion() throws {
+    @Test
+    func `Convert legacy TachikomaError to unified error`() {
         let legacyError = TachikomaError.modelNotFound("gpt-5")
         let unifiedError = legacyError.toUnifiedError()
 
@@ -32,8 +31,8 @@ struct UnifiedErrorsTests {
         #expect(unifiedError.recovery?.actions.contains(.selectDifferentModel) == true)
     }
 
-    @Test("Convert ModelError to unified error")
-    func modelErrorConversion() throws {
+    @Test
+    func `Convert ModelError to unified error`() {
         let modelError = ModelError.rateLimited(retryAfter: 60)
         let unifiedError = modelError.toUnifiedError()
 
@@ -45,8 +44,8 @@ struct UnifiedErrorsTests {
         } == true)
     }
 
-    @Test("Convert AgentToolError to unified error")
-    func agentToolErrorConversion() throws {
+    @Test
+    func `Convert AgentToolError to unified error`() {
         let toolError = AgentToolError.missingParameter("expression")
         let unifiedError = toolError.toUnifiedError()
 
@@ -54,8 +53,8 @@ struct UnifiedErrorsTests {
         #expect(unifiedError.message.contains("expression") == true)
     }
 
-    @Test("Error details with metadata")
-    func errorDetails() throws {
+    @Test
+    func `Error details with metadata`() {
         let details = ErrorDetails(
             reason: "Token limit exceeded",
             statusCode: 429,
@@ -73,8 +72,8 @@ struct UnifiedErrorsTests {
         #expect(details.metadata["tokens_used"] == "5000")
     }
 
-    @Test("Recovery suggestion with actions")
-    func testRecoverySuggestion() throws {
+    @Test
+    func `Recovery suggestion with actions`() {
         let recovery = RecoverySuggestion(
             suggestion: "Reduce request size and try again",
             actions: [
@@ -88,8 +87,8 @@ struct UnifiedErrorsTests {
         #expect(recovery.helpURL == "https://docs.example.com/errors")
     }
 
-    @Test("Error code categories")
-    func errorCodeCategories() throws {
+    @Test
+    func `Error code categories`() {
         #expect(ErrorCode.invalidRequest.category == .validation)
         #expect(ErrorCode.authenticationFailed.category == .authentication)
         #expect(ErrorCode.rateLimited.category == .rateLimit)
@@ -99,10 +98,12 @@ struct UnifiedErrorsTests {
         #expect(ErrorCode.parsingError.category == .parsing)
     }
 
-    @Test("Generic error conversion")
-    func genericErrorConversion() throws {
+    @Test
+    func `Generic error conversion`() {
         struct CustomError: Error, LocalizedError {
-            var errorDescription: String? { "Custom error occurred" }
+            var errorDescription: String? {
+                "Custom error occurred"
+            }
         }
 
         let customError = CustomError()
@@ -113,8 +114,8 @@ struct UnifiedErrorsTests {
         #expect(unifiedError.underlyingError != nil)
     }
 
-    @Test("API call error conversion")
-    func aPICallErrorConversion() throws {
+    @Test
+    func `API call error conversion`() {
         let apiError = APICallError(
             statusCode: 500,
             responseBody: "Internal server error",
@@ -135,8 +136,8 @@ struct UnifiedErrorsTests {
         #expect(unifiedError.details?.requestId == "req-456")
     }
 
-    @Test("Retry error conversion")
-    func retryErrorConversion() throws {
+    @Test
+    func `Retry error conversion`() {
         let retryError = RetryError(
             reason: "All attempts failed",
             lastError: TachikomaError.networkError(NSError(domain: "test", code: -1)),
@@ -152,8 +153,8 @@ struct UnifiedErrorsTests {
         #expect(unifiedError.underlyingError != nil)
     }
 
-    @Test("Error with nil recovery")
-    func errorWithoutRecovery() throws {
+    @Test
+    func `Error with nil recovery`() {
         let error = TachikomaUnifiedError(
             code: .invalidParameter,
             message: "Invalid parameter value",

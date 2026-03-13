@@ -6,14 +6,14 @@ import Testing
 @testable import Tachikoma
 
 #if os(Linux)
-@Suite("OpenAICompatibleHelper Tests", .disabled("URLProtocol mocking unavailable on Linux"))
+@Suite(.disabled("URLProtocol mocking unavailable on Linux"))
 struct OpenAICompatibleHelperTests {}
 #else
 
-@Suite("OpenAICompatibleHelper Tests", .serialized)
+@Suite(.serialized)
 struct OpenAICompatibleHelperTests {
-    @Test("generateText encodes stop sequences, headers, and tool definitions")
-    func generateTextEncodesPayload() async throws {
+    @Test
+    func `generateText encodes stop sequences, headers, and tool definitions`() async throws {
         let tool = AgentTool(
             name: "lookup",
             description: "Lookup a value",
@@ -75,8 +75,8 @@ struct OpenAICompatibleHelperTests {
         #expect(required == ["query"])
     }
 
-    @Test("streamText emits deltas as SSE chunks arrive")
-    func streamTextEmitsDeltas() async throws {
+    @Test
+    func `streamText emits deltas as SSE chunks arrive`() async throws {
         let request = ProviderRequest(
             messages: [ModelMessage(role: .user, content: [.text("stream")])],
         )
@@ -121,8 +121,8 @@ struct OpenAICompatibleHelperTests {
         #expect(deltas == "Hello world")
     }
 
-    @Test("non-200 responses surface TachikomaError.apiError")
-    func apiErrorsSurface() async throws {
+    @Test
+    func `non-200 responses surface TachikomaError.apiError`() async {
         await self.withMockedSession { urlRequest in
             let errorJSON = """
             {"error":{"message":"bad request","type":"invalid_request_error"}}

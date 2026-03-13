@@ -39,7 +39,9 @@ public enum RealtimeClientEvent: RealtimeEventProtocol {
         }
     }
 
-    public var eventId: String? { UUID().uuidString }
+    public var eventId: String? {
+        UUID().uuidString
+    }
 }
 
 // MARK: - Server Events (Events sent from server to client)
@@ -111,7 +113,9 @@ public enum RealtimeServerEvent: RealtimeEventProtocol {
         }
     }
 
-    public var eventId: String? { nil }
+    public var eventId: String? {
+        nil
+    }
 }
 
 // MARK: - Session Events

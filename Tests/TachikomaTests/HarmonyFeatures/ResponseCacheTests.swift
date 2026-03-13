@@ -1,7 +1,7 @@
 import Testing
 @testable import Tachikoma
 
-// Helper class for thread-safe mutable value in closures
+/// Helper class for thread-safe mutable value in closures
 final class Box<T>: @unchecked Sendable {
     var value: T
     init(value: T) {
@@ -9,10 +9,9 @@ final class Box<T>: @unchecked Sendable {
     }
 }
 
-@Suite("Response Caching")
 struct ResponseCacheTests {
-    @Test("ResponseCache initialization")
-    func responseCacheInitialization() async {
+    @Test
+    func `ResponseCache initialization`() async {
         let config = CacheConfiguration(maxEntries: 50, defaultTTL: 1800)
         let cache = ResponseCache(configuration: config)
         // Note: statistics() is not a public method, commenting out for now
@@ -32,8 +31,8 @@ struct ResponseCacheTests {
         #expect(cached == nil)
     }
 
-    @Test("ResponseCache store and retrieve")
-    func responseCacheStoreRetrieve() async {
+    @Test
+    func `ResponseCache store and retrieve`() async {
         let cache = ResponseCache()
 
         let request = ProviderRequest(
@@ -60,8 +59,8 @@ struct ResponseCacheTests {
         #expect(cached?.finishReason == .stop)
     }
 
-    @Test("ResponseCache cache miss")
-    func responseCacheMiss() async {
+    @Test
+    func `ResponseCache cache miss`() async {
         let cache = ResponseCache()
 
         let request = ProviderRequest(
@@ -75,8 +74,8 @@ struct ResponseCacheTests {
         #expect(cached == nil)
     }
 
-    @Test("ResponseCache TTL expiration")
-    func responseCacheTTLExpiration() async throws {
+    @Test
+    func `ResponseCache TTL expiration`() async throws {
         let config = CacheConfiguration(defaultTTL: 0.1) // 100ms TTL
         let cache = ResponseCache(configuration: config)
 
@@ -102,8 +101,8 @@ struct ResponseCacheTests {
         #expect(cached2 == nil)
     }
 
-    @Test("ResponseCache LRU eviction")
-    func responseCacheLRUEviction() async {
+    @Test
+    func `ResponseCache LRU eviction`() async {
         let config = CacheConfiguration(maxEntries: 2) // Small cache
         let cache = ResponseCache(configuration: config)
 
@@ -151,8 +150,8 @@ struct ResponseCacheTests {
         #expect(cached3?.text == "Response 3")
     }
 
-    @Test("ResponseCache clear")
-    func responseCacheClear() async {
+    @Test
+    func `ResponseCache clear`() async {
         let cache = ResponseCache()
 
         // Store multiple entries
@@ -180,8 +179,8 @@ struct ResponseCacheTests {
         // #expect(stats.validEntries == 0)
     }
 
-    @Test("ResponseCache statistics")
-    func responseCacheStatistics() async {
+    @Test
+    func `ResponseCache statistics`() async {
         let config = CacheConfiguration(maxEntries: 100, defaultTTL: 3600)
         let cache = ResponseCache(configuration: config)
 
@@ -210,8 +209,8 @@ struct ResponseCacheTests {
         // #expect(stats.newestEntry != nil)
     }
 
-    @Test("CacheKey generation deterministic")
-    func cacheKeyDeterministic() {
+    @Test
+    func `CacheKey generation deterministic`() {
         let messages = [
             ModelMessage.user("Hello"),
             ModelMessage.assistant("Hi there"),
@@ -237,8 +236,8 @@ struct ResponseCacheTests {
         #expect(key1.model == key2.model)
     }
 
-    @Test("CacheKey differs for different requests")
-    func cacheKeyDifferent() {
+    @Test
+    func `CacheKey differs for different requests`() {
         let request1 = ProviderRequest(
             messages: [ModelMessage.user("Hello")],
             tools: nil,
@@ -268,8 +267,8 @@ struct ResponseCacheTests {
         #expect(key1.hash != key3.hash)
     }
 
-    @Test("CacheKey includes tools in hash")
-    func cacheKeyIncludesTools() {
+    @Test
+    func `CacheKey includes tools in hash`() {
         let tool1 = AgentTool(
             name: "tool1",
             description: "First tool",
@@ -312,8 +311,8 @@ struct ResponseCacheTests {
         #expect(key2.hash != key3.hash)
     }
 
-    @Test("CachedProvider wraps provider correctly")
-    func cachedProviderWrapper() async throws {
+    @Test
+    func `CachedProvider wraps provider correctly`() async {
         let cache = ResponseCache()
 
         // Create a mock provider
@@ -330,8 +329,8 @@ struct ResponseCacheTests {
         #expect(cachedProvider.apiKey == mockProvider.apiKey)
     }
 
-    @Test("CachedProvider caches generateText")
-    func cachedProviderGenerateText() async throws {
+    @Test
+    func `CachedProvider caches generateText`() async throws {
         let cache = ResponseCache()
 
         // Use a simple counter that can be modified in the closure
@@ -363,8 +362,8 @@ struct ResponseCacheTests {
         #expect(callCount.value == 1) // Provider not called again
     }
 
-    @Test("CachedProvider doesn't cache streaming")
-    func cachedProviderStreamText() async throws {
+    @Test
+    func `CachedProvider doesn't cache streaming`() async throws {
         let cache = ResponseCache()
 
         let callCount = Box(value: 0)
@@ -401,10 +400,21 @@ private struct ResponseCacheMockProvider: ModelProvider {
     var onGenerateText: (@Sendable (ProviderRequest) -> Void)?
     var onStreamText: (@Sendable (ProviderRequest) -> Void)?
 
-    var modelId: String { "mock-model" }
-    var baseURL: String? { nil }
-    var apiKey: String? { nil }
-    var capabilities: ModelCapabilities { ModelCapabilities() }
+    var modelId: String {
+        "mock-model"
+    }
+
+    var baseURL: String? {
+        nil
+    }
+
+    var apiKey: String? {
+        nil
+    }
+
+    var capabilities: ModelCapabilities {
+        ModelCapabilities()
+    }
 
     init(
         model: LanguageModel,

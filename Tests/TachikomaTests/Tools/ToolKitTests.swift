@@ -2,12 +2,11 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Tool System Tests")
 struct ToolSystemTests {
     // MARK: - AgentTool Tests
 
-    @Test("AgentTool Creation")
-    func agentToolCreation() throws {
+    @Test
+    func `AgentTool Creation`() {
         // Create a simple tool using createTool helper
         let addTool = createTool(
             name: "add",
@@ -37,8 +36,8 @@ struct ToolSystemTests {
         #expect(addTool.parameters.required == ["a", "b"])
     }
 
-    @Test("Tool Execution")
-    func toolExecution() async throws {
+    @Test
+    func `Tool Execution`() async throws {
         // Create calculator tool
         let calculatorTool = createTool(
             name: "calculate",
@@ -72,8 +71,8 @@ struct ToolSystemTests {
         }
     }
 
-    @Test("Built-in Tools")
-    func builtInTools() async throws {
+    @Test
+    func `Built-in Tools`() async throws {
         // Test weatherTool
         #expect(weatherTool.name == "get_weather")
 
@@ -95,8 +94,8 @@ struct ToolSystemTests {
         }
     }
 
-    @Test("Tool Parameter Types")
-    func toolParameterTypes() {
+    @Test
+    func `Tool Parameter Types`() {
         // Test all parameter types
         let params = [
             AgentToolParameterProperty(
@@ -137,8 +136,8 @@ struct ToolSystemTests {
         }
     }
 
-    @Test("Tool Arguments")
-    func toolArguments() throws {
+    @Test
+    func `Tool Arguments`() throws {
         let args = AgentToolArguments([
             "string": AnyAgentToolValue(string: "hello"),
             "int": AnyAgentToolValue(int: 42),
@@ -168,8 +167,8 @@ struct ToolSystemTests {
         }
     }
 
-    @Test("Tool Error Handling")
-    func toolErrorHandling() throws {
+    @Test
+    func `Tool Error Handling`() throws {
         let args = AgentToolArguments([:])
 
         // Test missing required argument

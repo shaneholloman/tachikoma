@@ -98,7 +98,7 @@ public enum VoiceOption: Sendable, Hashable {
     case nova
     case shimmer
 
-    // Custom voice (provider-specific)
+    /// Custom voice (provider-specific)
     case custom(String)
 
     public var stringValue: String {

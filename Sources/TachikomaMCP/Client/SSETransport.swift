@@ -5,7 +5,7 @@ import FoundationNetworking
 import Logging
 import MCP
 
-// Internal state for SSE transport
+/// Internal state for SSE transport
 private actor SSEState {
     var transport: HTTPClientTransport?
     var baseURL: URL?
@@ -16,29 +16,60 @@ private actor SSEState {
     var timeoutTasks: [Int: Task<Void, Never>] = [:]
     var requestTimeoutNs: UInt64 = 30_000_000_000 // default 30s
 
-    func setTransport(_ t: HTTPClientTransport?) { self.transport = t }
-    func getTransport() -> HTTPClientTransport? { self.transport }
-    func setBaseURL(_ url: URL?) { self.baseURL = url }
-    func setHeaders(_ h: [String: String]) { self.headers = h }
-    func setEndpoint(_ url: URL?) { self.endpointURL = url }
-    func getEndpoint() -> URL? { self.endpointURL }
-    func getBaseURL() -> URL? { self.baseURL }
+    func setTransport(_ t: HTTPClientTransport?) {
+        self.transport = t
+    }
 
-    func getNextId() -> Int { defer { nextId += 1 }
+    func getTransport() -> HTTPClientTransport? {
+        self.transport
+    }
+
+    func setBaseURL(_ url: URL?) {
+        self.baseURL = url
+    }
+
+    func setHeaders(_ h: [String: String]) {
+        self.headers = h
+    }
+
+    func setEndpoint(_ url: URL?) {
+        self.endpointURL = url
+    }
+
+    func getEndpoint() -> URL? {
+        self.endpointURL
+    }
+
+    func getBaseURL() -> URL? {
+        self.baseURL
+    }
+
+    func getNextId() -> Int {
+        defer { nextId += 1 }
         return self.nextId
     }
 
-    func addPending(_ id: Int, _ cont: CheckedContinuation<Data, Swift.Error>) { self.pendingRequests[id] = cont }
-    func removePending(_ id: Int) -> CheckedContinuation<Data, Swift.Error>? { self.pendingRequests
-        .removeValue(forKey: id)
+    func addPending(_ id: Int, _ cont: CheckedContinuation<Data, Swift.Error>) {
+        self.pendingRequests[id] = cont
+    }
+
+    func removePending(_ id: Int) -> CheckedContinuation<Data, Swift.Error>? {
+        self.pendingRequests
+            .removeValue(forKey: id)
     }
 
     func setTimeout(_ seconds: TimeInterval) {
         self.requestTimeoutNs = UInt64((seconds > 0 ? seconds : 30) * 1_000_000_000)
     }
 
-    func addTimeoutTask(_ id: Int, _ task: Task<Void, Never>) { self.timeoutTasks[id] = task }
-    func cancelTimeout(_ id: Int) { self.timeoutTasks.removeValue(forKey: id)?.cancel() }
+    func addTimeoutTask(_ id: Int, _ task: Task<Void, Never>) {
+        self.timeoutTasks[id] = task
+    }
+
+    func cancelTimeout(_ id: Int) {
+        self.timeoutTasks.removeValue(forKey: id)?.cancel()
+    }
+
     func cancelAll(_ error: Swift.Error) {
         for (_, c) in self.pendingRequests {
             c.resume(throwing: error)
@@ -99,7 +130,7 @@ public final class SSETransport: MCPTransport {
         await self.state.setTransport(nil)
     }
 
-    // Expose underlying swift-sdk HTTP transport for advanced usage
+    /// Expose underlying swift-sdk HTTP transport for advanced usage
     public func underlyingSDKTransport() async -> HTTPClientTransport? {
         await self.state.getTransport()
     }

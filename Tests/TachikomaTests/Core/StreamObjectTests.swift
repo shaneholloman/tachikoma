@@ -1,28 +1,27 @@
 import Testing
 @testable import Tachikoma
 
-@Suite("StreamObject Tests")
 struct StreamObjectTests {
-    // Test struct for structured output
-    struct TestPerson: Codable, Sendable, Equatable {
+    /// Test struct for structured output
+    struct TestPerson: Codable, Equatable {
         let name: String
         let age: Int
         let email: String?
     }
 
-    struct TestResponse: Codable, Sendable, Equatable {
+    struct TestResponse: Codable, Equatable {
         let items: [String]
         let count: Int
         let metadata: TestMetadata?
 
-        struct TestMetadata: Codable, Sendable, Equatable {
+        struct TestMetadata: Codable, Equatable {
             let timestamp: String
             let version: String
         }
     }
 
-    @Test("streamObject basic functionality")
-    func streamObjectBasic() async throws {
+    @Test
+    func `streamObject basic functionality`() {
         // Since we can't easily mock the provider, we'll test the helper functions
         // that streamObject uses internally
 
@@ -39,8 +38,8 @@ struct StreamObjectTests {
         #expect(fixed2 == "{\"name\":\"Bob\",\"age\":}\"")
     }
 
-    @Test("ObjectStreamDelta types and structure")
-    func objectStreamDeltaTypes() throws {
+    @Test
+    func `ObjectStreamDelta types and structure`() {
         // Test the ObjectStreamDelta structure
         let startDelta = ObjectStreamDelta<TestPerson>(type: .start)
         #expect(startDelta.type == .start)
@@ -73,8 +72,8 @@ struct StreamObjectTests {
         #expect(errorDelta.error != nil)
     }
 
-    @Test("StreamObjectResult structure")
-    func streamObjectResultStructure() throws {
+    @Test
+    func `StreamObjectResult structure`() {
         // Test StreamObjectResult initialization
         let testStream = AsyncThrowingStream<ObjectStreamDelta<TestPerson>, Error> { continuation in
             Task {
@@ -99,8 +98,8 @@ struct StreamObjectTests {
         #expect(result.schema == TestPerson.self)
     }
 
-    @Test("StreamObjectResult AsyncSequence iteration")
-    func streamObjectResultAsyncSequence() async throws {
+    @Test
+    func `StreamObjectResult AsyncSequence iteration`() async throws {
         let testStream = AsyncThrowingStream<ObjectStreamDelta<TestPerson>, Error> { continuation in
             Task {
                 continuation.yield(ObjectStreamDelta(type: .start))
@@ -136,8 +135,8 @@ struct StreamObjectTests {
         #expect(deltaCount == 4) // start, partial, complete, done
     }
 
-    @Test("partialObjects filter method")
-    func partialObjectsFilter() async throws {
+    @Test
+    func `partialObjects filter method`() async throws {
         let testStream = AsyncThrowingStream<ObjectStreamDelta<TestPerson>, Error> { continuation in
             Task {
                 continuation.yield(ObjectStreamDelta(type: .start))
@@ -174,8 +173,8 @@ struct StreamObjectTests {
         #expect(partialObjects[2].name == "Person 3")
     }
 
-    @Test("finalObject method")
-    func testFinalObject() async throws {
+    @Test
+    func `finalObject method`() async throws {
         let testStream = AsyncThrowingStream<ObjectStreamDelta<TestPerson>, Error> { continuation in
             Task {
                 continuation.yield(ObjectStreamDelta(type: .start))
@@ -205,8 +204,8 @@ struct StreamObjectTests {
         #expect(finalObject.email == "complete@test.com")
     }
 
-    @Test("finalObject throws when no complete object")
-    func finalObjectThrows() async throws {
+    @Test
+    func `finalObject throws when no complete object`() async throws {
         let testStream = AsyncThrowingStream<ObjectStreamDelta<TestPerson>, Error> { continuation in
             Task {
                 continuation.yield(ObjectStreamDelta(type: .start))

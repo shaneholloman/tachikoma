@@ -2,10 +2,10 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite("Configuration environment loading", .serialized)
+@Suite(.serialized)
 struct ConfigurationEnvironmentTests {
-    @Test("Provider.environmentValue falls back to process environment")
-    func providerEnvironmentValueFallback() {
+    @Test
+    func `Provider.environmentValue falls back to process environment`() {
         let key = "TACHIKOMA_ENV_TEST_VALUE"
         setenv(key, "env-success", 1)
         defer { unsetenv(key) }
@@ -14,8 +14,8 @@ struct ConfigurationEnvironmentTests {
         #expect(value == "env-success")
     }
 
-    @Test("TachikomaConfiguration picks up base URLs from environment")
-    func configurationLoadsBaseURLFromEnvironment() {
+    @Test
+    func `TachikomaConfiguration picks up base URLs from environment`() {
         let key = "OPENAI_BASE_URL"
         setenv(key, "https://env.example.com", 1)
         defer { unsetenv(key) }

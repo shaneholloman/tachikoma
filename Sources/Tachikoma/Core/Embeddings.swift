@@ -220,7 +220,7 @@ protocol EmbeddingProvider: Sendable {
 
 /// Request for embedding generation
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
-struct EmbeddingRequest: Sendable {
+struct EmbeddingRequest {
     let input: EmbeddingInput
     let settings: EmbeddingSettings
 }

@@ -2,10 +2,9 @@ import MCP
 import Testing
 @testable import TachikomaMCP
 
-@Suite("Schema Builder Tests")
 struct SchemaBuilderTests {
-    @Test("Build string schema")
-    func stringSchema() {
+    @Test
+    func `Build string schema`() {
         let schema = SchemaBuilder.string(
             description: "User name",
             enum: ["Alice", "Bob"],
@@ -32,8 +31,8 @@ struct SchemaBuilderTests {
         }
     }
 
-    @Test("Build boolean schema")
-    func booleanSchema() {
+    @Test
+    func `Build boolean schema`() {
         let schema = SchemaBuilder.boolean(
             description: "Is active",
             default: true,
@@ -49,8 +48,8 @@ struct SchemaBuilderTests {
         #expect(dict["default"] == .bool(true))
     }
 
-    @Test("Build number schema")
-    func numberSchema() {
+    @Test
+    func `Build number schema`() {
         let schema = SchemaBuilder.number(
             description: "Temperature",
             minimum: 0.0,
@@ -70,8 +69,8 @@ struct SchemaBuilderTests {
         #expect(dict["default"] == .double(25.0))
     }
 
-    @Test("Build integer schema")
-    func integerSchema() {
+    @Test
+    func `Build integer schema`() {
         let schema = SchemaBuilder.integer(
             description: "Count",
             minimum: 1,
@@ -91,8 +90,8 @@ struct SchemaBuilderTests {
         #expect(dict["default"] == .int(10))
     }
 
-    @Test("Build array schema")
-    func arraySchema() {
+    @Test
+    func `Build array schema`() {
         let itemSchema = SchemaBuilder.string()
         let schema = SchemaBuilder.array(
             items: itemSchema,
@@ -115,8 +114,8 @@ struct SchemaBuilderTests {
         #expect(dict["uniqueItems"] == .bool(true))
     }
 
-    @Test("Build object schema")
-    func objectSchema() {
+    @Test
+    func `Build object schema`() {
         let schema = SchemaBuilder.object(
             properties: [
                 "name": SchemaBuilder.string(description: "User name"),
@@ -151,8 +150,8 @@ struct SchemaBuilderTests {
         }
     }
 
-    @Test("Build nullable schema")
-    func testNullableSchema() {
+    @Test
+    func `Build nullable schema`() {
         let baseSchema = SchemaBuilder.string(description: "Optional value")
         let nullableSchema = SchemaBuilder.nullable(baseSchema)
 
@@ -168,8 +167,8 @@ struct SchemaBuilderTests {
         }
     }
 
-    @Test("Build oneOf schema")
-    func oneOfSchema() {
+    @Test
+    func `Build oneOf schema`() {
         let schemas = [
             SchemaBuilder.string(),
             SchemaBuilder.integer(),
@@ -191,8 +190,8 @@ struct SchemaBuilderTests {
         }
     }
 
-    @Test("Build anyOf schema")
-    func anyOfSchema() {
+    @Test
+    func `Build anyOf schema`() {
         let schemas = [
             SchemaBuilder.string(),
             SchemaBuilder.integer(),
