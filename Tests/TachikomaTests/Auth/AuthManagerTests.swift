@@ -7,17 +7,48 @@ import Testing
 
 @Suite(.serialized)
 struct AuthManagerTests {
+    private func withIsolatedAuthState<T: Sendable>(
+        _ body: @Sendable () async throws -> T,
+    ) async rethrows
+        -> T
+    {
+        try await TestEnvironmentMutex.shared.withLock {
+            let originalProfileDirectory = TachikomaConfiguration.profileDirectoryName
+            let isolatedProfileDirectory = ".tachikoma-auth-tests-\(UUID().uuidString)"
+            let previousIgnoreEnvironment = TKAuthManager.shared.setIgnoreEnvironment(false)
+            let previousIgnoreCredentialStore = TKAuthManager.shared.setIgnoreCredentialStore(false)
+            let isolatedPath = NSString(string: "~/" + isolatedProfileDirectory).expandingTildeInPath
+
+            TachikomaConfiguration.profileDirectoryName = isolatedProfileDirectory
+            try? FileManager.default.removeItem(atPath: isolatedPath)
+
+            defer {
+                self.resetAuthEnv()
+                TKAuthManager.shared.setIgnoreEnvironment(previousIgnoreEnvironment)
+                TKAuthManager.shared.setIgnoreCredentialStore(previousIgnoreCredentialStore)
+                TachikomaConfiguration.profileDirectoryName = originalProfileDirectory
+                try? FileManager.default.removeItem(atPath: isolatedPath)
+            }
+
+            return try await body()
+        }
+    }
+
     private func resetAuthEnv() {
         unsetenv("XAI_API_KEY")
         unsetenv("X_AI_API_KEY")
         unsetenv("GROK_API_KEY")
         unsetenv("OPENAI_API_KEY")
+        unsetenv("OPENAI_ACCESS_TOKEN")
         unsetenv("ANTHROPIC_API_KEY")
+        unsetenv("ANTHROPIC_ACCESS_TOKEN")
+        unsetenv("GEMINI_API_KEY")
+        unsetenv("GOOGLE_API_KEY")
     }
 
     @Test
-    func envPreferredOverCreds() async throws {
-        try await TestEnvironmentMutex.shared.withLock {
+    func `env preferred over creds`() async throws {
+        try await self.withIsolatedAuthState {
             self.resetAuthEnv()
             setenv("OPENAI_API_KEY", "env-key", 1)
             defer { unsetenv("OPENAI_API_KEY") }
@@ -32,8 +63,8 @@ struct AuthManagerTests {
     }
 
     @Test
-    func grokAliasEnv() async {
-        await TestEnvironmentMutex.shared.withLock {
+    func `grok alias env`() async {
+        await self.withIsolatedAuthState {
             self.resetAuthEnv()
             setenv("X_AI_API_KEY", "alias-key", 1)
             unsetenv("XAI_API_KEY")
@@ -50,9 +81,9 @@ struct AuthManagerTests {
 
     @Test
     @MainActor
-    func validateSuccessMock() async {
+    func `validate success mock`() async throws {
         let session = URLSession.mock(status: 200)
-        let req = URLRequest(url: URL(string: "https://api.openai.com/v1/models")!)
+        let req = try URLRequest(url: #require(URL(string: "https://api.openai.com/v1/models")))
         let result = await HTTP.perform(request: req, timeoutSeconds: 5, session: session)
         switch result {
         case .success: break
@@ -62,9 +93,9 @@ struct AuthManagerTests {
 
     @Test
     @MainActor
-    func validateFailureMock() async {
+    func `validate failure mock`() async throws {
         let session = URLSession.mock(status: 401)
-        let req = URLRequest(url: URL(string: "https://api.openai.com/v1/models")!)
+        let req = try URLRequest(url: #require(URL(string: "https://api.openai.com/v1/models")))
         let result = await HTTP.perform(request: req, timeoutSeconds: 5, session: session)
         switch result {
         case let .failure(reason):
@@ -76,7 +107,7 @@ struct AuthManagerTests {
 
     @Test
     @MainActor
-    func oAuthTokenExchangeUsesFormEncoding() async throws {
+    func `o auth token exchange uses form encoding`() async throws {
         OAuthMockURLProtocol.reset()
         let config = OAuthConfig(
             prefix: "TEST",
@@ -119,7 +150,7 @@ struct AuthManagerTests {
 
     @Test
     @MainActor
-    func oAuthTokenExchangeUsesJSONEncodingAndStateWhenRequired() async throws {
+    func `o auth token exchange uses JSON encoding and state when required`() async throws {
         OAuthMockURLProtocol.reset()
         let config = OAuthConfig(
             prefix: "TEST",
@@ -173,8 +204,14 @@ struct AuthManagerTests {
 private final class AuthMockURLProtocol: URLProtocol {
     nonisolated(unsafe) static var statusCode: Int = 200
 
-    override class func canInit(with _: URLRequest) -> Bool { true }
-    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override class func canInit(with _: URLRequest) -> Bool {
+        true
+    }
+
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
+        request
+    }
+
     override func startLoading() {
         let response = HTTPURLResponse(
             url: self.request.url!,
@@ -217,8 +254,13 @@ private final class OAuthMockURLProtocol: URLProtocol {
         self.lastBody = nil
     }
 
-    override class func canInit(with _: URLRequest) -> Bool { true }
-    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override class func canInit(with _: URLRequest) -> Bool {
+        true
+    }
+
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
+        request
+    }
 
     override func startLoading() {
         OAuthMockURLProtocol.lastRequest = self.request
