@@ -1,4 +1,3 @@
-import Configuration
 #if canImport(Darwin)
 import Darwin
 #else
@@ -164,56 +163,21 @@ public enum Provider: Sendable, Hashable, Codable {
 
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 extension Provider {
-    @available(macOS 15.0, iOS 18.0, watchOS 11.0, tvOS 18.0, *)
-    private static var environmentReader: ConfigReader {
-        enum Holder {
-            static let reader = ConfigReader(
-                provider: EnvironmentVariablesProvider(
-                    secretsSpecifier: .dynamic { key, _ in
-                        let lowercased = key.lowercased()
-                        return lowercased.contains("key") ||
-                            lowercased.contains("token") ||
-                            lowercased.contains("secret")
-                    },
-                ),
-            )
-        }
-        return Holder.reader
-    }
-
     /// Load API key from environment variables
     /// Checks primary environment variable first, then alternatives
     public func loadAPIKeyFromEnvironment() -> String? {
         // Check primary environment variable
-        if !self.environmentVariable.isEmpty {
-            if #available(macOS 15.0, iOS 18.0, watchOS 11.0, tvOS 18.0, *) {
-                if
-                    let key = Self.environmentReader.string(
-                        forKey: ConfigKey([self.environmentVariable]),
-                        isSecret: true,
-                    ),
-                    !key.isEmpty
-                {
-                    return key
-                }
-            } else if
-                let key = ProcessInfo.processInfo.environment[environmentVariable],
-                !key.isEmpty
-            {
+        if
+            !self.environmentVariable.isEmpty,
+            let key = Self.processEnvironmentValue(for: self.environmentVariable),
+            !key.isEmpty
+        {
                 return key
-            }
         }
 
         // Check alternative environment variables
         for altVar in self.alternativeEnvironmentVariables {
-            if #available(macOS 15.0, iOS 18.0, watchOS 11.0, tvOS 18.0, *) {
-                if
-                    let key = Self.environmentReader.string(forKey: ConfigKey([altVar]), isSecret: true),
-                    !key.isEmpty
-                {
-                    return key
-                }
-            } else if let key = ProcessInfo.processInfo.environment[altVar], !key.isEmpty {
+            if let key = Self.processEnvironmentValue(for: altVar), !key.isEmpty {
                 return key
             }
         }
@@ -228,19 +192,12 @@ extension Provider {
 
     /// Read an environment value using the shared configuration reader.
     public static func environmentValue(for key: String, isSecret: Bool = false) -> String? {
-        // Read an environment value using the shared configuration reader.
-        if #available(macOS 15.0, iOS 18.0, watchOS 11.0, tvOS 18.0, *) {
-            if
-                let value = environmentReader.string(forKey: ConfigKey([key]), isSecret: isSecret),
-                !value.isEmpty
-            {
-                return value
-            }
-        }
+        _ = isSecret
+        return self.processEnvironmentValue(for: key)
+    }
 
-        guard let pointer = getenv(key) else {
-            return nil
-        }
+    private static func processEnvironmentValue(for key: String) -> String? {
+        guard let pointer = getenv(key) else { return nil }
         return String(cString: pointer)
     }
 }

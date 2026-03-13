@@ -19,8 +19,7 @@ enum TestHelpers {
         }
         let config = TachikomaConfiguration(loadFromEnvironment: false)
         for (provider, key) in apiKeys {
-            let resolved = self.resolve(provider: provider, provided: key)
-            config.setAPIKey(resolved, for: provider)
+            config.setAPIKey(key, for: provider)
         }
         if enableMockOverride {
             self.configureTestBehavior(for: config, apiKeys: apiKeys)
@@ -179,10 +178,6 @@ enum TestHelpers {
     static func isMockAPIKey(_ key: String?) -> Bool {
         guard let key, !key.isEmpty else { return true }
         return key == "test-key"
-    }
-
-    private static func resolve(provider: String, provided: String) -> String {
-        return provided
     }
 
     private static func configureTestBehavior(for config: TachikomaConfiguration, apiKeys: [String: String]) {

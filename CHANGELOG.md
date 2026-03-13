@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `TachikomaConfiguration` can optionally override the provider factory so test harnesses can inject mock providers without affecting production defaults, improving hermetic test runs.
 - Implemented OpenRouter, Together, Replicate, and Anthropic-compatible providers on top of the shared helpers so aggregator models no longer throw “not yet implemented” errors and honour custom base URLs/headers.
 - `Provider.environmentValue` falls back to classic `getenv` lookups when the modern configuration reader returns no value, ensuring environment overrides succeed on macOS 14 deployments.
+- Provider environment reads now use direct process environment lookups, so test overrides and runtime unsets behave deterministically across SwiftPM/Xcode runs.
 
 ### Fixed
 - MCP bridge conversions now handle embedded resources and resource links from `swift-sdk` 0.11, and test helpers no longer swap mock keys for live environment credentials during provider/audio suites.
@@ -40,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Audio provider tests and helpers consistently force mock mode when exercising stub audio payloads, preventing accidental live API calls that fail to decode fixtures.
 - `TestHelpers` expose discardable configuration helpers and stricter mock-key detection, reducing compiler warnings and flaky skips.
 - OpenAI transcription timestamp tests no longer hit the live API and succeed reliably under both mock and real key configurations.
+- Google provider API-key resolution no longer treats `GOOGLE_APPLICATION_CREDENTIALS` file paths as credential strings.
 - Anthropic OAuth login token exchange now uses the correct request format (JSON body + `state`). Thanks @jonathanglasmeyer.
 
 ### Testing

@@ -7,6 +7,37 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
+private func withTemporaryEnvironment<T: Sendable>(
+    _ updates: [String: String?],
+    _ body: @Sendable () throws -> T,
+) async rethrows -> T {
+    try await TestEnvironmentMutex.shared.withLock {
+        let saved = updates.keys.map { key in
+            (key, getenv(key).map { String(cString: $0) })
+        }
+
+        for (key, value) in updates {
+            if let value {
+                setenv(key, value, 1)
+            } else {
+                unsetenv(key)
+            }
+        }
+
+        defer {
+            for (key, value) in saved {
+                if let value {
+                    setenv(key, value, 1)
+                } else {
+                    unsetenv(key)
+                }
+            }
+        }
+
+        return try body()
+    }
+}
+
 @Suite("Provider Enum Tests")
 struct ProviderTests {
     @Suite("Provider Properties Tests")
@@ -173,32 +204,16 @@ struct ProviderTests {
         }
 
         @Test("Google ignores ADC credential paths as API keys")
-        func googleIgnoresADCCredentialPaths() {
-            let previousGeminiAPIKey = getenv("GEMINI_API_KEY").map { String(cString: $0) }
-            let previousGoogleAPIKey = getenv("GOOGLE_API_KEY").map { String(cString: $0) }
-            let previousGoogleCredentials = getenv("GOOGLE_APPLICATION_CREDENTIALS").map { String(cString: $0) }
-            unsetenv("GEMINI_API_KEY")
-            unsetenv("GOOGLE_API_KEY")
-            setenv("GOOGLE_APPLICATION_CREDENTIALS", "/tmp/service-account.json", 1)
-            defer {
-                if let previousGeminiAPIKey {
-                    setenv("GEMINI_API_KEY", previousGeminiAPIKey, 1)
-                } else {
-                    unsetenv("GEMINI_API_KEY")
-                }
-                if let previousGoogleAPIKey {
-                    setenv("GOOGLE_API_KEY", previousGoogleAPIKey, 1)
-                } else {
-                    unsetenv("GOOGLE_API_KEY")
-                }
-                if let previousGoogleCredentials {
-                    setenv("GOOGLE_APPLICATION_CREDENTIALS", previousGoogleCredentials, 1)
-                } else {
-                    unsetenv("GOOGLE_APPLICATION_CREDENTIALS")
-                }
+        func googleIgnoresADCCredentialPaths() async throws {
+            let resolved = await withTemporaryEnvironment([
+                "GEMINI_API_KEY": nil,
+                "GOOGLE_API_KEY": nil,
+                "GOOGLE_APPLICATION_CREDENTIALS": "/tmp/fake-google-adc.json",
+            ]) {
+                Provider.google.loadAPIKeyFromEnvironment()
             }
 
-            #expect(Provider.google.loadAPIKeyFromEnvironment() == nil)
+            #expect(resolved == nil)
         }
     }
 
