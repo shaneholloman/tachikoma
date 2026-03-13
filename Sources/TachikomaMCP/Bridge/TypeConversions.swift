@@ -125,18 +125,7 @@ extension ToolResponse {
 
         // Convert the first content item to a result
         if let firstContent = content.first {
-            switch firstContent {
-            case let .text(text):
-                return AnyAgentToolValue(string: text)
-            case let .image(data, mimeType, _):
-                // For images, return a descriptive string
-                return AnyAgentToolValue(string: "[Image: \(mimeType), size: \(data.count) bytes]")
-            case let .resource(uri, _, text):
-                // For resources, return the text content if available
-                return AnyAgentToolValue(string: text ?? "[Resource: \(uri)]")
-            case let .audio(data, mimeType):
-                return AnyAgentToolValue(string: "[Audio: \(mimeType), size: \(data.count) bytes]")
-            }
+            return AnyAgentToolValue(string: MCPContentBridge.summary(for: firstContent))
         }
 
         // No content
@@ -171,31 +160,6 @@ extension ToolResponse {
     }
 
     private func convertContentToAnyAgentToolValue(_ content: MCP.Tool.Content) -> AnyAgentToolValue {
-        switch content {
-        case let .text(text):
-            return AnyAgentToolValue(string: text)
-        case let .image(data, mimeType, _):
-            return AnyAgentToolValue(object: [
-                "type": AnyAgentToolValue(string: "image"),
-                "mimeType": AnyAgentToolValue(string: mimeType),
-                "data": AnyAgentToolValue(string: data),
-            ])
-        case let .resource(uri, mimeType, text):
-            var resourceDict: [String: AnyAgentToolValue] = [
-                "type": AnyAgentToolValue(string: "resource"),
-                "uri": AnyAgentToolValue(string: uri),
-                "mimeType": AnyAgentToolValue(string: mimeType),
-            ]
-            if let text {
-                resourceDict["text"] = AnyAgentToolValue(string: text)
-            }
-            return AnyAgentToolValue(object: resourceDict)
-        case let .audio(data, mimeType):
-            return AnyAgentToolValue(object: [
-                "type": AnyAgentToolValue(string: "audio"),
-                "mimeType": AnyAgentToolValue(string: mimeType),
-                "data": AnyAgentToolValue(string: data),
-            ])
-        }
+        MCPContentBridge.convert(content)
     }
 }

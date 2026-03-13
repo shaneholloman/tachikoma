@@ -249,34 +249,6 @@ public enum MCPToolAdapter {
 
     /// Convert MCP Tool.Content to AnyAgentToolValue
     private static func convertContent(_ content: MCP.Tool.Content) -> AnyAgentToolValue {
-        // Convert MCP Tool.Content to AnyAgentToolValue
-        switch content {
-        case let .text(text):
-            return AnyAgentToolValue(string: text)
-        case let .image(data, mimeType, _):
-            return AnyAgentToolValue(object: [
-                "type": AnyAgentToolValue(string: "image"),
-                "mimeType": AnyAgentToolValue(string: mimeType),
-                "data": AnyAgentToolValue(string: data),
-            ])
-        case let .resource(uri, mimeType, text):
-            var resourceDict: [String: AnyAgentToolValue] = [
-                "type": AnyAgentToolValue(string: "resource"),
-                "uri": AnyAgentToolValue(string: uri),
-                "mimeType": AnyAgentToolValue(string: mimeType),
-            ]
-            if let text {
-                resourceDict["text"] = AnyAgentToolValue(string: text)
-            } else {
-                resourceDict["text"] = AnyAgentToolValue(null: ())
-            }
-            return AnyAgentToolValue(object: resourceDict)
-        case let .audio(data, mimeType):
-            return AnyAgentToolValue(object: [
-                "type": AnyAgentToolValue(string: "audio"),
-                "mimeType": AnyAgentToolValue(string: mimeType),
-                "data": AnyAgentToolValue(string: data),
-            ])
-        }
+        MCPContentBridge.convert(content)
     }
 }
