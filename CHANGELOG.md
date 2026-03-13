@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Provider.environmentValue` falls back to classic `getenv` lookups when the modern configuration reader returns no value, ensuring environment overrides succeed on macOS 14 deployments.
 
 ### Fixed
+- MCP bridge conversions now handle embedded resources and resource links from `swift-sdk` 0.11, and test helpers no longer swap mock keys for live environment credentials during provider/audio suites.
 - `retryWithCancellation` now registers token handlers per-attempt and cancels in-flight work, resolving hangs when external cancellation should short-circuit retries.
 - Audio provider tests and helpers consistently force mock mode when exercising stub audio payloads, preventing accidental live API calls that fail to decode fixtures.
 - `TestHelpers` expose discardable configuration helpers and stricter mock-key detection, reducing compiler warnings and flaky skips.
