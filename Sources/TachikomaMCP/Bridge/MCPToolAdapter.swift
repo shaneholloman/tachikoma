@@ -185,7 +185,7 @@ public enum MCPToolAdapter {
     private static func convertResponse(_ response: ToolResponse) -> AnyAgentToolValue {
         if response.isError {
             let errorMessage = response.content.compactMap { content -> String? in
-                if case let .text(text) = content {
+                if case let .text(text, _, _) = content {
                     return text
                 }
                 return nil

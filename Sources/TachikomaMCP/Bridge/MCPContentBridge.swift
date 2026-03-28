@@ -3,11 +3,17 @@ import MCP
 import Tachikoma
 
 enum MCPContentBridge {
+    private struct ResourceLinkDetails {
+        let title: String?
+        let description: String?
+        let mimeType: String?
+    }
+
     static func summary(for content: MCP.Tool.Content) -> String {
         switch content {
-        case let .text(text):
+        case let .text(text, _, _):
             return text
-        case let .image(data, mimeType, _):
+        case let .image(data, mimeType, _, _):
             return "[Image: \(mimeType), size: \(data.count) bytes]"
         case let .resource(resource, _, _):
             if let text = resource.text {
@@ -22,16 +28,16 @@ enum MCPContentBridge {
                 return "[Resource Link: \(uri), type: \(mimeType)]"
             }
             return "[Resource Link: \(uri)]"
-        case let .audio(data, mimeType):
+        case let .audio(data, mimeType, _, _):
             return "[Audio: \(mimeType), size: \(data.count) bytes]"
         }
     }
 
     static func convert(_ content: MCP.Tool.Content) -> AnyAgentToolValue {
         switch content {
-        case let .text(text):
+        case let .text(text, _, _):
             AnyAgentToolValue(string: text)
-        case let .image(data, mimeType, _):
+        case let .image(data, mimeType, _, _):
             AnyAgentToolValue(object: [
                 "type": AnyAgentToolValue(string: "image"),
                 "mimeType": AnyAgentToolValue(string: mimeType),
@@ -47,12 +53,14 @@ enum MCPContentBridge {
             AnyAgentToolValue(object: self.resourceLinkObject(
                 uri: uri,
                 name: name,
-                title: title,
-                description: description,
-                mimeType: mimeType,
+                details: ResourceLinkDetails(
+                    title: title,
+                    description: description,
+                    mimeType: mimeType,
+                ),
                 annotations: annotations,
             ))
-        case let .audio(data, mimeType):
+        case let .audio(data, mimeType, _, _):
             AnyAgentToolValue(object: [
                 "type": AnyAgentToolValue(string: "audio"),
                 "mimeType": AnyAgentToolValue(string: mimeType),
@@ -103,9 +111,7 @@ enum MCPContentBridge {
     private static func resourceLinkObject(
         uri: String,
         name: String,
-        title: String?,
-        description: String?,
-        mimeType: String?,
+        details: ResourceLinkDetails,
         annotations: Resource.Annotations?,
     )
         -> [String: AnyAgentToolValue]
@@ -116,15 +122,15 @@ enum MCPContentBridge {
             "name": AnyAgentToolValue(string: name),
         ]
 
-        if let title {
+        if let title = details.title {
             resourceDict["title"] = AnyAgentToolValue(string: title)
         }
 
-        if let description {
+        if let description = details.description {
             resourceDict["description"] = AnyAgentToolValue(string: description)
         }
 
-        if let mimeType {
+        if let mimeType = details.mimeType {
             resourceDict["mimeType"] = AnyAgentToolValue(string: mimeType)
         }
 

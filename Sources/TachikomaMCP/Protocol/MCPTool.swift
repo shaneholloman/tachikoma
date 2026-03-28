@@ -213,7 +213,7 @@ public struct ToolResponse: Sendable {
     public static func text(_ text: String, meta: Value? = nil) -> ToolResponse {
         // Create a text response
         ToolResponse(
-            content: [.text(text)],
+            content: [.text(text: text, annotations: nil, _meta: nil)],
             isError: false,
             meta: meta,
         )
@@ -223,7 +223,7 @@ public struct ToolResponse: Sendable {
     public static func error(_ message: String, meta: Value? = nil) -> ToolResponse {
         // Create an error response
         ToolResponse(
-            content: [.text(message)],
+            content: [.text(text: message, annotations: nil, _meta: nil)],
             isError: true,
             meta: meta,
         )
@@ -233,7 +233,7 @@ public struct ToolResponse: Sendable {
     public static func image(data: Data, mimeType: String = "image/png", meta: Value? = nil) -> ToolResponse {
         // Create an image response
         ToolResponse(
-            content: [.image(data: data.base64EncodedString(), mimeType: mimeType, metadata: nil)],
+            content: [.image(data: data.base64EncodedString(), mimeType: mimeType, annotations: nil, _meta: nil)],
             isError: false,
             meta: meta,
         )

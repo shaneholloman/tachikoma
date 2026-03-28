@@ -161,7 +161,7 @@ public final class MCPToolProvider: DynamicToolProvider {
         // If there's an error, return it as a string
         if response.isError {
             let errorMessage = response.content.compactMap { content -> String? in
-                if case let .text(text) = content {
+                if case let .text(text, _, _) = content {
                     return text
                 }
                 return nil

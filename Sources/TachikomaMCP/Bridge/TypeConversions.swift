@@ -114,7 +114,7 @@ extension ToolResponse {
         // If there's an error, return error message
         if isError {
             let errorMessage = content.compactMap { content -> String? in
-                if case let .text(text) = content {
+                if case let .text(text, _, _) = content {
                     return text
                 }
                 return nil
@@ -137,7 +137,7 @@ extension ToolResponse {
         // If there's an error, return it as a string
         if isError {
             let errorMessage = content.compactMap { content -> String? in
-                if case let .text(text) = content {
+                if case let .text(text, _, _) = content {
                     return text
                 }
                 return nil
