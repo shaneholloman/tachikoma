@@ -2,21 +2,7 @@
 
 All notable changes to the Tachikoma project will be documented in this file.
 
-## [0.1.0] - 2026-01-18
-
-### Added
-- Core Swift 6 AI SDK with strict concurrency, streaming responses, and typed tool calling.
-- Unified message/content model (text, images, audio) with structured tool results.
-- Provider support for OpenAI (Chat + Responses), Anthropic, xAI (Grok), Google Gemini, Ollama, and OpenAI-compatible endpoints (OpenRouter/Together/Replicate).
-- Config system with credential store + env overrides, model registry, and capability lookup helpers.
-- Test helpers and mock infrastructure for deterministic provider/unit coverage.
-
-All notable changes to the Tachikoma project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
+## [0.2.0] - 2026-04-28
 
 ### Added
 - First-class Azure OpenAI provider: deployment-based model case `.azureOpenAI`, Azure-specific URL/header/query wiring (api-version, api-key or bearer token), env overrides (`AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_BEARER_TOKEN`, `AZURE_OPENAI_ENDPOINT`/`RESOURCE`, `AZURE_OPENAI_API_VERSION`), and README guidance.
@@ -51,13 +37,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added provider-level network E2E coverage using local `URLProtocol` stubs plus new OpenAI Responses API tests (request encoding + streaming) so critical serialization paths are exercised without live traffic.
 - `ProviderEndToEndTests` now exercise every provider flavor (OpenRouter/Together/Replicate, OpenAI/Anthropic compatible, etc.), pushing overall line coverage above 40 % while keeping the suite deterministic via URLProtocol stubs.
 
-### Planned Features
-- Enhanced caching with persistence and TTL
-- Bidirectional streaming support
-- Request batching for high-volume usage
-- Advanced error recovery mechanisms
-- Metrics collection and monitoring
-- Distributed caching support
+## [0.1.0] - 2026-01-18
+
+### Added
+- Core Swift 6 AI SDK with strict concurrency, streaming responses, and typed tool calling.
+- Unified message/content model (text, images, audio) with structured tool results.
+- Provider support for OpenAI (Chat + Responses), Anthropic, xAI (Grok), Google Gemini, Ollama, and OpenAI-compatible endpoints (OpenRouter/Together/Replicate).
+- Config system with credential store + env overrides, model registry, and capability lookup helpers.
+- Test helpers and mock infrastructure for deterministic provider/unit coverage.
 
 ## [1.0.0] - 2025-01-XX
 
