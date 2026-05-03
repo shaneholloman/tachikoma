@@ -362,7 +362,7 @@ enum AudioFunctionsTests {
         }
 
         @Test
-        func `multiple provider integration`() async throws {
+        func `multiple provider integration`() async {
             await TestHelpers.withStandardTestConfiguration { config in
                 let audioData = TestHelpers.sampleAudioData(configuration: config)
 
