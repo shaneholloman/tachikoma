@@ -356,24 +356,20 @@ public final class TachikomaConfiguration: @unchecked Sendable {
                 let key = components[0].trimmingCharacters(in: .whitespacesAndNewlines)
                 let value = components[1...].joined(separator: "=").trimmingCharacters(in: .whitespacesAndNewlines)
 
-                // Map credential keys to providers
-                let lowercaseKey = key.lowercased()
-                if lowercaseKey.contains("openai") {
-                    self.setAPIKey(value, for: .openai)
-                } else if lowercaseKey.contains("anthropic") || lowercaseKey.contains("claude") {
-                    self.setAPIKey(value, for: .anthropic)
-                } else if lowercaseKey.contains("grok") {
-                    self.setAPIKey(value, for: .grok)
-                } else if lowercaseKey.contains("groq") {
-                    self.setAPIKey(value, for: .groq)
-                } else if lowercaseKey.contains("mistral") {
-                    self.setAPIKey(value, for: .mistral)
-                } else if lowercaseKey.contains("google") || lowercaseKey.contains("gemini") {
-                    self.setAPIKey(value, for: .google)
-                } else if lowercaseKey.contains("ollama") {
-                    self.setAPIKey(value, for: .ollama)
+                if let provider = Self.provider(forCredentialKey: key) {
+                    self.setAPIKey(value, for: provider)
                 }
             }
+        }
+    }
+
+    private static func provider(forCredentialKey key: String) -> Provider? {
+        let normalizedKey = key.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        return Provider.standardProviders.first { provider in
+            let keys = ([provider.environmentVariable] + provider.alternativeEnvironmentVariables)
+                .filter { !$0.isEmpty }
+                .map { $0.uppercased() }
+            return keys.contains(normalizedKey)
         }
     }
 

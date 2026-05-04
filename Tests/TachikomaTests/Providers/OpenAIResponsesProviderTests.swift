@@ -2,6 +2,11 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
+#if canImport(Darwin)
+import Darwin
+#else
+import Glibc
+#endif
 import Testing
 @testable import Tachikoma
 
@@ -236,6 +241,23 @@ struct OpenAIResponsesProviderTests {
             let provider = try OpenAIResponsesProvider(model: .gpt5Mini, configuration: config, session: session)
             let response = try await provider.generateText(request: self.sampleRequest)
             #expect(response.text.contains("GPT-5") || response.text.contains("pong"))
+        }
+    }
+
+    @Test
+    func `Responses provider resolves OAuth access token`() async throws {
+        try await self.withIsolatedAuthState {
+            try TKAuthManager.shared.setCredential(key: "OPENAI_ACCESS_TOKEN", value: "oauth-access-token")
+            let config = TachikomaConfiguration(loadFromEnvironment: false)
+
+            try await self.withMockedSession { request in
+                #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer oauth-access-token")
+                return NetworkMocking.jsonResponse(for: request, data: Self.responsesPayload(text: "oauth ok"))
+            } operation: { session in
+                let provider = try OpenAIResponsesProvider(model: .gpt5Mini, configuration: config, session: session)
+                let response = try await provider.generateText(request: self.sampleRequest)
+                #expect(response.text.contains("oauth ok"))
+            }
         }
     }
 
@@ -596,6 +618,39 @@ struct OpenAIResponsesProviderTests {
             apiKeys: ["openai": "test-key"],
             enableMockOverride: false,
         )
+    }
+
+    private func withIsolatedAuthState<T: Sendable>(
+        _ body: @Sendable () async throws -> T,
+    ) async rethrows
+        -> T
+    {
+        try await TestEnvironmentMutex.shared.withLock {
+            let originalProfileDirectory = TachikomaConfiguration.profileDirectoryName
+            let profileDirectory = ".tachikoma-responses-auth-tests-\(UUID().uuidString)"
+            let profilePath = NSString(string: "~/" + profileDirectory).expandingTildeInPath
+            let previousIgnoreEnvironment = TKAuthManager.shared.setIgnoreEnvironment(false)
+            let previousIgnoreCredentialStore = TKAuthManager.shared.setIgnoreCredentialStore(false)
+            let savedOpenAIKey = getenv("OPENAI_API_KEY").map { String(cString: $0) }
+
+            TachikomaConfiguration.profileDirectoryName = profileDirectory
+            unsetenv("OPENAI_API_KEY")
+            try? FileManager.default.removeItem(atPath: profilePath)
+
+            defer {
+                if let savedOpenAIKey {
+                    setenv("OPENAI_API_KEY", savedOpenAIKey, 1)
+                } else {
+                    unsetenv("OPENAI_API_KEY")
+                }
+                TKAuthManager.shared.setIgnoreEnvironment(previousIgnoreEnvironment)
+                TKAuthManager.shared.setIgnoreCredentialStore(previousIgnoreCredentialStore)
+                TachikomaConfiguration.profileDirectoryName = originalProfileDirectory
+                try? FileManager.default.removeItem(atPath: profilePath)
+            }
+
+            return try await body()
+        }
     }
 }
 

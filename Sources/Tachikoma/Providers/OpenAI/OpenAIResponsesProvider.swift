@@ -2,9 +2,6 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
 
 /// Provider for OpenAI Responses API (GPT-5, o3, o4)
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
@@ -17,6 +14,7 @@ public final class OpenAIResponsesProvider: ModelProvider {
     private let model: LanguageModel.OpenAI
     private let configuration: TachikomaConfiguration
     private let session: URLSession
+    private let auth: TKAuthValue
 
     private static let debugLogURL = URL(fileURLWithPath: "/tmp/tachikoma-gpt5.log")
 
@@ -37,9 +35,18 @@ public final class OpenAIResponsesProvider: ModelProvider {
         self.session = session
         self.baseURL = configuration.getBaseURL(for: .openai) ?? "https://api.openai.com/v1"
 
-        // Get API key from configuration
+        // Prefer configuration-provided key first (test configs use this), then shared OAuth/API-key auth.
         if let key = configuration.getAPIKey(for: .openai) {
+            self.auth = .bearer(key, betaHeader: nil)
             self.apiKey = key
+        } else if let auth = TKAuthManager.shared.resolveAuth(for: .openai) {
+            self.auth = auth
+            switch auth {
+            case let .apiKey(key):
+                self.apiKey = key
+            case let .bearer(token, _):
+                self.apiKey = token
+            }
         } else {
             throw TachikomaError.authenticationFailed("OPENAI_API_KEY not found")
         }
@@ -65,7 +72,8 @@ public final class OpenAIResponsesProvider: ModelProvider {
         let url = URL(string: "\(baseURL!)/responses")!
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
-        urlRequest.setValue("Bearer \(self.apiKey!)", forHTTPHeaderField: "Authorization")
+        let (authHeaderName, prefix, secret) = self.authHeader()
+        urlRequest.setValue("\(prefix)\(secret)", forHTTPHeaderField: authHeaderName)
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         // Add OpenAI-specific headers
@@ -134,7 +142,8 @@ public final class OpenAIResponsesProvider: ModelProvider {
         let finalURLRequest: URLRequest = {
             var req = URLRequest(url: url)
             req.httpMethod = "POST"
-            req.setValue("Bearer \(self.apiKey!)", forHTTPHeaderField: "Authorization")
+            let (authHeaderName, prefix, secret) = self.authHeader()
+            req.setValue("\(prefix)\(secret)", forHTTPHeaderField: authHeaderName)
             req.setValue("application/json", forHTTPHeaderField: "Content-Type")
             req.setValue("text/event-stream", forHTTPHeaderField: "Accept")
 
@@ -387,6 +396,15 @@ public final class OpenAIResponsesProvider: ModelProvider {
                     continuation.finish(throwing: error)
                 }
             }
+        }
+    }
+
+    private func authHeader() -> (String, String, String) {
+        switch self.auth {
+        case let .apiKey(key):
+            ("Authorization", "Bearer ", key)
+        case let .bearer(token, _):
+            ("Authorization", "Bearer ", token)
         }
     }
 
