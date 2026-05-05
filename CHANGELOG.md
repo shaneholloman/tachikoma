@@ -5,9 +5,9 @@ All notable changes to the Tachikoma project will be documented in this file.
 ## [Unreleased]
 
 ### Fixed
-- SwiftPM consumers can now resolve Commander remotely instead of requiring a local `../Commander` checkout.
-- Custom OpenAI-compatible and Anthropic-compatible providers now honor per-provider `options.apiKey` values from profile config.
-- Google/Gemini request encoding now sends tool results as documented user `functionResponse` turns and merges consecutive same-role contents before calling the API.
+- SwiftPM consumers can now resolve Commander remotely instead of requiring a local `../Commander` checkout. Thanks @malpern.
+- Custom OpenAI-compatible and Anthropic-compatible providers now honor per-provider `options.apiKey` values from profile config. Thanks @381181295.
+- Google/Gemini request encoding now sends tool results as documented user `functionResponse` turns and merges consecutive same-role contents before calling the API. Thanks @hsrvc.
 - OpenAI Responses API providers now resolve shared OAuth/API-key credentials instead of requiring `OPENAI_API_KEY` directly.
 - Credential loading now only maps exact API-key credential names to provider API keys, so OAuth access/refresh tokens no longer overwrite configured OpenAI or Anthropic keys.
 - Custom OpenAI-compatible and Anthropic-compatible providers now forward configured proxy headers to request calls.
