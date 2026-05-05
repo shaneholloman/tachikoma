@@ -97,6 +97,54 @@ struct ProviderEndToEndTests {
         }
     }
 
+    @Test
+    func `Google provider encodes tool results as user function responses`() async throws {
+        let toolCall = AgentToolCall(
+            id: "call_weather",
+            name: "get_weather",
+            arguments: ["location": AnyAgentToolValue(string: "Vienna")],
+        )
+        let toolResult = AgentToolResult.success(
+            toolCallId: "call_weather",
+            result: AnyAgentToolValue(object: ["temperature": AnyAgentToolValue(int: 21)]),
+        )
+        let providerRequest = ProviderRequest(
+            messages: [
+                .user("Weather?"),
+                ModelMessage(role: .assistant, content: [.text("Checking."), .toolCall(toolCall)]),
+                ModelMessage(role: .tool, content: [.toolResult(toolResult)]),
+            ],
+            settings: .init(maxTokens: 32),
+        )
+
+        try await NetworkMocking.withMockedNetwork { request in
+            let body = try #require(self.bodyData(from: request))
+            let json = try #require(JSONSerialization.jsonObject(with: body) as? [String: Any])
+            let contents = try #require(json["contents"] as? [[String: Any]])
+
+            #expect(contents.count == 3)
+            #expect(contents.compactMap { $0["role"] as? String } == ["user", "model", "user"])
+
+            let modelParts = try #require(contents[1]["parts"] as? [[String: Any]])
+            #expect(modelParts.count == 2)
+            #expect(modelParts[1]["functionCall"] != nil)
+
+            let toolParts = try #require(contents[2]["parts"] as? [[String: Any]])
+            let functionResponse = try #require(toolParts.first?["functionResponse"] as? [String: Any])
+            #expect(functionResponse["id"] as? String == "call_weather")
+            #expect(functionResponse["name"] as? String == "get_weather")
+
+            return NetworkMocking.streamResponse(for: request, data: Self.googleStreamPayload(text: "Done"))
+        } operation: {
+            let config = Self.makeConfiguration { config in
+                config.setAPIKey("google-live", for: .google)
+            }
+            let provider = try GoogleProvider(model: .gemini25Flash, configuration: config)
+            let response = try await provider.generateText(request: providerRequest)
+            #expect(response.text.contains("Done"))
+        }
+    }
+
     // MARK: - OpenAI-compatible providers
 
     @Test

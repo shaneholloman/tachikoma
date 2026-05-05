@@ -38,7 +38,8 @@ struct CustomProviderRegistryTests {
                 /* secret token */
                 "headers": {
                   "Authorization": "Bearer ${WEATHER_TOKEN}"
-                }
+                },
+                "apiKey": "${WEATHER_API_KEY}"
               },
               "models": {
                 "fast": { "name": "weather-fast" }
@@ -46,7 +47,10 @@ struct CustomProviderRegistryTests {
             },
             "claude-proxy": {
               "type": "anthropic",
-              "options": { "baseURL": "https://anthropic.local" }
+              "options": {
+                "baseURL": "https://anthropic.local",
+                "apiKey": "claude-provider-key"
+              }
             }
           }
         }
@@ -68,6 +72,7 @@ struct CustomProviderRegistryTests {
             #endif
             TachikomaConfiguration.profileDirectoryName = originalProfileDir
             unsetenv("WEATHER_TOKEN")
+            unsetenv("WEATHER_API_KEY")
             self.resetRegistry(
                 forProfile: originalProfileDir,
                 originalHome: originalHome,
@@ -78,6 +83,7 @@ struct CustomProviderRegistryTests {
         TachikomaConfiguration.profileDirectoryName = profileDirName
         self.setHomeEnvironment(to: tempHome.path)
         setenv("WEATHER_TOKEN", "sk-test-weather", 1)
+        setenv("WEATHER_API_KEY", "sk-provider-key", 1)
 
         CustomProviderRegistry.shared.loadFromProfile()
         let providers = CustomProviderRegistry.shared.list()
@@ -87,11 +93,13 @@ struct CustomProviderRegistryTests {
         let weather = try #require(providers["weather-ai"])
         #expect(weather.kind == .openai)
         #expect(weather.baseURL == "https://api.example.com")
+        #expect(weather.apiKey == "sk-provider-key")
         #expect(weather.headers["Authorization"] == "Bearer sk-test-weather")
         #expect(weather.models["fast"] == "weather-fast")
 
         let claude = try #require(CustomProviderRegistry.shared.get("claude-proxy"))
         #expect(claude.kind == .anthropic)
+        #expect(claude.apiKey == "claude-provider-key")
         #expect(claude.headers.isEmpty)
         #expect(claude.models.isEmpty)
 
@@ -101,7 +109,16 @@ struct CustomProviderRegistryTests {
             configuration: TachikomaConfiguration(loadFromEnvironment: false),
         )
         let compatibleProvider = try #require(resolved as? OpenAICompatibleProvider)
+        #expect(compatibleProvider.apiKey == "sk-provider-key")
         #expect(compatibleProvider.additionalHeaders["Authorization"] == "Bearer sk-test-weather")
+
+        let claudeProvider = DynamicCustomProvider(modelId: "claude-proxy/sonnet")
+        let resolvedClaude = try ProviderFactory.createProvider(
+            for: .custom(provider: claudeProvider),
+            configuration: TachikomaConfiguration(loadFromEnvironment: false),
+        )
+        let compatibleClaude = try #require(resolvedClaude as? AnthropicCompatibleProvider)
+        #expect(compatibleClaude.apiKey == "claude-provider-key")
 
         #expect(CustomProviderRegistry.shared.get("missing") == nil)
     }

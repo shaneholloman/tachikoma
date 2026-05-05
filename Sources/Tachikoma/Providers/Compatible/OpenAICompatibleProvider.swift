@@ -17,6 +17,7 @@ public final class OpenAICompatibleProvider: ModelProvider {
         modelId: String,
         baseURL: String,
         configuration: TachikomaConfiguration,
+        apiKey: String? = nil,
         additionalHeaders: [String: String] = [:],
         session: URLSession = .shared,
     ) throws {
@@ -25,8 +26,10 @@ public final class OpenAICompatibleProvider: ModelProvider {
         self.additionalHeaders = additionalHeaders
         self.session = session
 
-        // Try to get API key from configuration, otherwise try common environment variable patterns
-        if let key = configuration.getAPIKey(for: .custom("openai_compatible")) {
+        // Try explicit provider key, then configuration, then common environment variable patterns.
+        if let key = apiKey {
+            self.apiKey = key
+        } else if let key = configuration.getAPIKey(for: .custom("openai_compatible")) {
             self.apiKey = key
         } else if
             let key = ProcessInfo.processInfo.environment["OPENAI_COMPATIBLE_API_KEY"] ??

@@ -214,16 +214,15 @@ public final class GoogleProvider: ModelProvider {
                 }
             }
 
-            guard !parts.isEmpty else { continue }
             let role = switch message.role {
             case .assistant:
                 "model"
             case .tool:
-                "function"
+                "user"
             default:
                 "user"
             }
-            contents.append(.init(role: role, parts: parts))
+            Self.appendGoogleContent(role: role, parts: parts, to: &contents)
         }
 
         let config = GoogleGenerateRequest.GenerationConfig(
@@ -253,6 +252,20 @@ public final class GoogleProvider: ModelProvider {
 // MARK: - Streaming Helpers
 
 extension GoogleProvider {
+    private static func appendGoogleContent(
+        role: String,
+        parts: [GoogleGenerateRequest.Content.Part],
+        to contents: inout [GoogleGenerateRequest.Content],
+    ) {
+        guard !parts.isEmpty else { return }
+
+        if let last = contents.last, last.role == role {
+            contents[contents.count - 1] = .init(role: role, parts: last.parts + parts)
+        } else {
+            contents.append(.init(role: role, parts: parts))
+        }
+    }
+
     private static func buildToolCallNameMap(from messages: [ModelMessage]) -> [String: String] {
         var map: [String: String] = [:]
         for message in messages {

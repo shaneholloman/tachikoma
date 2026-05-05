@@ -14,6 +14,7 @@ public final class AnthropicCompatibleProvider: ModelProvider {
         modelId: String,
         baseURL: String,
         configuration: TachikomaConfiguration,
+        apiKey: String? = nil,
         additionalHeaders: [String: String] = [:],
     ) throws {
         self.modelId = modelId
@@ -21,8 +22,10 @@ public final class AnthropicCompatibleProvider: ModelProvider {
         self.configuration = configuration
         self.additionalHeaders = additionalHeaders
 
-        // Try to get API key from configuration, otherwise try common environment variable patterns
-        if let key = configuration.getAPIKey(for: .custom("anthropic_compatible")) {
+        // Try explicit provider key, then configuration, then common environment variable patterns.
+        if let key = apiKey {
+            self.apiKey = key
+        } else if let key = configuration.getAPIKey(for: .custom("anthropic_compatible")) {
             self.apiKey = key
         } else if
             let key = ProcessInfo.processInfo.environment["ANTHROPIC_COMPATIBLE_API_KEY"] ??

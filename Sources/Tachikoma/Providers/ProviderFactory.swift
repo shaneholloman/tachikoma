@@ -94,6 +94,7 @@ public struct ProviderFactory {
                             modelId: parsed.model,
                             baseURL: custom.baseURL,
                             configuration: configuration,
+                            apiKey: custom.apiKey,
                             additionalHeaders: custom.headers,
                         )
                     case .anthropic:
@@ -101,6 +102,7 @@ public struct ProviderFactory {
                             modelId: parsed.model,
                             baseURL: custom.baseURL,
                             configuration: configuration,
+                            apiKey: custom.apiKey,
                             additionalHeaders: custom.headers,
                         )
                     }
