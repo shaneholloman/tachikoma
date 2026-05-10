@@ -7,7 +7,7 @@ An advanced AI agent command-line interface with conversation support, MCP tool 
 - **Multi-turn Conversations**: Maintain context across multiple interactions
 - **MCP Tool Support**: Connect to Model Context Protocol servers for extended capabilities
 - **Status Bar UI**: Real-time status updates with spinners and progress indicators
-- **Thinking Display**: Show reasoning process for models that support it (O3, GPT-5)
+- **Thinking Display**: Show reasoning process for models that support it (GPT-5)
 - **Interactive Mode**: Continuous conversation with history management
 - **Multiple Output Formats**: Normal, JSON, or Markdown formatting
 - **Tool Visualization**: See tool calls with timing and results

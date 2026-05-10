@@ -347,7 +347,7 @@ public final class OpenAIResponsesProvider: ModelProvider {
                                         }
                                     }
                                 } else {
-                                    // Try standard Responses API format (O3, etc.)
+                                    // Try alternate Responses API delta format.
                                     do {
                                         let chunk = try JSONDecoder().decode(
                                             OpenAIResponsesStreamChunk.self,
@@ -753,7 +753,7 @@ public final class OpenAIResponsesProvider: ModelProvider {
     }
 
     static func convertToProviderResponse(_ response: OpenAIResponsesResponse) throws -> ProviderResponse {
-        // Handle GPT-5 format (output array) vs O3 format (choices array)
+        // Handle GPT-5 output arrays and alternate choices arrays.
         let text: String
         let toolCalls: [AgentToolCall]?
         let finishReason: FinishReason?
@@ -800,7 +800,7 @@ public final class OpenAIResponsesProvider: ModelProvider {
                 finishReason = .stop
             }
         } else if let choices = response.choices, let choice = choices.first {
-            // O3 format with choices array
+            // Alternate format with choices array.
             text = choice.message.content ?? ""
 
             // Convert tool calls
@@ -821,11 +821,11 @@ public final class OpenAIResponsesProvider: ModelProvider {
             throw TachikomaError.apiError("No output or choices in response")
         }
 
-        // Convert usage (handle both GPT-5 and O3 formats)
+        // Convert usage across Responses API token field variants.
         let usage: Usage?
         if let apiUsage = response.usage {
             // GPT-5 uses input_tokens/output_tokens
-            // O3 uses prompt_tokens/completion_tokens
+            // Alternate responses can use prompt_tokens/completion_tokens.
             let inputTokens = apiUsage.inputTokens ?? apiUsage.promptTokens ?? 0
             let outputTokens = apiUsage.outputTokens ?? apiUsage.completionTokens ?? 0
 

@@ -477,11 +477,11 @@ struct OpenAIResponsesResponse: Codable {
     let id: String
     let object: String?
     let createdAt: Int? // GPT-5 uses created_at
-    let created: Int? // O3 uses created
+    let created: Int? // Alternate responses can use created
     let status: String?
     let model: String
     let output: [ResponsesOutput]? // GPT-5 uses output array
-    let choices: [ResponsesChoice]? // O3 uses choices array
+    let choices: [ResponsesChoice]? // Alternate responses can use choices array
     let usage: ResponsesUsage?
     let metadata: ResponsesMetadata?
 
@@ -523,7 +523,7 @@ struct OpenAIResponsesResponse: Codable {
         }
     }
 
-    /// O3 choices format (kept for compatibility)
+    /// Alternate choices format.
     struct ResponsesChoice: Codable {
         let index: Int
         let message: ResponsesOutputMessage
@@ -614,7 +614,7 @@ struct OpenAIResponsesResponse: Codable {
 
 // MARK: - Streaming Response Types
 
-/// Server-sent event for streaming responses (O3 and older models)
+/// Server-sent event for alternate streaming responses.
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 struct OpenAIResponsesStreamChunk: Codable {
     let id: String
