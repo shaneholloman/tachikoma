@@ -28,7 +28,7 @@ struct OpenAIResponsesRequest: Encodable {
     let serviceTier: String?
     let include: [String]?
 
-    /// Reasoning configuration (for o3/o4/GPT-5)
+    /// Reasoning configuration (for GPT-5 thinking models)
     let reasoning: ReasoningConfig?
 
     /// Truncation for long inputs

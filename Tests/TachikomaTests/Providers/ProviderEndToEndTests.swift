@@ -57,7 +57,7 @@ struct ProviderEndToEndTests {
             let config = Self.makeConfiguration { config in
                 config.setAPIKey("sk-live-openai", for: .openai)
             }
-            let provider = try OpenAIProvider(model: .gpt4o, configuration: config)
+            let provider = try OpenAIProvider(model: .gpt55, configuration: config)
             let response = try await provider.generateText(request: Self.basicRequest)
             #expect(response.text == "OpenAI chat success")
         }
@@ -410,7 +410,7 @@ struct ProviderEndToEndTests {
             "id": "chatcmpl-123",
             "object": "chat.completion",
             "created": 1_723_000_000,
-            "model": "gpt-4o",
+            "model": "gpt-5.5",
             "choices": [
                 [
                     "index": 0,

@@ -237,6 +237,7 @@ public final class ModelCapabilityRegistry: @unchecked Sendable {
             excludedParameters: ["temperature", "topP", "frequencyPenalty", "presencePenalty"],
         )
 
+        self.capabilities["openai:gpt-5.5"] = gpt5Capabilities
         self.capabilities["openai:gpt-5.1"] = gpt5Capabilities
         self.capabilities["openai:gpt-5.2"] = gpt5Capabilities
         self.capabilities["openai:gpt-5"] = gpt5Capabilities
@@ -248,36 +249,6 @@ public final class ModelCapabilityRegistry: @unchecked Sendable {
         self.capabilities["openai:gpt-5-thinking-nano"] = gpt5Capabilities
         self.capabilities["openai:gpt-5-chat-latest"] = gpt5Capabilities
 
-        // O4/GPT-5 reasoning models (fixed temperature, reasoning effort)
-        let reasoningCapabilities = ModelParameterCapabilities(
-            supportsTemperature: false,
-            supportsTopP: false,
-            supportedProviderOptions: .init(
-                supportsReasoningEffort: true,
-                supportsPreviousResponseId: true,
-            ),
-            forcedTemperature: 1.0,
-            excludedParameters: ["temperature", "topP"],
-        )
-
-        self.capabilities["openai:o4"] = reasoningCapabilities
-        self.capabilities["openai:o4-mini"] = reasoningCapabilities
-
-        // Standard GPT-4 models
-        let gpt4Capabilities = ModelParameterCapabilities(
-            supportedProviderOptions: .init(
-                supportsParallelToolCalls: true,
-                supportsResponseFormat: true,
-                supportsLogprobs: true,
-            ),
-        )
-
-        self.capabilities["openai:gpt-4o"] = gpt4Capabilities
-        self.capabilities["openai:gpt-4o-mini"] = gpt4Capabilities
-        self.capabilities["openai:gpt-4.1"] = gpt4Capabilities
-        self.capabilities["openai:gpt-4.1-mini"] = gpt4Capabilities
-        self.capabilities["openai:gpt-4-turbo"] = gpt4Capabilities
-
         // Claude 4 models with thinking
         let claude4Capabilities = ModelParameterCapabilities(
             supportedProviderOptions: .init(
@@ -286,6 +257,7 @@ public final class ModelCapabilityRegistry: @unchecked Sendable {
             ),
         )
 
+        self.capabilities["anthropic:claude-opus-4-7"] = claude4Capabilities
         self.capabilities["anthropic:claude-opus-4-5"] = claude4Capabilities
         self.capabilities["anthropic:claude-opus-4-1-20250805"] = claude4Capabilities
         self.capabilities["anthropic:claude-sonnet-4-20250514"] = claude4Capabilities

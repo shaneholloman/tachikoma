@@ -48,7 +48,7 @@ struct UsageTrackingTests {
         let tracker = UsageTracker(forTesting: true)
 
         let sessionId = tracker.startSession()
-        let model = LanguageModel.openai(.gpt4oMini)
+        let model = LanguageModel.openai(.gpt5Mini)
         let usage = Usage(inputTokens: 100, outputTokens: 50)
 
         // Record usage
@@ -65,7 +65,7 @@ struct UsageTrackingTests {
         #expect(session?.totalTokens == 150)
 
         let operation = session?.operations.first
-        #expect(operation?.modelId == "gpt-4o-mini")
+        #expect(operation?.modelId == "gpt-5-mini")
         #expect(operation?.providerName == "OpenAI")
         #expect(operation?.usage.inputTokens == 100)
         #expect(operation?.usage.outputTokens == 50)
@@ -83,7 +83,7 @@ struct UsageTrackingTests {
         let tracker = UsageTracker(forTesting: true)
 
         let sessionId = tracker.startSession()
-        let model = LanguageModel.openai(.gpt4oMini)
+        let model = LanguageModel.openai(.gpt5Mini)
 
         // Record multiple operations
         tracker.recordUsage(
@@ -117,10 +117,10 @@ struct UsageTrackingTests {
         let usage = Usage(inputTokens: 1_000_000, outputTokens: 1_000_000) // 1M tokens each for easy calculation
 
         // Test OpenAI pricing
-        let gpt4oMiniCost = calculator.calculateCost(for: .openai(.gpt4oMini), usage: usage)
-        #expect(gpt4oMiniCost.input == 0.15) // $0.15 per million input tokens
-        #expect(gpt4oMiniCost.output == 0.60) // $0.60 per million output tokens
-        #expect(gpt4oMiniCost.total == 0.75)
+        let gpt5MiniCost = calculator.calculateCost(for: .openai(.gpt5Mini), usage: usage)
+        #expect(gpt5MiniCost.input == 1.00)
+        #expect(gpt5MiniCost.output == 4.00)
+        #expect(gpt5MiniCost.total == 5.00)
 
         // Test Anthropic pricing
         let claudeHaikuCost = calculator.calculateCost(for: .anthropic(.haiku45), usage: usage)
@@ -145,7 +145,7 @@ struct UsageTrackingTests {
         let session1 = tracker.startSession()
         tracker.recordUsage(
             sessionId: session1,
-            model: .openai(.gpt4oMini),
+            model: .openai(.gpt5Mini),
             usage: Usage(inputTokens: 100, outputTokens: 50),
             operation: .textGeneration,
         )
@@ -173,7 +173,7 @@ struct UsageTrackingTests {
 
         // Check model breakdown
         #expect(totalUsage.modelBreakdown.count == 2)
-        #expect(totalUsage.modelBreakdown[LanguageModel.openai(.gpt4oMini).modelId] != nil)
+        #expect(totalUsage.modelBreakdown[LanguageModel.openai(.gpt5Mini).modelId] != nil)
         #expect(totalUsage.modelBreakdown[LanguageModel.anthropic(.haiku45).modelId] != nil)
 
         // Check operation breakdown
@@ -191,7 +191,7 @@ struct UsageTrackingTests {
         let sessionId = tracker.startSession()
         tracker.recordUsage(
             sessionId: sessionId,
-            model: .openai(.gpt4oMini),
+            model: .openai(.gpt5Mini),
             usage: Usage(inputTokens: 1000, outputTokens: 500),
             operation: .textGeneration,
         )
@@ -212,7 +212,7 @@ struct UsageTrackingTests {
         #expect(formattedReport.contains("Operations: 1"))
         #expect(formattedReport.contains("Total Tokens: 1500"))
         #expect(formattedReport.contains("OpenAI"))
-        #expect(formattedReport.contains("gpt-4o-mini"))
+        #expect(formattedReport.contains("gpt-5-mini"))
         #expect(formattedReport.contains("Text Generation"))
     }
 
@@ -223,7 +223,7 @@ struct UsageTrackingTests {
         let sessionId = tracker.startSession()
         tracker.recordUsage(
             sessionId: sessionId,
-            model: .openai(.gpt4oMini),
+            model: .openai(.gpt5Mini),
             usage: Usage(inputTokens: 100, outputTokens: 50),
             operation: .textGeneration,
         )

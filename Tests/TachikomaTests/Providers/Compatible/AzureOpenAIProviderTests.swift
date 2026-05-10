@@ -20,7 +20,7 @@ private final class AzureTestURLProtocol: URLProtocol {
     static let responseBody: Data = """
     {
       "id": "chatcmpl-azure",
-      "model": "gpt-4o",
+      "model": "gpt-5.5",
       "choices": [
         {
           "index": 0,
@@ -85,7 +85,7 @@ struct AzureOpenAIProviderTests {
         await AzureTestURLProtocol.reset()
 
         let provider = try AzureOpenAIProvider(
-            deploymentId: "gpt-4o",
+            deploymentId: "gpt-5.5",
             resource: "my-aoai",
             apiVersion: "2025-04-01-preview",
             endpoint: nil,
@@ -99,7 +99,7 @@ struct AzureOpenAIProviderTests {
         #expect(response.text == "hello azure")
 
         let sentRequest = await AzureTestURLProtocol.fetchLastRequest()
-        #expect(sentRequest?.url?.path == "/openai/deployments/gpt-4o/chat/completions")
+        #expect(sentRequest?.url?.path == "/openai/deployments/gpt-5.5/chat/completions")
 
         if let components = sentRequest?.url.flatMap({ URLComponents(url: $0, resolvingAgainstBaseURL: false) }) {
             let apiVersion = components.queryItems?.first { $0.name == "api-version" }?.value
@@ -122,7 +122,7 @@ struct AzureOpenAIProviderTests {
         await AzureTestURLProtocol.reset()
 
         let provider = try AzureOpenAIProvider(
-            deploymentId: "gpt-4o-mini",
+            deploymentId: "gpt-5-mini",
             resource: nil,
             apiVersion: "2025-04-01-preview",
             endpoint: nil,

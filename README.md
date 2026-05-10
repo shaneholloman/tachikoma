@@ -99,7 +99,7 @@ print(result.text)
 
 Common picks:
 - Anthropic: `claude-opus-4-5` (`LanguageModel.default`)
-- OpenAI: `gpt-5.2` (flagship), `gpt-5` (coding/agents), `o4-mini` (reasoning), `gpt-4o` (vision)
+- OpenAI: `gpt-5.5` (flagship), `gpt-5` (coding/agents), `gpt-5-thinking` (reasoning)
 - Google: `gemini-3-flash`
 - Grok: `grok-4-fast-reasoning`
 - Local: `ollama/llama3.3`

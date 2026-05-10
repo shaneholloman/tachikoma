@@ -16,7 +16,7 @@ public struct RealtimeAPIDemo {
         // 1. Create configuration
         print("\n1️⃣ Creating Configuration...")
         let config = SessionConfiguration(
-            model: "gpt-4o-realtime-preview",
+            model: "gpt-realtime",
             voice: .nova,
             instructions: "You are a helpful voice assistant",
             inputAudioFormat: .pcm16,
@@ -108,7 +108,7 @@ public struct RealtimeAPIDemo {
         Example:
         let conversation = try RealtimeConversation(configuration: config)
         try await conversation.start(
-            model: .gpt4oRealtime,
+            model: .custom("gpt-realtime"),
             voice: .nova
         )
         ════════════════════════════════════════════════
@@ -118,7 +118,7 @@ public struct RealtimeAPIDemo {
     /// Create a sample configuration for testing
     public static func createSampleConfiguration() -> SessionConfiguration {
         SessionConfiguration.voiceConversation(
-            model: "gpt-4o-realtime-preview",
+            model: "gpt-realtime",
             voice: .nova,
         )
     }
@@ -127,7 +127,7 @@ public struct RealtimeAPIDemo {
     public static func validateTypes() -> Bool {
         // Test configuration creation
         let config = self.createSampleConfiguration()
-        guard config.model == "gpt-4o-realtime-preview" else { return false }
+        guard config.model == "gpt-realtime" else { return false }
 
         // Test VAD configuration
         let vad = RealtimeTurnDetection.serverVAD

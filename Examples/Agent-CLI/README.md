@@ -50,7 +50,7 @@ In interactive mode:
 ```bash
 agent-cli --model gpt-5 "Explain quantum computing"
 agent-cli --model claude "Write a haiku"
-agent-cli --model o3 --thinking "Solve this step by step: ..."
+agent-cli --model gpt-5-thinking --thinking "Solve this step by step: ..."
 ```
 
 ### With MCP Tools
@@ -171,13 +171,11 @@ agent-cli --mcp-server "db -- npx @modelcontextprotocol/server-postgres postgres
 ## Supported Models
 
 ### OpenAI
-- GPT-5 series: `gpt-5`, `gpt-5-mini`, `gpt-5-nano`
-- O-series: `o3`, `o3-mini`, `o3-pro`, `o4-mini`
-- GPT-4: `gpt-4.1`, `gpt-4o`, `gpt-4-turbo`
+- GPT-5 series: `gpt-5.5`, `gpt-5.2`, `gpt-5.1`, `gpt-5`, `gpt-5-mini`, `gpt-5-nano`
 
 ### Anthropic
 - Claude 4: `opus-4`, `sonnet-4`
-- Claude 3.5: `claude`, `sonnet`, `haiku`
+- Claude 4.x: `claude`, `sonnet`, `haiku`
 
 ### Others
 - Google: `gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.5-flash-lite`
@@ -209,7 +207,7 @@ agent-cli --mcp-server "db -- npx @modelcontextprotocol/server-sqlite ./app.db" 
 
 ### Complex Reasoning
 ```bash
-agent-cli --model o3 --thinking \
+agent-cli --model gpt-5-thinking --thinking \
           "Plan a distributed system architecture for a social media platform"
 ```
 

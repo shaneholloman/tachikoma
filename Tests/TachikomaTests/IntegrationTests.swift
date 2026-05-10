@@ -29,7 +29,7 @@ struct IntegrationTests {
 
         let streamResult = StreamTextResult(
             stream: textStream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
         )
 

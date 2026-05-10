@@ -9,9 +9,9 @@ struct ModelParsingTests {
     }
 
     @Test
-    func `parse GPT-5.1 base model`() {
-        let parsed = LanguageModel.parse(from: "gpt-5.1")
-        #expect(parsed == .openai(.gpt51))
+    func `parse GPT-5.5 base model`() {
+        let parsed = LanguageModel.parse(from: "gpt-5.5")
+        #expect(parsed == .openai(.gpt55))
     }
 
     @Test
@@ -27,6 +27,12 @@ struct ModelParsingTests {
     }
 
     @Test
+    func `parse Claude Opus 4.7 model id`() {
+        let parsed = LanguageModel.parse(from: "claude-opus-4-7")
+        #expect(parsed == .anthropic(.opus47))
+    }
+
+    @Test
     func `parse Claude Sonnet 4.5 snapshot id`() {
         let parsed = LanguageModel.parse(from: "claude-sonnet-4-5-20250929")
         #expect(parsed == .anthropic(.sonnet45))
@@ -35,7 +41,7 @@ struct ModelParsingTests {
     @Test
     func `parse shorthand Claude alias`() {
         let parsed = LanguageModel.parse(from: "claude")
-        #expect(parsed == .anthropic(.sonnet45))
+        #expect(parsed == .anthropic(.opus47))
     }
 
     @Test
@@ -48,5 +54,25 @@ struct ModelParsingTests {
     func `parse shorthand Gemini alias`() {
         let parsed = LanguageModel.parse(from: "gemini")
         #expect(parsed == .google(.gemini3Flash))
+    }
+
+    @Test
+    func `ModelSelector rejects legacy OpenAI before Ollama fallback`() throws {
+        if #available(macOS 13.0, iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
+            for model in ["gpt-4o", "gpt-4.1", "gpt-3.5-turbo", "o4-mini", "o3-mini"] {
+                #expect(throws: ModelValidationError.self) {
+                    _ = try ModelSelector.parseModel(model)
+                }
+            }
+        }
+    }
+
+    @Test
+    func `ModelSelector rejects Claude 3 before Ollama fallback`() throws {
+        if #available(macOS 13.0, iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
+            #expect(throws: ModelValidationError.self) {
+                _ = try ModelSelector.parseModel("claude-3-sonnet")
+            }
+        }
     }
 }

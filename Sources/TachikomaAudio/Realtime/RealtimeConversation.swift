@@ -150,7 +150,7 @@ public final class RealtimeConversation: ObservableObject {
 
         // Create session with configuration
         let sessionConfig = SessionConfiguration(
-            model: "gpt-4o-realtime-preview",
+            model: "gpt-realtime",
             voice: .alloy,
             instructions: nil,
             tools: nil,
@@ -167,7 +167,7 @@ public final class RealtimeConversation: ObservableObject {
 
     /// Start the conversation
     public func start(
-        model: LanguageModel.OpenAI = .gpt4oRealtime,
+        model: LanguageModel.OpenAI = .custom("gpt-realtime"),
         voice: RealtimeVoice = .alloy,
         instructions: String? = nil,
         tools: [RealtimeTool]? = nil,
@@ -495,7 +495,7 @@ public final class RealtimeConversation: ObservableObject {
 
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 public func startRealtimeConversation(
-    model: LanguageModel.OpenAI = .gpt4oRealtime,
+    model: LanguageModel.OpenAI = .custom("gpt-realtime"),
     voice: RealtimeVoice = .alloy,
     instructions: String? = nil,
     tools: [AgentTool]? = nil,
@@ -548,7 +548,7 @@ public final class RealtimeConversation {
     }
 
     public func start(
-        model _: LanguageModel.OpenAI = .gpt4oRealtime,
+        model _: LanguageModel.OpenAI = .custom("gpt-realtime"),
         voice _: RealtimeVoice = .alloy,
         instructions _: String? = nil,
         tools _: [RealtimeTool]? = nil,
@@ -560,7 +560,7 @@ public final class RealtimeConversation {
 // swiftformat:disable wrapMultilineStatementBraces wrapReturnType indent
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 public func startRealtimeConversation(
-    model _: LanguageModel.OpenAI = .gpt4oRealtime,
+    model _: LanguageModel.OpenAI = .custom("gpt-realtime"),
     voice _: RealtimeVoice = .alloy,
     instructions _: String? = nil,
     tools _: [AgentTool]? = nil,

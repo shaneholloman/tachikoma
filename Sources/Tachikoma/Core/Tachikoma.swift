@@ -27,7 +27,7 @@ import Foundation
 //
 // ```swift
 // // Simple generation
-// let answer = try await generate("What is 2+2?", using: .openai(.gpt4o))
+// let answer = try await generate("What is 2+2?", using: .openai(.gpt55))
 //
 // // Conversation management
 // let conversation = Conversation()
@@ -114,7 +114,7 @@ public enum API {
     /// Model selection system
     public enum Models {
         /// Type-safe model selection
-        /// - `.openai(.gpt4o)`, `.anthropic(.opus4)`, `.grok(.grok4)`, `.ollama(.llama3_3)`
+        /// - `.openai(.gpt55)`, `.anthropic(.opus47)`, `.grok(.grok4)`, `.ollama(.llama3_3)`
         public static let typed = "Provider-specific model enums"
 
         /// Custom endpoints
@@ -196,16 +196,16 @@ public enum API {
 /// Migration guide from legacy API to modern API
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 public enum MigrationGuide {
-    /// Legacy: `Tachikoma.shared.getModel("gpt-4").getResponse(request)`
-    /// Modern: `generate("Hello", using: .openai(.gpt4o))`
+    /// Legacy: `Tachikoma.shared.getModel("gpt-5.5").getResponse(request)`
+    /// Modern: `generate("Hello", using: .openai(.gpt55))`
     public static let simpleGeneration = """
     // OLD (deprecated)
-    let model = try await Tachikoma.shared.getModel("gpt-4")
+    let model = try await Tachikoma.shared.getModel("gpt-5.5")
     let request = ModelRequest(messages: [.user(content: .text("Hello"))], settings: .default)
     let response = try await model.getResponse(request: request)
 
     // NEW (modern)
-    let response = try await generate("Hello", using: .openai(.gpt4o))
+    let response = try await generate("Hello", using: .openai(.gpt55))
     """
 
     /// Legacy: Complex ModelRequest/ModelResponse handling

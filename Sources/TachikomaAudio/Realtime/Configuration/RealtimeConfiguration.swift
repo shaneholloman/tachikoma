@@ -128,7 +128,7 @@ public struct InputAudioTranscription: Sendable, Codable {
 /// Session configuration with all options
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 public struct SessionConfiguration: Sendable, Codable {
-    /// Model to use (e.g., "gpt-4o-realtime-preview")
+    /// Model to use (e.g., "gpt-realtime")
     public var model: String
 
     /// Voice for audio responses
@@ -213,7 +213,7 @@ public struct SessionConfiguration: Sendable, Codable {
     }
 
     public init(
-        model: String = "gpt-4o-realtime-preview",
+        model: String = "gpt-realtime",
         voice: RealtimeVoice = .alloy,
         instructions: String? = nil,
         inputAudioFormat: RealtimeAudioFormat = .pcm16,
@@ -242,7 +242,7 @@ public struct SessionConfiguration: Sendable, Codable {
 
     /// Create a default configuration for voice conversations
     public static func voiceConversation(
-        model: String = "gpt-4o-realtime-preview",
+        model: String = "gpt-realtime",
         voice: RealtimeVoice = .alloy,
     )
         -> SessionConfiguration
@@ -258,7 +258,7 @@ public struct SessionConfiguration: Sendable, Codable {
 
     /// Create a configuration for text-only interactions
     public static func textOnly(
-        model: String = "gpt-4o-realtime-preview",
+        model: String = "gpt-realtime",
     )
         -> SessionConfiguration
     {
@@ -273,7 +273,7 @@ public struct SessionConfiguration: Sendable, Codable {
 
     /// Create a configuration with tools
     public static func withTools(
-        model: String = "gpt-4o-realtime-preview",
+        model: String = "gpt-realtime",
         voice: RealtimeVoice = .alloy,
         tools: [RealtimeTool],
     )

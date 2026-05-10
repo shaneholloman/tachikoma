@@ -186,8 +186,9 @@ public enum OpenAIAPIMode: String, Sendable, CaseIterable {
     public static func defaultMode(for model: LanguageModel.OpenAI) -> OpenAIAPIMode {
         // Determine default API mode for a given model
         switch model {
-        case .o4Mini, .gpt5, .gpt5Pro, .gpt5Mini, .gpt5Nano, .gpt51, .gpt52:
-            .responses // Reasoning models and GPT-5 default to Responses API
+        case .gpt5, .gpt5Pro, .gpt5Mini, .gpt5Nano, .gpt51, .gpt52, .gpt55,
+             .gpt5Thinking, .gpt5ThinkingMini, .gpt5ThinkingNano, .gpt5ChatLatest:
+            .responses // GPT-5 defaults to Responses API
         default:
             .chat // All other models use Chat Completions API
         }
@@ -614,7 +615,7 @@ public enum ResponseChannel: String, Sendable, Codable, CaseIterable {
     case final // Final answer to the user
 }
 
-/// Reasoning effort level for models that support it (o3, opus-4, etc.)
+/// Reasoning effort level for models that support it (GPT-5 thinking, opus-4, etc.)
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 public enum ReasoningEffort: String, Sendable, Codable, CaseIterable {
     case low

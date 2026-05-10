@@ -49,7 +49,7 @@ class RealtimeVoiceAssistant {
 
         // Start the conversation
         self.conversation = try await startRealtimeConversation(
-            model: .gpt4oRealtime,
+            model: .custom("gpt-realtime"),
             voice: .nova,
             instructions: """
             You are a helpful voice assistant. Keep responses concise and natural.
@@ -151,7 +151,7 @@ class RealtimeDemo {
 
         // Server VAD automatically detects when user starts/stops speaking
         let conversation = try await startRealtimeConversation(
-            model: .gpt4oRealtime,
+            model: .custom("gpt-realtime"),
             voice: .alloy,
             instructions: "You are a voice assistant with server-side voice activity detection",
         )
@@ -171,7 +171,7 @@ class RealtimeDemo {
 
         // Configure for both text and audio responses
         let conversation = try await startRealtimeConversation(
-            model: .gpt4oRealtime,
+            model: .custom("gpt-realtime"),
             voice: .shimmer,
         )
 
@@ -222,7 +222,7 @@ class RealtimeDemo {
         }
 
         let conversation = try await startRealtimeConversation(
-            model: .gpt4oRealtime,
+            model: .custom("gpt-realtime"),
             voice: .echo,
             instructions: "You are a smart home assistant. Use the available tools to control devices.",
             tools: [smartHomeTool],
@@ -315,7 +315,7 @@ struct RealtimeVoiceView: View {
     private func setupConversation() async {
         do {
             conversation = try await startRealtimeConversation(
-                model: .gpt4oRealtime,
+                model: .custom("gpt-realtime"),
                 voice: .nova,
             )
 

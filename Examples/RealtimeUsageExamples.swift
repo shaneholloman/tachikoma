@@ -24,7 +24,7 @@ class BasicVoiceAssistant: ObservableObject {
 
         // Start conversation with voice
         try await self.conversation?.start(
-            model: .gpt4oRealtime,
+            model: .custom("gpt-realtime"),
             voice: .nova,
             instructions: "You are a helpful voice assistant. Keep responses concise.",
         )
@@ -307,7 +307,7 @@ class AudioStreamingExample {
     func setupAudioStreaming(apiKey: String) async throws {
         // Configure for audio streaming
         var config = EnhancedSessionConfiguration(
-            model: "gpt-4o-realtime-preview",
+            model: "gpt-realtime",
             voice: .echo,
             inputAudioFormat: .pcm16,
             outputAudioFormat: .pcm16,
@@ -371,7 +371,7 @@ class MultiTurnConversation {
     func runConversation(apiKey: String) async throws {
         // Configure for multi-turn dialogue
         let config = EnhancedSessionConfiguration(
-            model: "gpt-4o-realtime-preview",
+            model: "gpt-realtime",
             voice: .fable,
             instructions: """
             You are a knowledgeable assistant engaged in a multi-turn conversation.
@@ -547,7 +547,7 @@ class VoiceAssistantViewController: UIViewController {
                 self.conversation = try RealtimeConversation(configuration: config)
 
                 try await self.conversation?.start(
-                    model: .gpt4oRealtime,
+                    model: .custom("gpt-realtime"),
                     voice: .shimmer,
                 )
 

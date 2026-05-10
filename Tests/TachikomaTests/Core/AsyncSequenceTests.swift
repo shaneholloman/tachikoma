@@ -17,7 +17,7 @@ struct AsyncSequenceTests {
 
         let result = StreamTextResult(
             stream: testStream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
         )
 
@@ -86,7 +86,7 @@ struct AsyncSequenceTests {
 
         let result = StreamObjectResult(
             objectStream: testStream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
             schema: TestData.self,
         )
@@ -117,7 +117,7 @@ struct AsyncSequenceTests {
 
         let result = StreamTextResult(
             stream: testStream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
         )
 
@@ -149,7 +149,7 @@ struct AsyncSequenceTests {
 
         let result = StreamTextResult(
             stream: testStream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
         )
 
@@ -183,7 +183,7 @@ struct AsyncSequenceTests {
 
         let result = StreamTextResult(
             stream: testStream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
         )
 
@@ -218,7 +218,7 @@ struct AsyncSequenceTests {
 
         let result = StreamTextResult(
             stream: testStream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
         )
 
@@ -262,7 +262,7 @@ struct AsyncSequenceTests {
 
         let result = StreamObjectResult(
             objectStream: testStream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
             schema: TestItem.self,
         )

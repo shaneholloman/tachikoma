@@ -49,7 +49,7 @@ struct ProviderIntegrationTests {
 
     @Test(.enabled(if: Self.hasOpenAIKey))
     func `OpenAI Provider - Real API Call`() async throws {
-        let model = Model.openai(.gpt4oMini)
+        let model = Model.openai(.gpt5Mini)
         let config = TachikomaConfiguration()
         do {
             _ = try ProviderFactory.createProvider(for: model, configuration: config)
@@ -72,7 +72,7 @@ struct ProviderIntegrationTests {
 
     @Test(.enabled(if: Self.hasOpenAIKey))
     func `OpenAI Provider - Tool Calling`() async throws {
-        let model = Model.openai(.gpt4oMini)
+        let model = Model.openai(.gpt5Mini)
         let config = TachikomaConfiguration()
 
         do {
@@ -117,7 +117,7 @@ struct ProviderIntegrationTests {
 
     @Test(.enabled(if: Self.hasOpenAIKey))
     func `OpenAI Provider - Streaming`() async throws {
-        let model = Model.openai(.gpt4oMini)
+        let model = Model.openai(.gpt5Mini)
         let config = TachikomaConfiguration()
 
         do {
@@ -323,7 +323,7 @@ struct ProviderIntegrationTests {
 
     @Test(.enabled(if: Self.hasOpenAIKey))
     func `Multi-Modal Provider - Vision Support`() async throws {
-        let model = Model.openai(.gpt4o)
+        let model = Model.openai(.gpt55)
         let config = TachikomaConfiguration()
         let provider = try ProviderFactory.createProvider(for: model, configuration: config)
 

@@ -113,10 +113,10 @@ public enum EmbeddingModel: Sendable {
         // Convert to LanguageModel for usage tracking
         switch self {
         case .openai:
-            .openai(.gpt4o) // Placeholder for tracking
+            .openai(.gpt55) // Placeholder for tracking
         case .cohere, .voyage, .custom:
             // Return a dummy model for tracking purposes
-            .openai(.gpt4o)
+            .openai(.gpt55)
         }
     }
 }

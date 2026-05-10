@@ -56,8 +56,8 @@ extension TachikomaExamples {
         print("Creating provider-specific models with type safety:")
 
         // OpenAI models
-        let gpt4o = Model.openai(.gpt4o)
-        let gpt41 = Model.openai(.gpt41)
+        let gpt55 = Model.openai(.gpt55)
+        let gpt52 = Model.openai(.gpt52)
         let gpt5Mini = Model.openai(.gpt5Mini)
 
         // Anthropic models
@@ -75,11 +75,11 @@ extension TachikomaExamples {
 
         // Custom endpoints
         let openRouter = Model.openRouter(modelId: "anthropic/claude-sonnet-4.5")
-        let customAPI = Model.openaiCompatible(modelId: "gpt-4", baseURL: "https://api.azure.com")
+        let customAPI = Model.openaiCompatible(modelId: "gpt-5.5", baseURL: "https://api.azure.com")
 
         let models = [
-            gpt4o,
-            gpt41,
+            gpt55,
+            gpt52,
             gpt5Mini,
             opus4,
             sonnet4,
@@ -100,7 +100,7 @@ extension TachikomaExamples {
 
         // Model capabilities
         print("\nModel capabilities:")
-        print("  • Vision support: \(gpt4o.supportsVision)")
+        print("  • Vision support: \(gpt55.supportsVision)")
         print("  • Tool support: \(opus4.supportsTools)")
         print("  • Streaming support: \(sonnet4.supportsStreaming)")
     }
@@ -192,7 +192,7 @@ extension TachikomaExamples {
         // Record some usage
         try? await tracker.recordUsage(
             operation: .generation,
-            model: "gpt-4o".lowercased(),
+            model: "gpt-5.5".lowercased(),
             inputTokens: 100,
             outputTokens: 50,
             cost: 0.003,
@@ -273,7 +273,7 @@ extension TachikomaExamples {
 
         // Test different provider creations (these will fail without API keys, which is expected)
         let models: [(String, Model)] = [
-            ("OpenAI GPT-4o", .openai(.gpt4o)),
+            ("OpenAI GPT-5.5", .openai(.gpt55)),
             ("Anthropic Opus 4", .anthropic(.opus4)),
             ("Grok 4 Fast", .grok(.grok4FastReasoning)),
             ("Ollama Llama 3.3", .ollama(.llama3_3)),
@@ -319,7 +319,7 @@ extension String {
 extension Model {
     var supportsVision: Bool {
         switch self {
-        case .openai(.gpt4o), .grok(.grok2Vision), .ollama(.llava):
+        case .openai(.gpt55), .grok(.grok2Vision), .ollama(.llava):
             true
         default:
             false

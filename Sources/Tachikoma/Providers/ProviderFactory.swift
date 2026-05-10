@@ -15,9 +15,9 @@ public struct ProviderFactory {
         // Create a provider for the specified language model
         switch model {
         case let .openai(openaiModel):
-            // Use Responses API for reasoning models (o4) and GPT-5 family
+            // Use Responses API for the GPT-5 family
             switch openaiModel {
-            case .o4Mini,
+            case .gpt55,
                  .gpt52,
                  .gpt51,
                  .gpt5,

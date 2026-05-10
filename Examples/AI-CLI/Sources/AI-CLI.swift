@@ -190,7 +190,7 @@ struct AICLI {
             -m, --model <MODEL>     Specify the AI model to use
             --api <API>            For OpenAI models: 'chat' or 'responses' (default: responses for GPT-5)
             -s, --stream           Stream the response (partial support)
-            --thinking             Show reasoning/thinking process (O3, O4, GPT-5 via Responses API)
+            --thinking             Show reasoning/thinking process (GPT-5 via Responses API)
             --verbose, -v          Show detailed debug output
             --config               Show current configuration and exit
             -h, --help             Show this help message
@@ -202,7 +202,7 @@ struct AICLI {
 
             # Use specific models
             ai-cli --model claude "Explain quantum computing"
-            ai-cli --model gpt-4o "Describe this image"
+            ai-cli --model gpt-5.5 "Describe this image"
             ai-cli --model grok "Tell me a joke"
             ai-cli --model llama3.3 "Help me debug this code"
 
@@ -222,14 +222,12 @@ struct AICLI {
         OpenAI:
           • gpt-5, gpt-5-pro, gpt-5-mini, gpt-5-nano (GPT-5 series, August 2025)
           • gpt-5-thinking, gpt-5-thinking-mini, gpt-5-thinking-nano
-          • gpt-4.1, gpt-4.1-mini, o4-mini (GPT-4.1 / reasoning)
-          • gpt-4o, gpt-4o-mini (Multimodal)
-          • gpt-4-turbo (Legacy)
+          • gpt-5.5, gpt-5.2, gpt-5.1 (flagship)
+          • gpt-5.5, gpt-5-mini (multimodal)
 
         Anthropic:
           • claude-opus-4-1-20250805, claude-sonnet-4-20250514 (Claude 4)
-          • claude-3-7-sonnet (Claude 3.7)
-          • claude-3-5-opus, claude-3-5-sonnet, claude-3-5-haiku (Claude 3.5)
+          • claude-opus-4-7, claude-sonnet-4.5, claude-haiku-4.5 (Claude 4.x)
 
         Google:
           • gemini-2.5-pro (reasoning, thinking support)
@@ -257,7 +255,7 @@ struct AICLI {
 
         SHORTCUTS:
           • claude, opus → claude-opus-4-1-20250805
-          • gpt, gpt4 → gpt-4.1
+          • gpt → gpt-5.5
           • grok → grok-4-fast-reasoning
           • gemini → gemini-2.5-flash
           • llama, llama3 → llama3.3
@@ -473,7 +471,7 @@ struct AICLI {
 
         let supportsThinking = self.isReasoningModel(model) && actualApiMode != .chat
         if config.showThinking, !supportsThinking {
-            print("⚠️  Note: --thinking only works with O3, O4, and GPT-5 models via Responses API")
+            print("⚠️  Note: --thinking only works with GPT-5 models via Responses API")
         }
 
         if case let .openai(openaiModel) = model, actualApiMode == .chat {
@@ -585,8 +583,7 @@ struct AICLI {
     static func isReasoningModel(_ model: LanguageModel) -> Bool {
         guard case let .openai(openaiModel) = model else { return false }
         switch openaiModel {
-        case .o4Mini,
-             .gpt5,
+        case .gpt5,
              .gpt5Pro,
              .gpt5Mini,
              .gpt5Nano,
@@ -672,7 +669,7 @@ struct AICLI {
                     }
                 }
 
-                // If no summary, try content array (for O3/O4)
+                // If no summary, try content array.
                 if reasoningText == nil || reasoningText?.isEmpty == true {
                     if let contentArray = output["content"] as? [[String: Any]] {
                         let reasoningParts = contentArray.compactMap { item -> String? in
@@ -801,15 +798,11 @@ struct AICLI {
         switch model {
         case let .openai(openaiModel):
             switch openaiModel {
-            case .gpt5: return nil // Pricing TBD
-            case .gpt5Mini: return nil // Pricing TBD
-            case .gpt5Nano: return nil // Pricing TBD
-            case .gpt4o:
+            case .gpt55, .gpt52, .gpt51, .gpt5:
                 inputCostPer1k = 0.005
-                outputCostPer1k = 0.015
-            case .gpt4oMini:
-                inputCostPer1k = 0.000_15
-                outputCostPer1k = 0.0006
+                outputCostPer1k = 0.020
+            case .gpt5Mini, .gpt5Nano:
+                return nil // Pricing TBD
             default: return nil
             }
         case let .anthropic(anthropicModel):

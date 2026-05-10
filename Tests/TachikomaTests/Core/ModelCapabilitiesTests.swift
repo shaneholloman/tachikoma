@@ -7,6 +7,7 @@ enum ModelCapabilitiesTests {
         @Test
         func `GPT-5 models exclude temperature and topP`() {
             let models: [LanguageModel] = [
+                .openai(.gpt55),
                 .openai(.gpt52),
                 .openai(.gpt51),
                 .openai(.gpt5),
@@ -35,26 +36,9 @@ enum ModelCapabilitiesTests {
         }
 
         @Test
-        func `Reasoning models have forced temperature`() {
-            let model = LanguageModel.openai(.o4Mini)
-            let capabilities = ModelCapabilityRegistry.shared.capabilities(for: model)
-
-            #expect(!capabilities.supportsTemperature)
-            #expect(!capabilities.supportsTopP)
-            #expect(capabilities.forcedTemperature == 1.0)
-            #expect(capabilities.excludedParameters.contains("temperature"))
-            #expect(capabilities.excludedParameters.contains("topP"))
-            #expect(capabilities.supportedProviderOptions.supportsReasoningEffort)
-            #expect(capabilities.supportedProviderOptions.supportsPreviousResponseId)
-        }
-
-        @Test
-        func `GPT-4 models support standard parameters`() {
+        func `Custom OpenAI models support standard parameters`() {
             let models: [LanguageModel] = [
-                .openai(.gpt4o),
-                .openai(.gpt4oMini),
-                .openai(.gpt41),
-                .openai(.gpt4Turbo),
+                .openai(.custom("custom-openai")),
             ]
 
             for model in models {
@@ -65,15 +49,13 @@ enum ModelCapabilitiesTests {
                 #expect(capabilities.supportsMaxTokens)
                 #expect(capabilities.supportsFrequencyPenalty)
                 #expect(capabilities.supportsPresencePenalty)
-                #expect(capabilities.supportedProviderOptions.supportsParallelToolCalls)
-                #expect(capabilities.supportedProviderOptions.supportsResponseFormat)
-                #expect(capabilities.supportedProviderOptions.supportsLogprobs)
             }
         }
 
         @Test
         func `Claude models support thinking`() {
             let models: [LanguageModel] = [
+                .anthropic(.opus47),
                 .anthropic(.opus4),
                 .anthropic(.sonnet4),
                 .anthropic(.sonnet45),
@@ -151,7 +133,7 @@ enum ModelCapabilitiesTests {
 
     struct SettingsValidationTests {
         @Test
-        func `Validate settings for GPT-5.1`() {
+        func `Validate settings for GPT-5.5`() {
             let settings = GenerationSettings(
                 maxTokens: 1000,
                 temperature: 0.7,
@@ -166,7 +148,7 @@ enum ModelCapabilitiesTests {
                 ),
             )
 
-            let validated = settings.validated(for: .openai(.gpt51))
+            let validated = settings.validated(for: .openai(.gpt55))
 
             #expect(validated.maxTokens == 1000)
             #expect(validated.temperature == nil) // Excluded
@@ -178,7 +160,7 @@ enum ModelCapabilitiesTests {
         }
 
         @Test
-        func `Validate settings for O3 with forced temperature`() {
+        func `Validate settings for GPT-5 strips unsupported options`() {
             let settings = GenerationSettings(
                 temperature: 0.5,
                 topP: 0.8,
@@ -190,16 +172,16 @@ enum ModelCapabilitiesTests {
                 ),
             )
 
-            let validated = settings.validated(for: LanguageModel.openai(.o4Mini))
+            let validated = settings.validated(for: LanguageModel.openai(.gpt55))
 
-            #expect(validated.temperature == 1.0) // Forced to 1.0
+            #expect(validated.temperature == nil) // Excluded
             #expect(validated.topP == nil) // Excluded
-            #expect(validated.providerOptions.openai?.reasoningEffort == .high) // Kept
-            #expect(validated.providerOptions.openai?.verbosity == nil) // Removed
+            #expect(validated.providerOptions.openai?.reasoningEffort == nil) // Removed
+            #expect(validated.providerOptions.openai?.verbosity == .medium) // Kept
         }
 
         @Test
-        func `Validate settings for GPT-4`() {
+        func `Validate settings for custom OpenAI model`() {
             let settings = GenerationSettings(
                 maxTokens: 2000,
                 temperature: 0.8,
@@ -216,17 +198,13 @@ enum ModelCapabilitiesTests {
                 ),
             )
 
-            let validated = settings.validated(for: .openai(.gpt4o))
+            let validated = settings.validated(for: .openai(.custom("custom-openai")))
 
             #expect(validated.maxTokens == 2000)
             #expect(validated.temperature == 0.8)
             #expect(validated.topP == 0.95)
             #expect(validated.frequencyPenalty == 0.2)
             #expect(validated.presencePenalty == 0.1)
-            #expect(validated.providerOptions.openai?.parallelToolCalls == true)
-            #expect(validated.providerOptions.openai?.responseFormat == .json)
-            #expect(validated.providerOptions.openai?.logprobs == true)
-            #expect(validated.providerOptions.openai?.topLogprobs == 3)
         }
 
         @Test
@@ -308,7 +286,7 @@ enum ModelCapabilitiesTests {
         func `Concurrent capability access`() async {
             let models: [LanguageModel] = [
                 .openai(.gpt51),
-                .openai(.gpt4o),
+                .openai(.gpt55),
                 .anthropic(.opus4),
                 .google(.gemini25Flash),
             ]

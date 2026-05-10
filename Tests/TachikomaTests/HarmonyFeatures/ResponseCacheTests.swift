@@ -317,7 +317,7 @@ struct ResponseCacheTests {
 
         // Create a mock provider
         let mockProvider = ResponseCacheMockProvider(
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             response: ProviderResponse(text: "Cached response", usage: nil, finishReason: .stop),
         )
 
@@ -336,7 +336,7 @@ struct ResponseCacheTests {
         // Use a simple counter that can be modified in the closure
         let callCount = Box(value: 0)
         var mockProvider = ResponseCacheMockProvider(
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             response: ProviderResponse(text: "Response", usage: nil, finishReason: .stop),
         )
         mockProvider.onGenerateText = { _ in
@@ -368,7 +368,7 @@ struct ResponseCacheTests {
 
         let callCount = Box(value: 0)
         var mockProvider = ResponseCacheMockProvider(
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             response: ProviderResponse(text: "Test", usage: nil, finishReason: .stop),
         )
         mockProvider.onStreamText = { _ in

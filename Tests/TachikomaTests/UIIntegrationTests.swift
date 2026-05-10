@@ -102,7 +102,7 @@ struct UIIntegrationTests {
 
         let streamResult = StreamTextResult(
             stream: textStream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
         )
 
@@ -159,7 +159,7 @@ struct UIIntegrationTests {
 
         let streamResult = StreamTextResult(
             stream: textStream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
         )
 

@@ -88,7 +88,7 @@ public struct ModelSettings: Sendable, Codable {
 
     /// Legacy initializer for backward compatibility
     public init(
-        modelName: String = "gpt-4",
+        modelName: String = "gpt-5.5",
         maxTokens: Int? = nil,
         temperature: Double? = nil,
         topP: Double? = nil,

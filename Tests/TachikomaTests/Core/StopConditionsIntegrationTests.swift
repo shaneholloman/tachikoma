@@ -327,7 +327,7 @@ private struct MockTextProvider: ModelProvider {
 
 private struct MockOpenAIProvider: ModelProvider {
     var modelId: String {
-        "gpt-4"
+        "gpt-5.5"
     }
 
     var baseURL: String? {

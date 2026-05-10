@@ -89,12 +89,12 @@ struct StreamObjectTests {
 
         let result = StreamObjectResult(
             objectStream: testStream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
             schema: TestPerson.self,
         )
 
-        #expect(result.model == .openai(.gpt4o))
+        #expect(result.model == .openai(.gpt55))
         #expect(result.schema == TestPerson.self)
     }
 
@@ -157,7 +157,7 @@ struct StreamObjectTests {
 
         let result = StreamObjectResult(
             objectStream: testStream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
             schema: TestPerson.self,
         )
@@ -193,7 +193,7 @@ struct StreamObjectTests {
 
         let result = StreamObjectResult(
             objectStream: testStream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
             schema: TestPerson.self,
         )
@@ -221,7 +221,7 @@ struct StreamObjectTests {
 
         let result = StreamObjectResult(
             objectStream: testStream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
             schema: TestPerson.self,
         )

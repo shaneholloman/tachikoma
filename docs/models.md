@@ -8,14 +8,11 @@ Tachikoma ships with a built-in model catalog (`CaseIterable` enums) plus suppor
 
 ## OpenAI (`LanguageModel.OpenAI`)
 
-- `o4-mini`
+- `gpt-5.5`
 - `gpt-5.2`, `gpt-5.1`
 - `gpt-5`, `gpt-5-pro`, `gpt-5-mini`, `gpt-5-nano`
 - `gpt-5-thinking`, `gpt-5-thinking-mini`, `gpt-5-thinking-nano`
 - `gpt-5-chat-latest`
-- `gpt-4.1`, `gpt-4.1-mini`
-- `gpt-4o`, `gpt-4o-mini`, `gpt-4o-realtime-preview`
-- `gpt-4-turbo`, `gpt-3.5-turbo`
 
 Notes:
 - Mini/Nano variants exist only for **GPT‑5** (not for GPT‑5.1 / GPT‑5.2).

@@ -231,7 +231,7 @@ struct StreamTransformTests {
 
         let result = StreamTextResult(
             stream: stream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
         )
 
@@ -264,7 +264,7 @@ struct StreamTransformTests {
 
         let result = StreamTextResult(
             stream: stream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
         )
 
@@ -291,7 +291,7 @@ struct StreamTransformTests {
 
         let result = StreamTextResult(
             stream: stream,
-            model: .openai(.gpt4o),
+            model: .openai(.gpt55),
             settings: .default,
         )
 

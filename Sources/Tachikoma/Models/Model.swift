@@ -31,8 +31,8 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
     // MARK: - Provider Sub-Enums
 
     public enum OpenAI: Sendable, Hashable, CaseIterable {
-        /// Latest models (2025)
-        case o4Mini
+        /// GPT-5.5 Series
+        case gpt55 // Flagship GPT-5.5
 
         /// GPT-5.2 Series
         case gpt52 // Flagship GPT-5.2
@@ -50,25 +50,12 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
         case gpt5ThinkingNano
         case gpt5ChatLatest // Non-reasoning default chat deployment
 
-        // GPT-4.1 Series
-        case gpt41
-        case gpt41Mini
-
-        // GPT-4o Series (Multimodal)
-        case gpt4o
-        case gpt4oMini
-        case gpt4oRealtime // Realtime API support
-
-        // Legacy support
-        case gpt4Turbo
-        case gpt35Turbo
-
         /// Fine-tuned models
         case custom(String)
 
         public static var allCases: [OpenAI] {
             [
-                .o4Mini,
+                .gpt55,
                 .gpt52,
                 .gpt51,
                 .gpt5,
@@ -79,20 +66,13 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
                 .gpt5ThinkingMini,
                 .gpt5ThinkingNano,
                 .gpt5ChatLatest,
-                .gpt41,
-                .gpt41Mini,
-                .gpt4o,
-                .gpt4oMini,
-                .gpt4oRealtime,
-                .gpt4Turbo,
-                .gpt35Turbo,
             ]
         }
 
         public var modelId: String {
             switch self {
             case let .custom(id): id
-            case .o4Mini: "o4-mini"
+            case .gpt55: "gpt-5.5"
             case .gpt52: "gpt-5.2"
             case .gpt51: "gpt-5.1"
             case .gpt5: "gpt-5"
@@ -103,83 +83,80 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
             case .gpt5ThinkingMini: "gpt-5-thinking-mini"
             case .gpt5ThinkingNano: "gpt-5-thinking-nano"
             case .gpt5ChatLatest: "gpt-5-chat-latest"
-            case .gpt41: "gpt-4.1"
-            case .gpt41Mini: "gpt-4.1-mini"
-            case .gpt4o: "gpt-4o"
-            case .gpt4oMini: "gpt-4o-mini"
-            case .gpt4oRealtime: "gpt-4o-realtime-preview"
-            case .gpt4Turbo: "gpt-4-turbo"
-            case .gpt35Turbo: "gpt-3.5-turbo"
             }
         }
 
         public var supportsVision: Bool {
             switch self {
-            case .gpt52,
+            case .gpt55,
+                 .gpt52,
                  .gpt51,
                  .gpt5, .gpt5Pro, .gpt5Mini, .gpt5Nano, .gpt5Thinking, .gpt5ThinkingMini, .gpt5ThinkingNano,
                  .gpt5ChatLatest: true // GPT-5+ supports multimodal
-            case .gpt4o, .gpt4oMini, .gpt4oRealtime: true
             default: false
             }
         }
 
         public var supportsTools: Bool {
             switch self {
-            case .o4Mini: true
-            case .gpt52,
+            case .gpt55,
+                 .gpt52,
                  .gpt51,
                  .gpt5, .gpt5Pro, .gpt5Mini, .gpt5Nano, .gpt5Thinking, .gpt5ThinkingMini, .gpt5ThinkingNano,
                  .gpt5ChatLatest: true // GPT-5+ excels at tool calling
-            case .gpt41, .gpt41Mini, .gpt4o, .gpt4oMini, .gpt4oRealtime, .gpt4Turbo: true
-            case .gpt35Turbo: true
             case .custom: true // Assume custom models support tools
             }
         }
 
         public var supportsAudioInput: Bool {
             switch self {
-            case .gpt52,
+            case .gpt55,
+                 .gpt52,
                  .gpt51,
                  .gpt5, .gpt5Pro, .gpt5Mini, .gpt5Nano, .gpt5Thinking, .gpt5ThinkingMini, .gpt5ThinkingNano,
                  .gpt5ChatLatest: true // GPT-5+ is fully multimodal
-            case .gpt4o, .gpt4oMini, .gpt4oRealtime: true // GPT-4o models support native audio input
             default: false
             }
         }
 
         public var supportsAudioOutput: Bool {
             switch self {
-            case .gpt4oRealtime: true // Realtime API supports native audio output
+            case let .custom(id): id.contains("realtime")
             default: false
             }
         }
 
         public var supportsRealtime: Bool {
             switch self {
-            case .gpt4oRealtime: true
+            case let .custom(id): id.contains("realtime")
             default: false
             }
         }
 
         public var contextLength: Int {
             switch self {
-            case .o4Mini: 128_000
-            case .gpt52,
+            case .gpt55,
+                 .gpt52,
                  .gpt51,
                  .gpt5, .gpt5Pro, .gpt5Mini, .gpt5Nano, .gpt5Thinking, .gpt5ThinkingMini, .gpt5ThinkingNano,
                  .gpt5ChatLatest: 400_000 // 272k input + 128k output
-            case .gpt41, .gpt41Mini: 1_000_000
-            case .gpt4o, .gpt4oMini, .gpt4oRealtime: 128_000
-            case .gpt4Turbo: 128_000
-            case .gpt35Turbo: 16000
             case .custom: 128_000 // Default assumption
             }
+        }
+
+        public var isUnsupportedLegacyFamily: Bool {
+            let normalized = self.modelId.lowercased()
+            let compact = normalized.replacingOccurrences(of: "-", with: "")
+                .replacingOccurrences(of: ".", with: "")
+            return normalized.hasPrefix("gpt-4") || compact.hasPrefix("gpt4") ||
+                normalized.hasPrefix("gpt-3") || compact.hasPrefix("gpt3") ||
+                normalized.hasPrefix("o3") || normalized.hasPrefix("o4")
         }
     }
 
     public enum Anthropic: Sendable, Hashable, CaseIterable {
-        // Claude 4.x / 4.5 Series (2025)
+        // Claude 4.x / 4.5+ Series
+        case opus47
         case opus45
         case opus4
         case opus4Thinking
@@ -193,6 +170,7 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
 
         public static var allCases: [Anthropic] {
             [
+                .opus47,
                 .opus45,
                 .opus4,
                 .opus4Thinking,
@@ -206,6 +184,7 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
         public var modelId: String {
             switch self {
             case let .custom(id): id
+            case .opus47: "claude-opus-4-7"
             case .opus45: "claude-opus-4-5"
             case .opus4: "claude-opus-4-1-20250805"
             case .opus4Thinking: "claude-opus-4-1-20250805-thinking"
@@ -218,7 +197,8 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
 
         public var supportsVision: Bool {
             switch self {
-            case .opus45, .opus4, .opus4Thinking, .sonnet4, .sonnet4Thinking, .sonnet45, .haiku45: true
+            case .opus47, .opus45, .opus4, .opus4Thinking, .sonnet4, .sonnet4Thinking, .sonnet45, .haiku45:
+                true
             case .custom: true // Assume custom models support vision
             }
         }
@@ -239,6 +219,7 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
 
         public var contextLength: Int {
             switch self {
+            case .opus47: 1_000_000
             case .opus45, .opus4, .opus4Thinking, .sonnet4, .sonnet4Thinking, .sonnet45, .haiku45: 500_000
             case .custom: 200_000 // Default assumption
             }
@@ -869,15 +850,12 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
 
     // MARK: - Default Model
 
-    public static let `default`: LanguageModel = .anthropic(.opus45)
+    public static let `default`: LanguageModel = .anthropic(.opus47)
 
     // MARK: - Convenience Static Properties
 
-    /// Default Claude model (opus45)
-    public static let claude: LanguageModel = .anthropic(.opus45)
-
-    /// Default GPT-4o model
-    public static let gpt4o: LanguageModel = .openai(.gpt4o)
+    /// Default Claude model (opus47)
+    public static let claude: LanguageModel = .anthropic(.opus47)
 
     /// Default Grok model (Grok-4-0709)
     public static let grok4: LanguageModel = .grok(.grok4)
@@ -1137,6 +1115,10 @@ extension LanguageModel {
 
         // MARK: OpenAI models
 
+        if compact.contains("gpt4") || compact.contains("gpt3") || compact.contains("o3") || compact.contains("o4") {
+            return nil
+        }
+
         if dashed == "gpt-5-pro" || compact == "gpt5pro" {
             return .openai(.gpt5Pro)
         }
@@ -1149,6 +1131,13 @@ extension LanguageModel {
                 return .openai(.gpt5ThinkingMini)
             }
             return .openai(.gpt5Thinking)
+        }
+
+        if dotted.contains("gpt-5-5") || compact.contains("gpt55") {
+            // GPT-5.5 currently has no mini/nano variants; map those suffixes to GPT-5 mini/nano.
+            if dotted.contains("nano") || compact.contains("nano") { return .openai(.gpt5Nano) }
+            if dotted.contains("mini") || compact.contains("mini") { return .openai(.gpt5Mini) }
+            return .openai(.gpt55)
         }
 
         if dotted.contains("gpt-5-2") || compact.contains("gpt52") {
@@ -1181,39 +1170,22 @@ extension LanguageModel {
             return .openai(.gpt5)
         }
 
-        if dotted.contains("gpt-4o-realtime") || compact.contains("gpt4orealtime") {
-            return .openai(.gpt4oRealtime)
-        }
+        // MARK: Anthropic models
 
-        if dotted.contains("gpt-4o-mini") || compact.contains("gpt4omini") {
-            return .openai(.gpt4oMini)
-        }
-
-        if dotted.contains("gpt-4o") || compact.contains("gpt4o") {
-            return .openai(.gpt4o)
-        }
-
-        if dotted.contains("gpt-4.1-mini") || compact.contains("gpt41mini") {
-            return .openai(.gpt41Mini)
-        }
-
-        if dotted.contains("gpt-4.1") || compact.contains("gpt41") {
-            return .openai(.gpt41)
+        if dotted.contains("claude-3") || compact.contains("claude3") {
+            return nil
         }
 
         if
-            dashed == "o3" || compact == "o3" || dashed == "o3-pro" || dashed == "o3-mini" || compact == "o3mini" ||
-            compact == "o3pro"
+            dotted.contains("claude-opus-4-7") ||
+            dotted.contains("claude-opus-4.7") ||
+            compact.contains("claudeopus47") ||
+            dotted.contains("opus-4-7") ||
+            dotted.contains("opus-4.7") ||
+            compact.contains("opus47")
         {
-            // o3 family is deprecated; steer callers to GPT-5.1 Mini
-            return .openai(.gpt5Mini)
+            return .anthropic(.opus47)
         }
-
-        if dashed == "o4-mini" || compact == "o4mini" {
-            return .openai(.o4Mini)
-        }
-
-        // MARK: Anthropic models
 
         if
             dotted.contains("claude-opus-4-5") ||
@@ -1268,7 +1240,7 @@ extension LanguageModel {
 
         let canonicalForms = [normalized, dashed, compact]
         if canonicalForms.contains(where: { genericClaudeIdentifiers.contains($0) }) {
-            return .anthropic(.sonnet45)
+            return .anthropic(.opus47)
         }
 
         // MARK: Google models
@@ -1383,10 +1355,6 @@ extension LanguageModel {
 
         if compact.contains("gpt") {
             return .openai(.gpt5Mini)
-        }
-
-        if compact.contains("o4") {
-            return .openai(.o4Mini)
         }
 
         return nil

@@ -56,7 +56,7 @@ public struct OpenAIOptions: Sendable, Codable {
     /// Verbosity level for GPT-5 models
     public var verbosity: Verbosity?
 
-    /// Reasoning effort for O3/O4 models
+    /// Reasoning effort for GPT-5 models
     public var reasoningEffort: ReasoningEffort?
 
     /// Previous response ID for Responses API chaining

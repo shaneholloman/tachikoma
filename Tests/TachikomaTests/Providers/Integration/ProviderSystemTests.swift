@@ -9,10 +9,10 @@ struct ProviderSystemTests {
     @Test
     func `Provider Factory - OpenAI Provider Creation`() async throws {
         try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
-            let model = Model.openai(.gpt4o)
+            let model = Model.openai(.gpt55)
             let provider = try ProviderFactory.createProvider(for: model, configuration: config)
 
-            #expect(provider.modelId == "gpt-4o")
+            #expect(provider.modelId == "gpt-5.5")
             #expect(provider.capabilities.supportsVision == true)
             #expect(provider.capabilities.supportsTools == true)
             #expect(provider.capabilities.supportsStreaming == true)
@@ -89,7 +89,7 @@ struct ProviderSystemTests {
             }
 
             #expect(throws: TachikomaError.self) {
-                try OpenAIProvider(model: .gpt4o, configuration: config)
+                try OpenAIProvider(model: .gpt55, configuration: config)
             }
 
             #expect(throws: TachikomaError.self) {
@@ -102,9 +102,9 @@ struct ProviderSystemTests {
 
     @Test
     func `Model Capabilities - Vision Support`() {
-        #expect(Model.openai(.gpt4o).supportsVision == true)
-        #expect(Model.openai(.gpt4oMini).supportsVision == true)
-        #expect(Model.openai(.gpt41).supportsVision == false)
+        #expect(Model.openai(.gpt55).supportsVision == true)
+        #expect(Model.openai(.gpt5Mini).supportsVision == true)
+        #expect(Model.openai(.custom("text-only-openai")).supportsVision == false)
 
         #expect(Model.anthropic(.opus4).supportsVision == true)
         #expect(Model.anthropic(.sonnet4).supportsVision == true)
@@ -121,8 +121,8 @@ struct ProviderSystemTests {
 
     @Test
     func `Model Capabilities - Tool Support`() {
-        #expect(Model.openai(.gpt4o).supportsTools == true)
-        #expect(Model.openai(.gpt41).supportsTools == true)
+        #expect(Model.openai(.gpt55).supportsTools == true)
+        #expect(Model.openai(.gpt55).supportsTools == true)
 
         #expect(Model.anthropic(.opus4).supportsTools == true)
         #expect(Model.anthropic(.sonnet4).supportsTools == true)
@@ -136,7 +136,7 @@ struct ProviderSystemTests {
 
     @Test
     func `Model Capabilities - Streaming Support`() {
-        #expect(Model.openai(.gpt4o).supportsStreaming == true)
+        #expect(Model.openai(.gpt55).supportsStreaming == true)
         #expect(Model.anthropic(.opus4).supportsStreaming == true)
         #expect(Model.grok(.grok4).supportsStreaming == true)
         #expect(Model.ollama(.llama33).supportsStreaming == true)

@@ -9,7 +9,7 @@ Based on the Vercel AI SDK patterns from `/Users/steipete/Downloads/ai-sdk.md`, 
 The Vercel AI SDK provides these core patterns:
 - **Provider-specific imports**: `import { openai } from '@ai-sdk/openai'`
 - **Core functions**: `generateText()`, `streamText()`, `generateObject()`, `streamObject()`
-- **Model specification**: `model: openai('gpt-4o')`, `model: anthropic('claude-sonnet-4')`
+- **Model specification**: `model: openai('gpt-5.5')`, `model: anthropic('claude-sonnet-4')`
 - **Unified API**: Same function signatures across all providers
 - **Tool integration**: Simple `tools: { toolName: toolDefinition }` object
 - **Streaming first**: Built-in streaming support with AsyncSequence patterns
@@ -55,7 +55,7 @@ The Vercel AI SDK provides these core patterns:
 - [ ] **Replace LanguageModel enum with LanguageModel protocol**
   - [ ] Create `LanguageModel` protocol with provider metadata
   - [ ] Create provider-specific model structs: `OpenAIModel`, `AnthropicModel`, etc.
-  - [ ] Implement model creation: `openai("gpt-4o")`, `anthropic("claude-sonnet-4")`
+  - [ ] Implement model creation: `openai("gpt-5.5")`, `anthropic("claude-sonnet-4")`
   - [ ] Add model capabilities: `supportsTools`, `supportsStreaming`, `supportsImages`
 
 #### 1.3 Core API Functions Redesign
@@ -105,7 +105,7 @@ The Vercel AI SDK provides these core patterns:
   - [ ] Google Gemini API integration
 
 - [ ] **Provider-specific features**
-  - [ ] Reasoning support for GPT-5 and o4-mini models
+  - [ ] Reasoning support for GPT-5 thinking models
   - [ ] Vision support for multimodal models
   - [ ] Function calling for compatible models
   - [ ] Streaming optimization per provider

@@ -12,7 +12,7 @@ import Tachikoma
 
 // Use Tachikoma normally without MCP
 let result = try await generateText(
-    model: .openai(.gpt4o),
+    model: .openai(.gpt55),
     messages: messages,
     tools: staticTools
 )
@@ -26,7 +26,7 @@ import TachikomaMCP
 // Now you can use MCP tools alongside static tools
 let mcpTools = try await MCPToolDiscovery.withFilesystem()
 let result = try await generateText(
-    model: .openai(.gpt4o),
+    model: .openai(.gpt55),
     messages: messages,
     tools: staticTools + mcpTools
 )

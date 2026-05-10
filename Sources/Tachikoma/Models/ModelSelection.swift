@@ -35,6 +35,10 @@ public struct ModelSelector {
             return .grok(grokModel)
         }
 
+        if Self.isUnsupportedLegacyOpenAIModel(normalized) || Self.isUnsupportedLegacyAnthropicModel(normalized) {
+            throw ModelValidationError.unsupportedModel(modelString)
+        }
+
         // Ollama shortcuts and models
         if let ollamaModel = parseOllamaModel(normalized) {
             return .ollama(ollamaModel)
@@ -46,7 +50,7 @@ public struct ModelSelector {
         }
 
         // Custom model ID - try to infer provider
-        if normalized.contains("gpt") || normalized.contains("o3") || normalized.contains("o4") {
+        if normalized.contains("gpt-5") || normalized.contains("gpt5") {
             return .openai(.custom(normalized))
         }
 
@@ -66,6 +70,13 @@ public struct ModelSelector {
 
     private static func parseOpenAIModel(_ input: String) -> Model.OpenAI? {
         switch input {
+        // GPT-5.5 models
+        case "gpt-5.5", "gpt5.5", "gpt-5-5", "gpt5-5", "gpt55":
+            return .gpt55
+        case "gpt-5.5-mini", "gpt5.5-mini", "gpt55-mini", "gpt55mini", "gpt-5-5-mini", "gpt5-5-mini":
+            return .gpt5Mini
+        case "gpt-5.5-nano", "gpt5.5-nano", "gpt55-nano", "gpt55nano", "gpt-5-5-nano", "gpt5-5-nano":
+            return .gpt5Nano
         // GPT-5.2 models
         case "gpt-5.2", "gpt5.2", "gpt-5-2", "gpt5-2", "gpt52":
             return .gpt52
@@ -97,27 +108,17 @@ public struct ModelSelector {
             return .gpt5ThinkingNano
         case "gpt-5-chat-latest", "gpt5-chat-latest":
             return .gpt5ChatLatest
-        // Direct matches
-        case "gpt-4o", "gpt4o":
-            return .gpt4o
-        case "gpt-4o-mini", "gpt4o-mini", "gpt4omini":
-            return .gpt4oMini
-        case "gpt-4.1", "gpt4.1", "gpt41":
-            return .gpt41
-        case "gpt-4.1-mini", "gpt4.1-mini", "gpt41mini":
-            return .gpt41Mini
-        case "o4-mini", "o4mini":
-            return .o4Mini
         // Shortcuts
         case "gpt":
-            return .gpt51 // Default to flagship GPT-5.1
-        case "gpt4", "gpt-4":
-            return .gpt4o // Default to latest GPT-4 variant
+            return .gpt55 // Default to flagship GPT-5.5
         case "openai":
-            return .gpt51 // Default to GPT-5.1
+            return .gpt55 // Default to GPT-5.5
         default:
             // Check if it's an OpenAI model ID
-            if input.hasPrefix("gpt") || input.hasPrefix("o4") {
+            if Self.isUnsupportedLegacyOpenAIModel(input) {
+                return nil
+            }
+            if input.hasPrefix("gpt-5") || input.hasPrefix("gpt5") {
                 return .custom(input)
             }
             return nil
@@ -131,6 +132,8 @@ public struct ModelSelector {
             return .opus4
         case "claude-opus-4-20250514-thinking":
             return .opus4Thinking
+        case "claude-opus-4-7", "claude-opus-4.7", "opus-4-7", "opus-4.7", "opus47":
+            return .opus47
         case "claude-opus-4-5", "claude-opus-4.5", "opus-4-5", "opus-4.5", "opus45":
             return .opus45
         case "claude-sonnet-4-20250514":
@@ -141,22 +144,39 @@ public struct ModelSelector {
             return .sonnet45
         // Shortcuts
         case "claude":
-            return .sonnet45 // Default plain Claude alias to latest Sonnet
+            return .opus47
         case "claude-opus", "opus":
-            return .opus45
+            return .opus47
         case "claude-sonnet", "sonnet":
             return .sonnet4
         case "claude-haiku", "haiku":
             return .haiku45
         case "anthropic":
-            return .opus45 // Default Anthropic model
+            return .opus47 // Default Anthropic model
         default:
             // Check if it's a Claude model ID
+            if Self.isUnsupportedLegacyAnthropicModel(input) {
+                return nil
+            }
             if input.hasPrefix("claude") {
                 return .custom(input)
             }
             return nil
         }
+    }
+
+    private static func isUnsupportedLegacyOpenAIModel(_ input: String) -> Bool {
+        let normalized = input.lowercased()
+        let compact = normalized.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: ".", with: "")
+        return normalized.hasPrefix("gpt-4") || compact.hasPrefix("gpt4") ||
+            normalized.hasPrefix("gpt-3") || compact.hasPrefix("gpt3") ||
+            normalized.hasPrefix("o3") || normalized.hasPrefix("o4")
+    }
+
+    private static func isUnsupportedLegacyAnthropicModel(_ input: String) -> Bool {
+        let normalized = input.lowercased()
+        let compact = normalized.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: ".", with: "")
+        return normalized.hasPrefix("claude-3") || compact.hasPrefix("claude3")
     }
 
     private static func parseGoogleModel(_ input: String) -> Model.Google? {
@@ -388,14 +408,14 @@ public func getAllAvailableModels() -> String {
     )
 
     output += "\nShortcuts:\n"
-    output += "  • claude, claude-opus, opus → claude-opus-4-20250514\n"
-    output += "  • gpt, gpt4 → gpt-4.1\n"
+    output += "  • claude, claude-opus, opus → claude-opus-4-7\n"
+    output += "  • gpt → gpt-5.5\n"
     output += "  • gemini → gemini-3-flash\n"
     output += "  • grok → grok-4-fast-reasoning\n"
     output += "  • llama, llama3 → llama3.3\n"
 
     output += "\nCustom Models:\n"
-    output += "  • OpenRouter: anthropic/claude-3.5-sonnet\n"
+    output += "  • OpenRouter: anthropic/claude-opus-4-7\n"
     output += "  • Custom OpenAI: custom-gpt-model\n"
     output += "  • Local Ollama: any-model:tag\n"
 
@@ -423,15 +443,15 @@ extension ModelSelector {
         // Get recommended models for specific use cases
         switch useCase {
         case .coding:
-            [.claude, .gpt4o, .google(.gemini25Pro)]
+            [.claude, .openai(.gpt55), .google(.gemini25Pro)]
         case .vision:
-            [.claude, .gpt4o, .google(.gemini3Flash)]
+            [.claude, .openai(.gpt55), .google(.gemini3Flash)]
         case .reasoning:
             [.openai(.gpt5Mini), .claude, .google(.gemini25Pro)]
         case .local:
             [.llama, .ollama(.mistralNemo), .ollama(.commandRPlus)]
         case .general:
-            [.claude, .gpt4o, .google(.gemini3Flash), .grok(.grok4FastReasoning), .llama]
+            [.claude, .openai(.gpt55), .google(.gemini3Flash), .grok(.grok4FastReasoning), .llama]
         }
     }
 }
@@ -449,6 +469,7 @@ public enum UseCase {
 public enum ModelValidationError: Error, LocalizedError {
     case visionNotSupported(String)
     case toolsNotSupported(String)
+    case unsupportedModel(String)
 
     public var errorDescription: String? {
         switch self {
@@ -456,6 +477,8 @@ public enum ModelValidationError: Error, LocalizedError {
             "Model '\(modelId)' does not support vision inputs"
         case let .toolsNotSupported(modelId):
             "Model '\(modelId)' does not support tool calling"
+        case let .unsupportedModel(modelId):
+            "Model '\(modelId)' is no longer supported"
         }
     }
 }

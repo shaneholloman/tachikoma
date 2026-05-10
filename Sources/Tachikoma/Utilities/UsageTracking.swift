@@ -528,7 +528,7 @@ public struct ModelCostCalculator: Sendable {
         // OpenAI Pricing (as of 2025)
         case let .openai(openaiModel):
             switch openaiModel {
-            case .o4Mini: (1.50, 6.00)
+            case .gpt55: (5.00, 20.00) // GPT-5.5 pricing estimate
             case .gpt52: (5.00, 20.00) // GPT-5.2 pricing estimate
             case .gpt51: (5.00, 20.00) // GPT-5.1 pricing estimate
             case .gpt5: (5.00, 20.00) // GPT-5 pricing estimate
@@ -539,18 +539,12 @@ public struct ModelCostCalculator: Sendable {
             case .gpt5ThinkingMini: (4.00, 16.00)
             case .gpt5ThinkingNano: (1.50, 6.00)
             case .gpt5ChatLatest: (2.50, 10.00)
-            case .gpt41: (2.50, 10.00)
-            case .gpt41Mini: (0.15, 0.60)
-            case .gpt4o: (2.50, 10.00)
-            case .gpt4oMini: (0.15, 0.60)
-            case .gpt4oRealtime: (5.00, 20.00) // Realtime API pricing estimate
-            case .gpt4Turbo: (10.00, 30.00)
-            case .gpt35Turbo: (0.50, 1.50)
             case .custom: (2.50, 10.00) // Default estimate
             }
         // Anthropic Pricing (as of 2025)
         case let .anthropic(anthropicModel):
             switch anthropicModel {
+            case .opus47: (15.00, 75.00)
             case .opus45: (5.00, 25.00)
             case .opus4, .opus4Thinking: (15.00, 75.00)
             case .sonnet4, .sonnet4Thinking: (3.00, 15.00)

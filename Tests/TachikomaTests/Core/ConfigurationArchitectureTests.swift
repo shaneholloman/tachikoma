@@ -55,7 +55,7 @@ struct ConfigurationArchitectureTests {
         // Example 1: Zero configuration
         _ = {
             Task {
-                _ = try await generate("What is 2+2?", using: .openai(.gpt4o))
+                _ = try await generate("What is 2+2?", using: .openai(.gpt55))
             }
         }
 
@@ -66,7 +66,7 @@ struct ConfigurationArchitectureTests {
             )
 
             Task {
-                _ = try await generate("Hello", using: .openai(.gpt4o))
+                _ = try await generate("Hello", using: .openai(.gpt55))
             }
         }
 
@@ -79,7 +79,7 @@ struct ConfigurationArchitectureTests {
 
                 _ = try await generate(
                     "Test prompt",
-                    using: .openai(.gpt4o),
+                    using: .openai(.gpt55),
                     configuration: testConfig,
                 )
             }

@@ -8,10 +8,10 @@ public enum ProviderParser {
         /// The provider name (e.g., "openai", "anthropic", "ollama")
         public let provider: String
 
-        /// The model name (e.g., "gpt-4", "claude-3", "llava:latest")
+        /// The model name (e.g., "gpt-5.5", "claude-opus-4-7", "llava:latest")
         public let model: String
 
-        /// The full string representation (e.g., "openai/gpt-4")
+        /// The full string representation (e.g., "openai/gpt-5.5")
         public var fullString: String {
             "\(self.provider)/\(self.model)"
         }
@@ -23,7 +23,7 @@ public enum ProviderParser {
     }
 
     /// Parse a provider string in the format "provider/model"
-    /// - Parameter providerString: String like "openai/gpt-4" or "ollama/llava:latest"
+    /// - Parameter providerString: String like "openai/gpt-5.5" or "ollama/llava:latest"
     /// - Returns: Parsed configuration or nil if invalid format
     public static func parse(_ providerString: String) -> ProviderConfig? {
         // Parse a provider string in the format "provider/model"
@@ -44,7 +44,7 @@ public enum ProviderParser {
     }
 
     /// Parse a comma-separated list of providers
-    /// - Parameter providersString: String like "openai/gpt-4,anthropic/claude-3,ollama/llava:latest"
+    /// - Parameter providersString: String like "openai/gpt-5.5,anthropic/claude-opus-4-7,ollama/llava:latest"
     /// - Returns: Array of parsed configurations
     public static func parseList(_ providersString: String) -> [ProviderConfig] {
         // Parse a comma-separated list of providers
@@ -54,7 +54,7 @@ public enum ProviderParser {
     }
 
     /// Get the first provider from a comma-separated list
-    /// - Parameter providersString: String like "openai/gpt-4,anthropic/claude-3"
+    /// - Parameter providersString: String like "openai/gpt-5.5,anthropic/claude-opus-4-7"
     /// - Returns: First parsed configuration or nil if none valid
     public static func parseFirst(_ providersString: String) -> ProviderConfig? {
         // Get the first provider from a comma-separated list
@@ -202,8 +202,22 @@ public enum ProviderParser {
     // MARK: - Private Helpers
 
     private static func parseOpenAIModel(_ modelString: String) -> LanguageModel? {
-        switch modelString.lowercased() {
-        case "o4-mini": .openai(.o4Mini)
+        let normalized = modelString.lowercased()
+        let compact = normalized.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: ".", with: "")
+        guard
+            !normalized.hasPrefix("gpt-4"), !compact.hasPrefix("gpt4"),
+            !normalized.hasPrefix("gpt-3"), !compact.hasPrefix("gpt3"),
+            !normalized.hasPrefix("o3"), !normalized.hasPrefix("o4")
+        else {
+            return nil
+        }
+
+        return switch normalized {
+        case "gpt-5.5", "gpt5.5", "gpt-5-5", "gpt5-5", "gpt55": .openai(.gpt55)
+        case "gpt-5.5-mini", "gpt5.5-mini", "gpt-5-5-mini", "gpt5-5-mini", "gpt55-mini", "gpt55mini":
+            .openai(.gpt5Mini)
+        case "gpt-5.5-nano", "gpt5.5-nano", "gpt-5-5-nano", "gpt5-5-nano", "gpt55-nano", "gpt55nano":
+            .openai(.gpt5Nano)
         case "gpt-5.2", "gpt5.2", "gpt-5-2", "gpt5-2", "gpt52": .openai(.gpt52)
         case "gpt-5.2-mini", "gpt5.2-mini", "gpt-5-2-mini", "gpt5-2-mini", "gpt52-mini", "gpt52mini":
             .openai(.gpt5Mini)
@@ -222,12 +236,6 @@ public enum ProviderParser {
         case "gpt-5-thinking-mini", "gpt5-thinking-mini", "gpt5thinkingmini": .openai(.gpt5ThinkingMini)
         case "gpt-5-thinking-nano", "gpt5-thinking-nano", "gpt5thinkingnano": .openai(.gpt5ThinkingNano)
         case "gpt-5-chat-latest", "gpt5-chat-latest": .openai(.gpt5ChatLatest)
-        case "gpt-4.1", "gpt4.1": .openai(.gpt41)
-        case "gpt-4.1-mini", "gpt4.1-mini": .openai(.gpt41Mini)
-        case "gpt-4o", "gpt4o": .openai(.gpt4o)
-        case "gpt-4o-mini", "gpt4o-mini": .openai(.gpt4oMini)
-        case "gpt-4-turbo", "gpt4-turbo": .openai(.gpt4Turbo)
-        case "gpt-3.5-turbo", "gpt35-turbo": .openai(.gpt35Turbo)
         default:
             // Handle custom/fine-tuned models
             .openai(.custom(modelString))
@@ -235,7 +243,15 @@ public enum ProviderParser {
     }
 
     private static func parseAnthropicModel(_ modelString: String) -> LanguageModel? {
-        switch modelString.lowercased() {
+        let normalized = modelString.lowercased()
+        let compact = normalized.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: ".", with: "")
+        guard !normalized.hasPrefix("claude-3"), !compact.hasPrefix("claude3") else {
+            return nil
+        }
+
+        return switch normalized {
+        case "claude-opus-4-7", "claude-opus-4.7", "claude-opus-4-7-latest", "opus-4-7", "opus-4.7", "opus47":
+            .anthropic(.opus47)
         case "claude-opus-4-5", "claude-opus-4.5", "claude-opus-4-5-latest", "opus-4-5", "opus-4.5", "opus45":
             .anthropic(.opus45)
         case "claude-opus-4-1-20250805", "claude-opus-4-20250514", "claude-opus-4", "opus-4": .anthropic(.opus4)

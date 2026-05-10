@@ -20,6 +20,10 @@ public final class OpenAIProvider: ModelProvider {
         configuration: TachikomaConfiguration,
         session: URLSession = .shared,
     ) throws {
+        guard !model.isUnsupportedLegacyFamily else {
+            throw TachikomaError.unsupportedOperation("OpenAI model '\(model.modelId)' is no longer supported")
+        }
+
         self.model = model
         self.modelId = model.modelId
         self.baseURL = configuration.getBaseURL(for: .openai) ?? "https://api.openai.com/v1"

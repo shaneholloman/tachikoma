@@ -163,8 +163,7 @@ final class Agent {
         switch model {
         case let .openai(openaiModel):
             switch openaiModel {
-            case .o4Mini,
-                 .gpt5,
+            case .gpt5,
                  .gpt5Pro,
                  .gpt5Mini,
                  .gpt5Nano,

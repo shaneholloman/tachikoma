@@ -16,20 +16,16 @@ public enum TranscriptionModel: Sendable, CustomStringConvertible {
 
     public enum OpenAI: String, CaseIterable, Sendable {
         case whisper1 = "whisper-1"
-        case gpt4oTranscribe = "gpt-4o-transcribe"
-        case gpt4oMiniTranscribe = "gpt-4o-mini-transcribe"
 
         public var supportsTimestamps: Bool {
             switch self {
             case .whisper1: true
-            case .gpt4oTranscribe, .gpt4oMiniTranscribe: false
             }
         }
 
         public var supportsLanguageDetection: Bool {
             switch self {
             case .whisper1: true
-            case .gpt4oTranscribe, .gpt4oMiniTranscribe: false
             }
         }
     }
@@ -155,12 +151,10 @@ public enum SpeechModel: Sendable, CustomStringConvertible {
     public enum OpenAI: String, CaseIterable, Sendable {
         case tts1 = "tts-1"
         case tts1HD = "tts-1-hd"
-        case gpt4oMiniTTS = "gpt-4o-mini-tts"
 
         public var supportsVoiceInstructions: Bool {
             switch self {
             case .tts1, .tts1HD: false
-            case .gpt4oMiniTTS: true
             }
         }
 
@@ -226,5 +220,5 @@ public enum SpeechModel: Sendable, CustomStringConvertible {
     public static let `default`: SpeechModel = .openai(.tts1)
     public static let highQuality: SpeechModel = .openai(.tts1HD)
     public static let fast: SpeechModel = .openai(.tts1)
-    public static let expressive: SpeechModel = .openai(.gpt4oMiniTTS)
+    public static let expressive: SpeechModel = .openai(.tts1HD)
 }

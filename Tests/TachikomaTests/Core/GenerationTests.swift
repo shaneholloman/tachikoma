@@ -10,7 +10,7 @@ struct GenerationTests {
         try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
             let result = try await generate(
                 "What is 2+2?",
-                using: .openai(.gpt4o),
+                using: .openai(.gpt55),
                 maxTokens: 100,
                 configuration: config,
             )
@@ -18,7 +18,7 @@ struct GenerationTests {
             self.assertOpenAIResult(
                 result,
                 prompt: "What is 2+2?",
-                modelId: "gpt-4o",
+                modelId: "gpt-5.5",
                 configuration: config,
             )
         }
@@ -56,7 +56,7 @@ struct GenerationTests {
         try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
             let result = try await generate(
                 "Tell me a joke",
-                using: .openai(.gpt4oMini),
+                using: .openai(.gpt5Mini),
                 system: "You are a comedian",
                 temperature: 0.8,
                 configuration: config,
@@ -77,7 +77,7 @@ struct GenerationTests {
         try await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
             let stream = try await stream(
                 "Count to 5",
-                using: .openai(.gpt4o),
+                using: .openai(.gpt55),
                 maxTokens: 50,
                 configuration: config,
             )
@@ -141,7 +141,7 @@ struct GenerationTests {
             let result = try await analyze(
                 image: .base64(testImageBase64),
                 prompt: "What do you see?",
-                using: .openai(.gpt4o),
+                using: .openai(.gpt55),
                 configuration: config,
             )
 
@@ -156,12 +156,12 @@ struct GenerationTests {
     @Test
     func `Analyze Function - Non-Vision Model Error`() async {
         _ = await TestHelpers.withTestConfiguration(apiKeys: ["openai": "test-key"]) { config in
-            // GPT-4.1 doesn't support vision
+            // Custom OpenAI models default to text-only capabilities
             await #expect(throws: TachikomaError.self) {
                 try await analyze(
                     image: .base64("test-image"),
                     prompt: "Describe this",
-                    using: .openai(.gpt41),
+                    using: .openai(.custom("text-only-openai")),
                     configuration: config,
                 )
             }
@@ -179,7 +179,7 @@ struct GenerationTests {
                 configuration: config,
             )
 
-            // Should default to GPT-4o for vision tasks
+            // Should default to GPT-5.5 for vision tasks
             self.assertOpenAIResult(
                 result,
                 prompt: "Analyze this image",
@@ -194,7 +194,7 @@ struct GenerationTests {
     func `Generate Function - Missing API Key`() async {
         _ = await TestHelpers.withEmptyTestConfiguration { config in
             await #expect(throws: TachikomaError.self) {
-                try await generate("Test", using: .openai(.gpt4o), configuration: config)
+                try await generate("Test", using: .openai(.gpt55), configuration: config)
             }
         }
     }
@@ -208,7 +208,7 @@ struct GenerationTests {
             // With mock provider (test-key), this should work even with invalid URL
             // Real implementations would fail with network error
             do {
-                let result = try await generate("Test", using: .openai(.gpt4o), configuration: config)
+                let result = try await generate("Test", using: .openai(.gpt55), configuration: config)
                 #expect(!result.isEmpty)
             } catch {
                 // If using real provider, invalid URL will cause network error
@@ -226,7 +226,7 @@ struct GenerationTests {
             // Test generation without tools
             let result = try await generate(
                 "Hello",
-                using: .openai(.gpt4o),
+                using: .openai(.gpt55),
                 configuration: config,
             )
 

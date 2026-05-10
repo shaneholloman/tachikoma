@@ -13,7 +13,7 @@ func testRealtimeConfiguration() async throws {
     // Test 1: Session Configuration
     print("\n1️⃣ Testing Session Configuration:")
     let voiceConfig = SessionConfiguration.voiceConversation(
-        model: "gpt-4o-realtime-preview",
+        model: "gpt-realtime",
         voice: .nova,
     )
     print("   ✅ Model: \(voiceConfig.model)")

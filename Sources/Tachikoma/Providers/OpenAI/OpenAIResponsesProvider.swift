@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-/// Provider for OpenAI Responses API (GPT-5, o3, o4)
+/// Provider for OpenAI Responses API (GPT-5)
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 public final class OpenAIResponsesProvider: ModelProvider {
     public let modelId: String
@@ -29,6 +29,10 @@ public final class OpenAIResponsesProvider: ModelProvider {
         configuration: TachikomaConfiguration,
         session: URLSession = .shared,
     ) throws {
+        guard !model.isUnsupportedLegacyFamily else {
+            throw TachikomaError.unsupportedOperation("OpenAI model '\(model.modelId)' is no longer supported")
+        }
+
         self.model = model
         self.modelId = model.modelId
         self.configuration = configuration
@@ -918,7 +922,7 @@ public final class OpenAIResponsesProvider: ModelProvider {
 
     private static func isReasoningModel(_ model: LanguageModel.OpenAI) -> Bool {
         switch model {
-        case .o4Mini:
+        case .gpt5Thinking, .gpt5ThinkingMini, .gpt5ThinkingNano:
             true
         default:
             false
@@ -927,7 +931,8 @@ public final class OpenAIResponsesProvider: ModelProvider {
 
     private static func isGPT5Model(_ model: LanguageModel.OpenAI) -> Bool {
         switch model {
-        case .gpt52,
+        case .gpt55,
+             .gpt52,
              .gpt51,
              .gpt5,
              .gpt5Pro,

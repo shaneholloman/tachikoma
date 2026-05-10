@@ -68,8 +68,8 @@ struct LanguageModelCoverageTests {
     @Test
     func `LanguageModel top level switches`() {
         let baseModels: [LanguageModel] = [
-            .openai(.gpt51),
-            .anthropic(.opus45),
+            .openai(.gpt55),
+            .anthropic(.opus47),
             .google(.gemini25Flash),
             .mistral(.large2),
             .groq(.mixtral8x7b),

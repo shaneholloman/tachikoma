@@ -670,7 +670,7 @@ public func analyze(
         model
     } else {
         // Use a vision-capable model by default
-        .openai(.gpt4o)
+        .openai(.gpt55)
     }
 
     // Ensure the model supports vision

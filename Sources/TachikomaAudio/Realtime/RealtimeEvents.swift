@@ -188,7 +188,7 @@ public struct RealtimeSessionConfig: Codable, Sendable {
     }
 
     public init(
-        model: String = "gpt-4o-realtime-preview",
+        model: String = "gpt-realtime",
         voice: RealtimeVoice = .alloy,
         instructions: String? = nil,
         tools: [RealtimeTool]? = nil,

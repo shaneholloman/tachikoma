@@ -25,7 +25,7 @@ struct AnthropicInterleavedDefaultsTests {
     @Test
     func `Provider request includes beta header and thinking payload`() throws {
         let config = TachikomaConfiguration(apiKeys: ["anthropic": "test-key"])
-        let provider = try AnthropicProvider(model: .opus45, configuration: config)
+        let provider = try AnthropicProvider(model: .opus47, configuration: config)
 
         let settings = GenerationSettings(
             maxTokens: 64,
@@ -49,7 +49,7 @@ struct AnthropicInterleavedDefaultsTests {
 
         let body = try #require(urlRequest.httpBody)
         let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: Any])
-        #expect(json["model"] as? String == "claude-opus-4-5")
+        #expect(json["model"] as? String == "claude-opus-4-7")
         #expect(json["stream"] as? Bool == true)
 
         let thinking = try #require(json["thinking"] as? [String: Any])

@@ -25,7 +25,7 @@ ai-cli "What is the capital of France?"
 ai-cli --model claude "Explain quantum computing"
 
 # Stream the response
-ai-cli --stream --model gpt-4o "Write a short story"
+ai-cli --stream --model gpt-5.5 "Write a short story"
 ```
 
 ## Parameters
@@ -35,7 +35,7 @@ ai-cli --stream --model gpt-4o "Write a short story"
 | `-m, --model <MODEL>` | Specify the AI model to use |
 | `--api <chat\|responses>` | For OpenAI models: select API type (default: responses for GPT-5) |
 | `-s, --stream` | Stream the response in real-time |
-| `--thinking` | Show reasoning process (O3, O4, GPT-5 - note: API currently doesn't expose actual reasoning) |
+| `--thinking` | Show GPT-5 reasoning process (note: API currently doesn't expose actual reasoning) |
 | `--verbose, -v` | Show detailed debug output |
 | `--config` | Show current configuration and API key status |
 | `--help, -h` | Show help message |
@@ -60,15 +60,11 @@ Add to your shell profile (`~/.zshrc`, `~/.bashrc`) for persistence.
 ## Supported Models
 
 ### OpenAI
-- **GPT-5 Series**: `gpt-5`, `gpt-5-mini`, `gpt-5-nano`
-- **O-Series**: `o3`, `o3-mini`, `o3-pro`, `o4-mini`
-- **GPT-4**: `gpt-4.1`, `gpt-4.1-mini`, `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo`
-- **Legacy**: `gpt-3.5-turbo`
+- **GPT-5 Series**: `gpt-5.5`, `gpt-5.2`, `gpt-5.1`, `gpt-5`, `gpt-5-mini`, `gpt-5-nano`
 
 ### Anthropic
 - **Claude 4**: `claude-opus-4-1-20250805`, `claude-sonnet-4-20250514`
-- **Claude 3.7**: `claude-3-7-sonnet`
-- **Claude 3.5**: `claude-3-5-opus`, `claude-3-5-sonnet`, `claude-3-5-haiku`
+- **Claude 4.x**: `claude-opus-4-7`, `claude-sonnet-4.5`, `claude-haiku-4.5`
 
 ### Google
 - **Gemini 2.5**: `gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.5-flash-lite`
@@ -81,7 +77,7 @@ Add to your shell profile (`~/.zshrc`, `~/.bashrc`) for persistence.
 
 ### Model Shortcuts
 - `claude` → claude-opus-4-1-20250805
-- `gpt` → gpt-4.1
+- `gpt` → gpt-5.5
 - `gemini` → gemini-2.5-flash
 - `grok` → grok-4-fast-reasoning
 - `llama` → llama3.3
@@ -98,7 +94,7 @@ ai-cli --stream --model gpt-5 "Explain the theory of relativity"
 
 # API selection for OpenAI
 ai-cli --model gpt-5 --api chat "Use Chat Completions API"
-ai-cli --model o3 --api responses "Use Responses API"
+ai-cli --model gpt-5-thinking --api responses "Use Responses API"
 
 # Debug mode
 ai-cli --verbose --model opus "Debug this request"

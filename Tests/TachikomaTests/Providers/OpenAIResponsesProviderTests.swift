@@ -23,6 +23,7 @@ struct OpenAIResponsesProviderTests {
         let config = self.openAIConfig()
 
         let gpt5Models: [LanguageModel.OpenAI] = [
+            .gpt55,
             .gpt52,
             .gpt51,
             .gpt5,
@@ -44,8 +45,8 @@ struct OpenAIResponsesProviderTests {
     }
 
     @Test
-    func `GPT-5.1 text.verbosity parameter is set correctly`() throws {
-        // Test that the text.verbosity parameter is properly configured for GPT-5.1
+    func `GPT-5.5 text.verbosity parameter is set correctly`() throws {
+        // Test that the text.verbosity parameter is properly configured for GPT-5.5
         let config = self.openAIConfig()
 
         // Skip if no API key
@@ -54,7 +55,7 @@ struct OpenAIResponsesProviderTests {
         }
 
         let provider = try OpenAIResponsesProvider(
-            model: .gpt51,
+            model: .gpt55,
             configuration: config,
         )
 
@@ -69,18 +70,18 @@ struct OpenAIResponsesProviderTests {
 
         // We can't directly test the internal request building without making it public
         // But we can verify the provider is configured correctly
-        #expect(provider.modelId == "gpt-5.1")
+        #expect(provider.modelId == "gpt-5.5")
         #expect(provider.capabilities.supportsTools == true)
         #expect(provider.capabilities.supportsVision == true)
     }
 
     @Test
-    func `Reasoning models use Responses API`() throws {
-        // Test that reasoning-oriented models also use the OpenAIResponsesProvider
+    func `GPT-5 models use Responses API`() throws {
+        // Test that GPT-5 models use the OpenAIResponsesProvider
         let config = self.openAIConfig()
 
-        let reasoningModels: [LanguageModel.OpenAI] = [
-            .o4Mini,
+        let responsesModels: [LanguageModel.OpenAI] = [
+            .gpt55,
             .gpt52,
             .gpt51,
             .gpt5,
@@ -88,7 +89,7 @@ struct OpenAIResponsesProviderTests {
             .gpt5Thinking,
         ]
 
-        for model in reasoningModels {
+        for model in responsesModels {
             let provider = try ProviderFactory.createProvider(
                 for: .openai(model),
                 configuration: config,
@@ -102,11 +103,10 @@ struct OpenAIResponsesProviderTests {
     }
 
     @Test
-    func `Legacy models use standard OpenAI provider`() throws {
-        // Test that non-GPT-5/reasoning models use the standard OpenAIProvider
+    func `Custom OpenAI models use standard OpenAI provider`() throws {
         let config = self.openAIConfig()
 
-        let legacyModels: [LanguageModel.OpenAI] = [.gpt4o, .gpt4oMini, .gpt41]
+        let legacyModels: [LanguageModel.OpenAI] = [.custom("custom-openai")]
 
         for model in legacyModels {
             let provider = try ProviderFactory.createProvider(
@@ -116,7 +116,7 @@ struct OpenAIResponsesProviderTests {
 
             #expect(
                 provider is OpenAIProvider,
-                "Legacy model \(model) should use OpenAIProvider",
+                "Custom model \(model) should use OpenAIProvider",
             )
         }
     }
@@ -472,12 +472,12 @@ struct OpenAIResponsesProviderTests {
             #expect(request.url?.path == "/v1/responses")
             let payload = Self.responsesStreamPayload(chunks: [
                 Self.streamChunkJSON(content: "Hello", finishReason: nil),
-                Self.streamChunkJSON(content: "Hello world", finishReason: nil),
+                Self.streamChunkJSON(content: " world", finishReason: nil),
                 Self.streamChunkJSON(content: nil, finishReason: "stop"),
             ])
             return NetworkMocking.streamResponse(for: request, data: payload)
         } operation: { session in
-            let provider = try OpenAIResponsesProvider(model: .o4Mini, configuration: config, session: session)
+            let provider = try OpenAIResponsesProvider(model: .gpt55, configuration: config, session: session)
             let stream = try await provider.streamText(request: self.sampleRequest)
 
             var collected = ""
@@ -566,29 +566,18 @@ struct OpenAIResponsesProviderTests {
     }
 
     private static func streamChunkJSON(content: String?, finishReason: String?) -> String {
-        var delta: [String: Any] = [
-            "role": "assistant",
-        ]
         if let content {
-            delta["content"] = content
-        }
-
-        var choice: [String: Any] = [
-            "index": 0,
-            "delta": delta,
-        ]
-        if let finishReason {
-            choice["finish_reason"] = finishReason
+            let chunk: [String: Any] = [
+                "type": "response.output_text.delta",
+                "delta": content,
+            ]
+            let data = try! JSONSerialization.data(withJSONObject: chunk)
+            return String(data: data, encoding: .utf8)!
         }
 
         let chunk: [String: Any] = [
-            "id": "resp_stream",
-            "object": "response",
-            "created": 1_700_000_000,
-            "model": "o4-mini",
-            "choices": [choice],
+            "type": finishReason == nil ? "response.output_text.done" : "response.completed",
         ]
-
         let data = try! JSONSerialization.data(withJSONObject: chunk)
         return String(data: data, encoding: .utf8)!
     }

@@ -367,35 +367,35 @@ struct TachikomaConfigurationTests {
                 Task {
                     // Uses default (.current)
                     _ = try await generateText(
-                        model: .openai(.gpt4o),
+                        model: .openai(.gpt55),
                         messages: [.user("Test")],
                     )
 
                     // Uses explicit
                     _ = try await generateText(
-                        model: .openai(.gpt4o),
+                        model: .openai(.gpt55),
                         messages: [.user("Test")],
                         configuration: explicitConfig,
                     )
 
                     // Stream functions
                     _ = try await streamText(
-                        model: .openai(.gpt4o),
+                        model: .openai(.gpt55),
                         messages: [.user("Test")],
                     )
 
                     _ = try await streamText(
-                        model: .openai(.gpt4o),
+                        model: .openai(.gpt55),
                         messages: [.user("Test")],
                         configuration: explicitConfig,
                     )
 
                     // Convenience functions
-                    _ = try await generate("Test", using: .openai(.gpt4o))
-                    _ = try await generate("Test", using: .openai(.gpt4o), configuration: explicitConfig)
+                    _ = try await generate("Test", using: .openai(.gpt55))
+                    _ = try await generate("Test", using: .openai(.gpt55), configuration: explicitConfig)
 
-                    _ = try await stream("Test", using: .openai(.gpt4o))
-                    _ = try await stream("Test", using: .openai(.gpt4o), configuration: explicitConfig)
+                    _ = try await stream("Test", using: .openai(.gpt55))
+                    _ = try await stream("Test", using: .openai(.gpt55), configuration: explicitConfig)
                 }
             }
 
@@ -559,9 +559,9 @@ struct TachikomaConfigurationTests {
                 return DummyProvider()
             }
 
-            let provider = try config.makeProvider(for: .openai(.gpt4o))
+            let provider = try config.makeProvider(for: .openai(.gpt55))
             #expect(provider is DummyProvider)
-            #expect(capturedModel == .openai(.gpt4o))
+            #expect(capturedModel == .openai(.gpt55))
         }
 
         @Test
@@ -569,8 +569,8 @@ struct TachikomaConfigurationTests {
             let config = TachikomaConfiguration(loadFromEnvironment: false)
             config.setAPIKey("mock-key", for: .openai)
 
-            let provider = try config.makeProvider(for: .openai(.gpt4o))
-            #expect(provider is OpenAIProvider)
+            let provider = try config.makeProvider(for: .openai(.gpt55))
+            #expect(provider is OpenAIResponsesProvider)
         }
     }
 }

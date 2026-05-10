@@ -49,7 +49,7 @@ echo "  • Stream token handling"
 echo ""
 
 echo "🔑 API Integration Examples (require valid API keys):"
-echo "  • OpenAI GPT-4o, GPT-4.1, o3 generation"
+echo "  • OpenAI GPT-5 generation"
 echo "  • Anthropic Claude Opus 4, Sonnet 4 generation"
 echo "  • Grok 4 and Grok 2 Vision models"
 echo "  • Ollama local models (llama3.3, llava)"
@@ -70,7 +70,7 @@ echo "🚀 How to Use Tachikoma:"
 echo "========================"
 echo ""
 echo "1. Basic Generation:"
-echo '   let answer = try await generate("What is 2+2?", using: .openai(.gpt4o))'
+echo '   let answer = try await generate("What is 2+2?", using: .openai(.gpt55))'
 echo ""
 echo "2. With Tools:"
 echo '   @ToolKit'

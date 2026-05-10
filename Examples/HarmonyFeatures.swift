@@ -9,7 +9,7 @@ func demonstrateMultiChannelResponse() async throws {
     print("=== Multi-Channel Response Demo ===\n")
 
     let result = try await generateText(
-        model: .openai(.gpt4o),
+        model: .openai(.gpt55),
         messages: [
             .user("Explain how recursion works in programming"),
         ],
@@ -36,7 +36,7 @@ func demonstrateReasoningEffort() async throws {
     // High effort for complex problem
     print("High effort response:")
     let complexResult = try await generateText(
-        model: .openai(.gpt4o),
+        model: .openai(.gpt55),
         messages: [
             .user("Design a distributed system for real-time collaboration"),
         ],
@@ -50,7 +50,7 @@ func demonstrateReasoningEffort() async throws {
     // Low effort for simple query
     print("\nLow effort response:")
     let simpleResult = try await generateText(
-        model: .openai(.gpt4o),
+        model: .openai(.gpt55),
         messages: [
             .user("What is the capital of Japan?"),
         ],
@@ -82,7 +82,7 @@ func demonstrateRetryHandler() async throws {
                 print("Attempting API call...")
                 // Simulate a call that might fail
                 return try await generateText(
-                    model: .openai(.gpt4o),
+                    model: .openai(.gpt55),
                     messages: [.user("Hello")],
                 )
             },
@@ -144,7 +144,7 @@ func demonstrateEnhancedTools() async throws {
     }
 
     let result = try await generateText(
-        model: .openai(.gpt4o),
+        model: .openai(.gpt55),
         messages: [
             .user("What's 25 * 4 and what's the weather in Tokyo?"),
         ],
@@ -278,7 +278,7 @@ func demonstrateIntegratedFeatures() async throws {
     do {
         let result = try await retryHandler.execute {
             try await generateText(
-                model: .openai(.gpt4o),
+                model: .openai(.gpt55),
                 messages: [
                     .system("You are a helpful assistant. Use channels to organize your response."),
                     .user("Analyze the benefits of functional programming"),

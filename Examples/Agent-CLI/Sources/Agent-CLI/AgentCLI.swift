@@ -27,7 +27,7 @@ struct AgentCLI: AsyncParsableCommand {
     @Argument(help: "Query or task for the agent")
     var query: String?
 
-    @Option(name: .shortAndLong, help: "AI model to use (e.g., gpt-5, claude, o3)")
+    @Option(name: .shortAndLong, help: "AI model to use (e.g., gpt-5.5, gpt-5-thinking, claude)")
     var model: String = "gpt-5"
 
     @Flag(name: .shortAndLong, help: "Interactive conversation mode")

@@ -19,10 +19,10 @@ All notable changes to the Tachikoma project will be documented in this file.
 - Azure provider unit tests using URLProtocol stubs to verify path, query, and auth header construction.
 
 ### Changed
-- Added OpenAI's GPT-5.1 family (flagship/mini/nano) throughout the model enums, selectors, provider factories, capability registry, pricing tables, docs, and test suites. GPT aliases (`gpt`, `gpt-5`, `gpt-4o`) now normalize to `.openai(.gpt51)` so downstream apps inherit the new default seamlessly.
+- Added OpenAI's GPT-5.1 family (flagship/mini/nano) throughout the model enums, selectors, provider factories, capability registry, pricing tables, docs, and test suites. GPT aliases (`gpt`, `gpt-5`) now normalize to supported GPT-5 models so downstream apps inherit the new default seamlessly.
 - Expanded xAI Grok support to the full November 2025 catalog (`grok-4-fast-*`, `grok-code-fast-1`, `grok-2-*`, `grok-vision-beta`, etc.), updated the CLI shortcuts so `grok` now maps to `grok-4-fast-reasoning`, and refreshed selectors, provider parsers, capability tables, and docs snippets to match the official API lineup.
 - Google/Gemini support now targets the Gemini 2.5 family exclusively (`gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.5-flash-lite`), with updated model selectors, parsers, docs, and pricing tables; older 1.5/2.0 IDs are no longer recognized.
-- Removed deprecated OpenAI reasoning models (`o1`, `o1-mini`, `o3`, `o3-mini`) in favour of the GPT‑5 family plus `o4-mini`, updating enums, provider factories, capability tables, prompts, and documentation metadata accordingly.
+- Removed deprecated OpenAI reasoning models (`o1`, `o1-mini`, `o3`, `o3-mini`, `o4-mini`) in favour of the GPT‑5 family, updating enums, provider factories, capability tables, prompts, and documentation metadata accordingly.
 - Google/Gemini integration now uses the documented `x-goog-api-key` header with `alt=sse` streaming, adds fallbacks for `GOOGLE_API_KEY` / `GOOGLE_APPLICATION_CREDENTIALS`, and hardens the SSE decoder so live tests succeed consistently.
 - Pruned Anthropic model support to the Claude 4.x line (Opus 4, Sonnet 4 / 4.5, Haiku 4.5) to match current API availability and reduce maintenance burden.
 - `TachikomaConfiguration` now loads credentials first and lets environment variables override them so operators can supersede stored settings without editing credentials files.
@@ -71,8 +71,8 @@ All notable changes to the Tachikoma project will be documented in this file.
 
 #### Provider Support
 - **OpenAI Provider**: Complete integration with dual API support
-  - Chat Completions API for standard models (GPT-4o, GPT-4.1)
-  - Responses API for reasoning models (o3, o4 series)
+  - Chat Completions API for standard custom models
+  - Responses API for GPT-5 models
   - Automatic API selection based on model capabilities
   - Parameter filtering for reasoning models
   - Full streaming support for both APIs
@@ -80,7 +80,7 @@ All notable changes to the Tachikoma project will be documented in this file.
 
 - **Anthropic Provider**: Native Claude API integration
   - Support for Claude 4 (Opus, Sonnet) with thinking modes
-  - Claude 3.5/3.7 series compatibility
+  - Claude 4.x series compatibility
   - Content block handling for multimodal inputs
   - System prompt separation
   - Server-Sent Events streaming

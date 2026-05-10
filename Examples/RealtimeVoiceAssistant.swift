@@ -29,7 +29,7 @@ class RealtimeVoiceAssistant {
 
         // Start with voice configuration
         try await conversation.start(
-            model: .gpt4oRealtime,
+            model: .custom("gpt-realtime"),
             voice: .nova,
             instructions: "You are a helpful, witty, and friendly AI assistant. Keep responses concise.",
         )
@@ -77,7 +77,7 @@ class RealtimeVoiceAssistant {
 
         // Advanced configuration with all features
         let config = SessionConfiguration(
-            model: "gpt-4o-realtime-preview",
+            model: "gpt-realtime",
             voice: .nova,
             instructions: """
             You are an expert AI assistant with deep knowledge across many domains.
@@ -147,7 +147,7 @@ class RealtimeVoiceAssistant {
 
         // Configuration with tools
         let config = SessionConfiguration.withTools(
-            model: "gpt-4o-realtime-preview",
+            model: "gpt-realtime",
             voice: .nova,
             tools: [
                 // Weather tool
