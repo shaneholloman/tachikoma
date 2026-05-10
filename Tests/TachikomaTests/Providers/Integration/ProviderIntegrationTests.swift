@@ -3,7 +3,7 @@ import Foundation
 import Testing
 @testable import Tachikoma
 
-@Suite(.enabled(if: ProcessInfo.processInfo.environment["INTEGRATION_TESTS"] != nil))
+@Suite(.serialized, .enabled(if: ProcessInfo.processInfo.environment["INTEGRATION_TESTS"] != nil))
 struct ProviderIntegrationTests {
     // MARK: - Test Configuration
 
@@ -14,35 +14,93 @@ struct ProviderIntegrationTests {
         static let streamMessage = "Count from 1 to 3"
     }
 
-    private static func hasEnv(_ name: String) -> Bool {
-        guard let value = ProcessInfo.processInfo.environment[name] else {
-            return false
+    private struct LiveCredentials {
+        var openAI: String?
+        var anthropic: String?
+        var google: String?
+        var mistral: String?
+        var groq: String?
+        var grok: String?
+
+        static func capture() -> Self {
+            let environment = ProcessInfo.processInfo.environment
+            return Self(
+                openAI: Self.validKey(environment["OPENAI_API_KEY"]),
+                anthropic: Self.validKey(environment["ANTHROPIC_API_KEY"]),
+                google: Self.validKey(environment["GEMINI_API_KEY"]) ?? Self.validKey(environment["GOOGLE_API_KEY"]),
+                mistral: Self.validKey(environment["MISTRAL_API_KEY"]),
+                groq: Self.validKey(environment["GROQ_API_KEY"]),
+                grok: Self.validKey(environment["X_AI_API_KEY"])
+                    ?? Self.validKey(environment["XAI_API_KEY"])
+                    ?? Self.validKey(environment["GROK_API_KEY"]),
+            )
         }
-        return !value.isEmpty
+
+        private static func validKey(_ value: String?) -> String? {
+            guard let key = value?.trimmingCharacters(in: .whitespacesAndNewlines), !key.isEmpty else {
+                return nil
+            }
+            let lowercased = key.lowercased()
+            guard
+                key != "env-key",
+                key != "cred-key",
+                key != "test-key",
+                !lowercased.hasPrefix("test-")
+            else {
+                return nil
+            }
+            return key
+        }
     }
 
+    private static let liveCredentials = LiveCredentials.capture()
+
     private static var hasOpenAIKey: Bool {
-        hasEnv("OPENAI_API_KEY")
+        Self.liveCredentials.openAI != nil
     }
 
     private static var hasAnthropicKey: Bool {
-        hasEnv("ANTHROPIC_API_KEY")
+        Self.liveCredentials.anthropic != nil
     }
 
     private static var hasGoogleKey: Bool {
-        hasEnv("GEMINI_API_KEY") || hasEnv("GOOGLE_API_KEY")
+        Self.liveCredentials.google != nil
     }
 
     private static var hasMistralKey: Bool {
-        hasEnv("MISTRAL_API_KEY")
+        Self.liveCredentials.mistral != nil
     }
 
     private static var hasGroqKey: Bool {
-        hasEnv("GROQ_API_KEY")
+        Self.liveCredentials.groq != nil
     }
 
     private static var hasGrokKey: Bool {
-        hasEnv("X_AI_API_KEY") || hasEnv("XAI_API_KEY") || hasEnv("GROK_API_KEY")
+        Self.liveCredentials.grok != nil
+    }
+
+    private static func liveConfiguration() -> TachikomaConfiguration {
+        let credentials = Self.liveCredentials
+        let config = TachikomaConfiguration(loadFromEnvironment: false)
+        if let openAI = credentials.openAI {
+            config.setAPIKey(openAI, for: .openai)
+        }
+        if let anthropic = credentials.anthropic {
+            config.setAPIKey(anthropic, for: .anthropic)
+        }
+        if let google = credentials.google {
+            config.setAPIKey(google, for: .google)
+        }
+        if let mistral = credentials.mistral {
+            config.setAPIKey(mistral, for: .mistral)
+        }
+        if let groq = credentials.groq {
+            config.setAPIKey(groq, for: .groq)
+        }
+        if let grok = credentials.grok {
+            config.setAPIKey(grok, for: .grok)
+        }
+        return config
     }
 
     // MARK: - OpenAI Integration Tests
@@ -50,14 +108,14 @@ struct ProviderIntegrationTests {
     @Test(.enabled(if: Self.hasOpenAIKey))
     func `OpenAI Provider - Real API Call`() async throws {
         let model = Model.openai(.gpt5Mini)
-        let config = TachikomaConfiguration()
+        let config = Self.liveConfiguration()
         do {
             _ = try ProviderFactory.createProvider(for: model, configuration: config)
 
             let response = try await generate(
                 TestConfig.shortMessage,
                 using: model,
-                maxTokens: 50,
+                maxTokens: 300,
                 temperature: 0.0,
                 configuration: config,
             )
@@ -73,7 +131,7 @@ struct ProviderIntegrationTests {
     @Test(.enabled(if: Self.hasOpenAIKey))
     func `OpenAI Provider - Tool Calling`() async throws {
         let model = Model.openai(.gpt5Mini)
-        let config = TachikomaConfiguration()
+        let config = Self.liveConfiguration()
 
         do {
             let provider = try ProviderFactory.createProvider(for: model, configuration: config)
@@ -118,7 +176,7 @@ struct ProviderIntegrationTests {
     @Test(.enabled(if: Self.hasOpenAIKey))
     func `OpenAI Provider - Streaming`() async throws {
         let model = Model.openai(.gpt5Mini)
-        let config = TachikomaConfiguration()
+        let config = Self.liveConfiguration()
 
         do {
             let provider = try ProviderFactory.createProvider(for: model, configuration: config)
@@ -128,7 +186,7 @@ struct ProviderIntegrationTests {
                     ModelMessage(role: .user, content: [.text(TestConfig.streamMessage)]),
                 ],
                 tools: nil,
-                settings: .init(maxTokens: 100, temperature: 0.0),
+                settings: .init(maxTokens: 300, temperature: 0.0),
             )
 
             let stream = try await provider.streamText(request: request)
@@ -165,12 +223,14 @@ struct ProviderIntegrationTests {
     @Test(.enabled(if: Self.hasAnthropicKey))
     func `Anthropic Provider - Real API Call`() async throws {
         let model = Model.anthropic(.sonnet46)
+        let config = Self.liveConfiguration()
         do {
             let response = try await generate(
                 TestConfig.shortMessage,
                 using: model,
                 maxTokens: 50,
                 temperature: 0.0,
+                configuration: config,
             )
 
             if !(response.lowercased().contains("hello") && response.contains("Tachikoma")) {
@@ -184,7 +244,7 @@ struct ProviderIntegrationTests {
     @Test(.enabled(if: Self.hasAnthropicKey))
     func `Anthropic Provider - Tool Calling`() async throws {
         let model = Model.anthropic(.sonnet46)
-        let config = TachikomaConfiguration()
+        let config = Self.liveConfiguration()
 
         do {
             let provider = try ProviderFactory.createProvider(for: model, configuration: config)
@@ -262,12 +322,14 @@ struct ProviderIntegrationTests {
     @Test(.enabled(if: Self.hasGrokKey))
     func `Grok Provider - Real API Call`() async throws {
         let model = Model.grok(.grok43)
+        let config = Self.liveConfiguration()
         do {
             let response = try await generate(
                 TestConfig.shortMessage,
                 using: model,
                 maxTokens: 50,
                 temperature: 0.0,
+                configuration: config,
             )
             if !(response.lowercased().contains("hello") && response.contains("Tachikoma")) {
                 Self.warn("Grok integration returned: \(response.prefix(120))…")
@@ -282,12 +344,14 @@ struct ProviderIntegrationTests {
     @Test(.enabled(if: Self.hasGoogleKey))
     func `Google Provider - Real API Call`() async throws {
         let model = Model.google(.gemini25Flash)
+        let config = Self.liveConfiguration()
         do {
             let response = try await generate(
                 TestConfig.shortMessage,
                 using: model,
                 maxTokens: 50,
                 temperature: 0.0,
+                configuration: config,
             )
             if !(response.lowercased().contains("hello") && response.contains("Tachikoma")) {
                 Self.warn("Google integration returned: \(response.prefix(120))…")
@@ -301,8 +365,15 @@ struct ProviderIntegrationTests {
 
     @Test(.enabled(if: Self.hasMistralKey))
     func `Mistral Provider - Real API Call`() async throws {
-        let model = Model.mistral(.small)
-        let response = try await generate(TestConfig.shortMessage, using: model, maxTokens: 50, temperature: 0.0)
+        let model = Model.mistral(.smallLatest)
+        let config = Self.liveConfiguration()
+        let response = try await generate(
+            TestConfig.shortMessage,
+            using: model,
+            maxTokens: 50,
+            temperature: 0.0,
+            configuration: config,
+        )
 
         #expect(response.lowercased().contains("hello"))
         #expect(response.contains("Tachikoma"))
@@ -313,7 +384,14 @@ struct ProviderIntegrationTests {
     @Test(.enabled(if: Self.hasGroqKey))
     func `Groq Provider - Real API Call`() async throws {
         let model = Model.groq(.llama318b)
-        let response = try await generate(TestConfig.shortMessage, using: model, maxTokens: 50, temperature: 0.0)
+        let config = Self.liveConfiguration()
+        let response = try await generate(
+            TestConfig.shortMessage,
+            using: model,
+            maxTokens: 50,
+            temperature: 0.0,
+            configuration: config,
+        )
 
         #expect(response.lowercased().contains("hello"))
         #expect(response.contains("Tachikoma"))
@@ -324,11 +402,11 @@ struct ProviderIntegrationTests {
     @Test(.enabled(if: Self.hasOpenAIKey))
     func `Multi-Modal Provider - Vision Support`() async throws {
         let model = Model.openai(.gpt55)
-        let config = TachikomaConfiguration()
+        let config = Self.liveConfiguration()
         let provider = try ProviderFactory.createProvider(for: model, configuration: config)
 
-        // Create a simple base64 encoded 1x1 red pixel PNG
-        let redPixelPNG = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
+        // Create a simple base64 encoded 16x16 red square PNG
+        let redPixelPNG = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAF0lEQVR4nGP4z8BAEiJN9aiGUQ1DSgMAkPn/Afnh+ngAAAAASUVORK5CYII="
 
         let imageContent = ModelMessage.ContentPart.ImageContent(
             data: redPixelPNG,
@@ -343,13 +421,13 @@ struct ProviderIntegrationTests {
                 ]),
             ],
             tools: nil,
-            settings: .init(maxTokens: 50, temperature: 0.0),
+            settings: .init(maxTokens: 300, temperature: 0.0),
         )
 
         let response = try await provider.generateText(request: request)
 
         let normalized = response.text.lowercased()
-        #expect(normalized.contains("red") || normalized.contains("yellow"))
+        #expect(normalized.contains("red"))
     }
 
     // MARK: - Helper Methods
