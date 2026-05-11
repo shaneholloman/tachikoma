@@ -1011,6 +1011,12 @@ extension LanguageModel {
         let trimmed = modelString.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return nil }
 
+        if let qualified = ProviderParser.parse(trimmed),
+           qualified.provider.lowercased() == "ollama"
+        {
+            return .ollama(Self.parseOllamaModelIdentifier(qualified.model))
+        }
+
         let normalized = trimmed.lowercased()
         let dashed = normalized.replacingOccurrences(of: "_", with: "-")
         let compact = dashed.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: ".", with: "")
@@ -1234,6 +1240,14 @@ extension LanguageModel {
             return .ollama(.gptOSS120B)
         }
 
+        if compact.contains("qwen25vl") {
+            return .ollama(Self.parseOllamaModelIdentifier(trimmed))
+        }
+
+        if normalized == "qwen2.5" || normalized == "qwen2.5:latest" || compact == "qwen25" {
+            return .ollama(.qwen25)
+        }
+
         if compact.contains("llama4") {
             return .ollama(.llama4)
         }
@@ -1265,6 +1279,40 @@ extension LanguageModel {
         }
 
         return nil
+    }
+
+    private static func parseOllamaModelIdentifier(_ modelString: String) -> Ollama {
+        let trimmed = modelString.trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalized = trimmed.lowercased()
+
+        switch normalized {
+        case "gpt-oss:120b", "gpt-oss-120b":
+            return .gptOSS120B
+        case "gpt-oss:20b", "gpt-oss-20b":
+            return .gptOSS20B
+        case "llama3.3", "llama3.3:latest":
+            return .llama33
+        case "llama3.2", "llama3.2:latest":
+            return .llama32
+        case "llama3.1", "llama3.1:latest":
+            return .llama31
+        case "llava", "llava:latest":
+            return .llava
+        case "bakllava", "bakllava:latest":
+            return .bakllava
+        case "llama3.2-vision:11b":
+            return .llama32Vision11b
+        case "llama3.2-vision:90b":
+            return .llama32Vision90b
+        case "qwen2.5vl:7b":
+            return .qwen25vl7b
+        case "qwen2.5vl:32b":
+            return .qwen25vl32b
+        case "qwen2.5", "qwen2.5:latest":
+            return .qwen25
+        default:
+            return .custom(trimmed)
+        }
     }
 }
 

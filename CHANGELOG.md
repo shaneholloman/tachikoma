@@ -9,6 +9,7 @@ All notable changes to the Tachikoma project will be documented in this file.
 - Removed stale direct model support for retired or non-canonical IDs including GPT-5.1/5.2/pseudo-thinking models, deprecated Claude Sonnet/Opus 4 snapshots, Grok 2/3/4-fast rows, old Groq Llama/Mixtral/Gemma aliases, stale Mistral aliases, and invalid LM Studio `current`.
 
 ### Fixed
+- Ollama model parsing now preserves explicit custom vision model IDs such as `qwen2.5vl:3b` instead of falling back to `llama3.3` (#16).
 - SwiftPM consumers can now resolve Commander remotely instead of requiring a local `../Commander` checkout. Thanks @malpern.
 - Custom OpenAI-compatible and Anthropic-compatible providers now honor per-provider `options.apiKey` values from profile config. Thanks @381181295.
 - Google/Gemini request encoding now sends tool results as documented user `functionResponse` turns and merges consecutive same-role contents before calling the API. Thanks @hsrvc.

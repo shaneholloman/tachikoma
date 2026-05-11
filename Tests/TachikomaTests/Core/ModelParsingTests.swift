@@ -64,6 +64,22 @@ struct ModelParsingTests {
     }
 
     @Test
+    func `parse custom Ollama Qwen vision model without falling back to Llama`() {
+        let parsed = LanguageModel.parse(from: "qwen2.5vl:3b")
+        #expect(parsed == .ollama(.custom("qwen2.5vl:3b")))
+        #expect(parsed?.modelId == "qwen2.5vl:3b")
+        #expect(parsed?.supportsVision == true)
+        #expect(parsed?.supportsTools == false)
+    }
+
+    @Test
+    func `parse provider-qualified custom Ollama model`() {
+        let parsed = LanguageModel.parse(from: "ollama/qwen2.5vl:3b")
+        #expect(parsed == .ollama(.custom("qwen2.5vl:3b")))
+        #expect(parsed?.modelId == "qwen2.5vl:3b")
+    }
+
+    @Test
     func `ModelSelector rejects legacy OpenAI before Ollama fallback`() throws {
         if #available(macOS 13.0, iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
             for model in ["gpt-4o", "gpt-4.1", "gpt-3.5-turbo", "o4-mini", "o3-mini", "gpt-5.2"] {
