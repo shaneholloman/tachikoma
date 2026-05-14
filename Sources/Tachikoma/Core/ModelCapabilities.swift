@@ -206,6 +206,8 @@ public final class ModelCapabilityRegistry: @unchecked Sendable {
             "ollama:\(submodel.modelId)"
         case let .lmstudio(submodel):
             "lmstudio:\(submodel.modelId)"
+        case let .minimax(submodel):
+            "minimax:\(submodel.modelId)"
         case let .openRouter(modelId):
             "openrouter:\(modelId)"
         case let .together(modelId):
@@ -355,6 +357,9 @@ public final class ModelCapabilityRegistry: @unchecked Sendable {
             return ModelParameterCapabilities(
                 supportsSeed: true,
             )
+
+        case .minimax:
+            return ModelParameterCapabilities()
 
         default:
             // Default capabilities for unknown models

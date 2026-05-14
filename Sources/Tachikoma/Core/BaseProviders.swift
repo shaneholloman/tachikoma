@@ -27,13 +27,22 @@ public final class AnthropicProvider: ModelProvider {
         model: LanguageModel.Anthropic,
         configuration: TachikomaConfiguration,
         additionalHeaders: [String: String] = [:],
+        authOverride: TKAuthValue? = nil,
     ) throws {
         self.model = model
         self.modelId = model.modelId
         self.baseURL = configuration.getBaseURL(for: .anthropic) ?? "https://api.anthropic.com"
         self.additionalHeaders = additionalHeaders
 
-        if let key = configuration.getAPIKey(for: .anthropic) {
+        if let authOverride {
+            self.auth = authOverride
+            switch authOverride {
+            case let .apiKey(key):
+                self.apiKey = key
+            case let .bearer(token, _):
+                self.apiKey = token
+            }
+        } else if let key = configuration.getAPIKey(for: .anthropic) {
             self.auth = .apiKey(key)
             self.apiKey = key
         } else if let auth = TKAuthManager.shared.resolveAuth(for: .anthropic) {

@@ -31,6 +31,11 @@ Notes:
 - `gemini-3-flash` (API id currently maps to `gemini-3-flash-preview`)
 - `gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.5-flash-lite`
 
+## MiniMax (`LanguageModel.MiniMax`)
+
+- `MiniMax-M2.7`
+- `MiniMax-M2.7-highspeed`
+
 ## xAI Grok (`LanguageModel.Grok`)
 
 - `grok-4.3`

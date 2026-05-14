@@ -52,6 +52,13 @@ struct LanguageModelCoverageTests {
             #expect(model.contextLength > 0)
         }
 
+        for model in LanguageModel.MiniMax.allCases {
+            #expect(!model.modelId.isEmpty)
+            _ = model.supportsVision
+            _ = model.supportsTools
+            #expect(model.contextLength > 0)
+        }
+
         for model in LanguageModel.Ollama.allCases {
             #expect(!model.modelId.isEmpty)
             _ = model.supportsVision
@@ -74,6 +81,7 @@ struct LanguageModelCoverageTests {
             .mistral(.medium35),
             .groq(.llama3370b),
             .grok(.grok43),
+            .minimax(.m27),
             .ollama(.llama33),
             .lmstudio(.gptOSS20B),
             .openRouter(modelId: "openrouter/alpha"),

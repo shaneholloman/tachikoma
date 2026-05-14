@@ -375,6 +375,7 @@ struct AICLI {
         case .openai: .openai
         case .anthropic: .anthropic
         case .google: .google
+        case .minimax: .minimax
         case .mistral: .mistral
         case .groq: .groq
         case .grok: .grok
@@ -405,6 +406,9 @@ struct AICLI {
             print("# Legacy names still supported:")
             print("export GOOGLE_API_KEY='gk-your-key-here'")
             print("Get your key at: https://aistudio.google.com/apikey")
+        case .minimax:
+            print("Set your MiniMax API key:")
+            print("export MINIMAX_API_KEY='your-key-here'")
         case .mistral:
             print("Set your Mistral API key:")
             print("export MISTRAL_API_KEY='your-key-here'")
@@ -820,6 +824,9 @@ struct AICLI {
                 outputCostPer1k = 0.004
             default: return nil
             }
+        case .minimax:
+            inputCostPer1k = 0.0003
+            outputCostPer1k = 0.0012
         default:
             return nil
         }

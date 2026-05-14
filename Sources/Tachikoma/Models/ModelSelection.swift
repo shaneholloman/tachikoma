@@ -30,6 +30,11 @@ public struct ModelSelector {
             return .google(googleModel)
         }
 
+        // MiniMax shortcuts and models
+        if let miniMaxModel = parseMiniMaxModel(normalized) {
+            return .minimax(miniMaxModel)
+        }
+
         // Grok shortcuts and models
         if let grokModel = parseGrokModel(normalized) {
             return .grok(grokModel)
@@ -42,7 +47,12 @@ public struct ModelSelector {
             throw ModelValidationError.unsupportedModel(modelString)
         }
 
-        // Ollama shortcuts and models
+        // LM Studio shortcuts and models
+        if let lmStudioModel = parseLMStudioModel(normalized) {
+            return .lmstudio(lmStudioModel)
+        }
+
+        // Ollama shortcuts and models. Keep after explicit local providers because it accepts custom IDs.
         if let ollamaModel = parseOllamaModel(normalized) {
             return .ollama(ollamaModel)
         }
@@ -219,6 +229,22 @@ public struct ModelSelector {
         }
     }
 
+    private static func parseMiniMaxModel(_ input: String) -> Model.MiniMax? {
+        switch input {
+        case "minimax-m2.7", "minimax-m2-7", "m2.7", "m2-7", "minimax/m2.7", "minimax/m2-7",
+             "minimax/minimax-m2.7", "minimax/minimax-m2-7":
+            return .m27
+        case "minimax-m2.7-highspeed", "minimax-m2-7-highspeed", "m2.7-highspeed", "m2-7-highspeed",
+             "minimax/m2.7-highspeed", "minimax/m2-7-highspeed", "minimax/minimax-m2.7-highspeed",
+             "minimax/minimax-m2-7-highspeed":
+            return .m27Highspeed
+        case "minimax":
+            return .m27
+        default:
+            return nil
+        }
+    }
+
     private static func isUnsupportedLegacyGrokModel(_ input: String) -> Bool {
         let normalized = input.lowercased()
         return normalized.hasPrefix("grok-2") ||
@@ -280,6 +306,33 @@ public struct ModelSelector {
         }
     }
 
+    private static func parseLMStudioModel(_ input: String) -> Model.LMStudio? {
+        if input == "lmstudio" || input == "lm-studio" {
+            return .gptOSS120B
+        }
+
+        for prefix in ["lmstudio/", "lm-studio/"] where input.hasPrefix(prefix) {
+            let modelId = String(input.dropFirst(prefix.count))
+            guard !modelId.isEmpty else { return nil }
+            return Self.parseLMStudioModelIdentifier(modelId)
+        }
+
+        return nil
+    }
+
+    private static func parseLMStudioModelIdentifier(_ input: String) -> Model.LMStudio {
+        switch input {
+        case "openai/gpt-oss-120b", "gpt-oss-120b", "gpt-oss:120b":
+            .gptOSS120B
+        case "openai/gpt-oss-20b", "gpt-oss-20b", "gpt-oss:20b":
+            .gptOSS20B
+        case "meta/llama-3.3-70b", "llama-3.3-70b", "llama3.3-70b":
+            .llama3370B
+        default:
+            .custom(input)
+        }
+    }
+
     // MARK: - Model Information
 
     /// Get available models for a specific provider
@@ -305,8 +358,15 @@ public struct ModelSelector {
             }
         case "google", "gemini":
             return Model.Google.allCases.map(\.userFacingModelId)
+        case "minimax":
+            return Model.MiniMax.allCases.map(\.modelId)
         case "ollama":
             return Model.Ollama.allCases.compactMap {
+                if case .custom = $0 { return nil }
+                return $0.modelId
+            }
+        case "lmstudio", "lm-studio":
+            return Model.LMStudio.allCases.compactMap {
                 if case .custom = $0 { return nil }
                 return $0.modelId
             }
@@ -381,6 +441,11 @@ public func getAllAvailableModels() -> String {
     )
 
     output += formatModelList(
+        title: "MiniMax",
+        models: ModelSelector.availableModels(for: "minimax"),
+    )
+
+    output += formatModelList(
         title: "Grok (xAI)",
         models: ModelSelector.availableModels(for: "grok"),
     )
@@ -394,6 +459,7 @@ public func getAllAvailableModels() -> String {
     output += "  • claude, claude-opus, opus → claude-opus-4-7\n"
     output += "  • gpt → gpt-5.5\n"
     output += "  • gemini → gemini-3.1-pro-preview\n"
+    output += "  • minimax → MiniMax-M2.7\n"
     output += "  • grok → grok-4.3\n"
     output += "  • llama, llama3 → llama3.3\n"
 

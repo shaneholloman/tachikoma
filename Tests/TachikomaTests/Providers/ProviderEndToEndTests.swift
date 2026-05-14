@@ -340,6 +340,42 @@ struct ProviderEndToEndTests {
         }
     }
 
+    @Test
+    func `Anthropic-compatible provider accepts auth override`() async throws {
+        try await NetworkMocking.withMockedNetwork { request in
+            self.expectPath(request, endsWith: "/messages")
+            #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer compat-token")
+            #expect(request.value(forHTTPHeaderField: "x-api-key") == nil)
+            return NetworkMocking.jsonResponse(for: request, data: Self.anthropicPayload(text: "Compat bearer"))
+        } operation: {
+            let provider = try AnthropicCompatibleProvider(
+                modelId: "claude-compat-4",
+                baseURL: "https://compat.anthropic.test",
+                configuration: Self.makeConfiguration { _ in },
+                auth: .bearer("compat-token", betaHeader: nil),
+            )
+            let response = try await provider.generateText(request: Self.basicRequest)
+            #expect(response.text == "Compat bearer")
+        }
+    }
+
+    @Test
+    func `MiniMax provider uses bearer auth`() async throws {
+        try await NetworkMocking.withMockedNetwork { request in
+            self.expectPath(request, endsWith: "/messages")
+            #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer live-minimax")
+            #expect(request.value(forHTTPHeaderField: "x-api-key") == nil)
+            return NetworkMocking.jsonResponse(for: request, data: Self.anthropicPayload(text: "MiniMax ok"))
+        } operation: {
+            let config = Self.makeConfiguration { config in
+                config.setAPIKey("live-minimax", for: .minimax)
+            }
+            let provider = try ProviderFactory.createProvider(for: .minimax(.m27), configuration: config)
+            let response = try await provider.generateText(request: Self.basicRequest)
+            #expect(response.text == "MiniMax ok")
+        }
+    }
+
     // MARK: - Helpers
 
     private func assertOpenAICompatibleProvider(_ model: LanguageModel, provider: Provider) async throws {

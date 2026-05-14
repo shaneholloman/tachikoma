@@ -16,6 +16,7 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
     case grok(Grok)
     case ollama(Ollama)
     case lmstudio(LMStudio)
+    case minimax(MiniMax)
     case azureOpenAI(deployment: String, resource: String? = nil, apiVersion: String? = nil, endpoint: String? = nil)
 
     // Third-party aggregators
@@ -261,6 +262,35 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
             case .gemini25FlashLite:
                 524_288
             }
+        }
+    }
+
+    public enum MiniMax: String, Sendable, Hashable, CaseIterable {
+        case m27 = "MiniMax-M2.7"
+        case m27Highspeed = "MiniMax-M2.7-highspeed"
+
+        public var modelId: String {
+            self.rawValue
+        }
+
+        public var supportsVision: Bool {
+            false
+        }
+
+        public var supportsTools: Bool {
+            true
+        }
+
+        public var supportsAudioInput: Bool {
+            false
+        }
+
+        public var supportsAudioOutput: Bool {
+            false
+        }
+
+        public var contextLength: Int {
+            204_800
         }
     }
 
@@ -628,6 +658,8 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
             return "Ollama/\(model.modelId)"
         case let .lmstudio(model):
             return "LMStudio/\(model.modelId)"
+        case let .minimax(model):
+            return "MiniMax/\(model.modelId)"
         case let .azureOpenAI(deployment, resource, apiVersion, endpoint):
             let host = endpoint ?? resource ?? "endpoint"
             let version = apiVersion ?? "api-version-default"
@@ -665,6 +697,8 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
             model.modelId
         case let .lmstudio(model):
             model.modelId
+        case let .minimax(model):
+            model.modelId
         case let .azureOpenAI(deployment, _, _, _):
             deployment
         case let .openRouter(modelId):
@@ -700,6 +734,8 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
             model.supportsVision
         case let .lmstudio(model):
             model.supportsVision
+        case let .minimax(model):
+            model.supportsVision
         case .azureOpenAI:
             true // Azure mirrors OpenAI models with vision support when available
         case .openRouter, .together, .replicate:
@@ -734,6 +770,8 @@ public enum LanguageModel: Sendable, CustomStringConvertible, Hashable {
             "Ollama"
         case .lmstudio:
             "LMStudio"
+        case .minimax:
+            "MiniMax"
         case .openRouter:
             "OpenRouter"
         case .together:
@@ -787,6 +825,8 @@ extension LanguageModel {
             model.supportsAudioInput
         case .lmstudio:
             false // LMStudio doesn't support audio input
+        case let .minimax(model):
+            model.supportsAudioInput
         case .azureOpenAI:
             false // Azure chat endpoints currently omit audio input
         case .openRouter, .together, .replicate:
@@ -816,6 +856,8 @@ extension LanguageModel {
             model.supportsAudioOutput
         case .lmstudio:
             false // LMStudio doesn't support audio output
+        case let .minimax(model):
+            model.supportsAudioOutput
         case .azureOpenAI:
             false // Azure chat endpoints currently omit audio output
         case .openRouter, .together, .replicate:
@@ -845,6 +887,8 @@ extension LanguageModel {
             model.supportsTools
         case let .lmstudio(model):
             model.supportsTools
+        case let .minimax(model):
+            model.supportsTools
         case .azureOpenAI:
             true // Azure OpenAI mirrors OpenAI tool support
         case .openRouter, .together, .replicate:
@@ -873,6 +917,8 @@ extension LanguageModel {
         case let .ollama(model):
             model.contextLength
         case let .lmstudio(model):
+            model.contextLength
+        case let .minimax(model):
             model.contextLength
         case .azureOpenAI:
             128_000 // conservative default matching OpenAI tier
@@ -914,6 +960,9 @@ extension LanguageModel {
             hasher.combine(model)
         case let .lmstudio(model):
             hasher.combine("lmstudio")
+            hasher.combine(model)
+        case let .minimax(model):
+            hasher.combine("minimax")
             hasher.combine(model)
         case let .openRouter(modelId):
             hasher.combine("openRouter")
@@ -962,6 +1011,8 @@ extension LanguageModel {
         case let (.ollama(lhsModel), .ollama(rhsModel)):
             lhsModel == rhsModel
         case let (.lmstudio(lhsModel), .lmstudio(rhsModel)):
+            lhsModel == rhsModel
+        case let (.minimax(lhsModel), .minimax(rhsModel)):
             lhsModel == rhsModel
         case let (.openRouter(lhsId), .openRouter(rhsId)):
             lhsId == rhsId
@@ -1015,6 +1066,18 @@ extension LanguageModel {
            qualified.provider.lowercased() == "ollama"
         {
             return .ollama(Self.parseOllamaModelIdentifier(qualified.model))
+        }
+
+        if let qualified = ProviderParser.parse(trimmed),
+           ["lmstudio", "lm-studio"].contains(qualified.provider.lowercased())
+        {
+            return .lmstudio(Self.parseLMStudioModelIdentifier(qualified.model))
+        }
+
+        if let qualified = ProviderParser.parse(trimmed),
+           qualified.provider.lowercased() == "minimax"
+        {
+            return Self.parseMiniMaxModelIdentifier(qualified.model).map(LanguageModel.minimax)
         }
 
         let normalized = trimmed.lowercased()
@@ -1198,6 +1261,29 @@ extension LanguageModel {
             return .google(.gemini31ProPreview)
         }
 
+        // MARK: MiniMax models
+
+        if
+            dashed.contains("minimax-m2.7-highspeed") ||
+            dotted.contains("minimax-m2-7-highspeed") ||
+            compact.contains("minimaxm27highspeed") ||
+            dashed == "m2.7-highspeed" ||
+            dotted == "m2-7-highspeed"
+        {
+            return .minimax(.m27Highspeed)
+        }
+
+        if
+            dashed.contains("minimax-m2.7") ||
+            dotted.contains("minimax-m2-7") ||
+            compact.contains("minimaxm27") ||
+            dashed == "m2.7" ||
+            dotted == "m2-7" ||
+            normalized == "minimax"
+        {
+            return .minimax(.m27)
+        }
+
         // MARK: Grok models
 
         let unsupportedGrok = normalized.hasPrefix("grok-2") ||
@@ -1232,6 +1318,14 @@ extension LanguageModel {
         }
 
         // MARK: Ollama models
+
+        if normalized == "ollama" {
+            return .ollama(.llama33)
+        }
+
+        if normalized == "lmstudio" || normalized == "lm-studio" {
+            return .lmstudio(.gptOSS120B)
+        }
 
         if compact.contains("gptoss") {
             if compact.contains("20b") {
@@ -1312,6 +1406,35 @@ extension LanguageModel {
             return .qwen25
         default:
             return .custom(trimmed)
+        }
+    }
+
+    private static func parseLMStudioModelIdentifier(_ modelString: String) -> LMStudio {
+        let trimmed = modelString.trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalized = trimmed.lowercased()
+
+        switch normalized {
+        case "openai/gpt-oss-120b", "gpt-oss-120b", "gpt-oss:120b":
+            return .gptOSS120B
+        case "openai/gpt-oss-20b", "gpt-oss-20b", "gpt-oss:20b":
+            return .gptOSS20B
+        case "meta/llama-3.3-70b", "llama-3.3-70b", "llama3.3-70b":
+            return .llama3370B
+        default:
+            return .custom(trimmed)
+        }
+    }
+
+    private static func parseMiniMaxModelIdentifier(_ modelString: String) -> MiniMax? {
+        let normalized = modelString.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+
+        switch normalized {
+        case "minimax-m2.7", "minimax-m2-7", "m2.7", "m2-7":
+            return .m27
+        case "minimax-m2.7-highspeed", "minimax-m2-7-highspeed", "m2.7-highspeed", "m2-7-highspeed":
+            return .m27Highspeed
+        default:
+            return nil
         }
     }
 }

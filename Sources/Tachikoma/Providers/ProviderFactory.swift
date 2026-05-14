@@ -56,6 +56,25 @@ public struct ProviderFactory {
                 modelId: lmstudioModel.modelId,
             )
 
+        case let .minimax(minimaxModel):
+            guard let apiKey = configuration.getAPIKey(for: .minimax) else {
+                throw TachikomaError.authenticationFailed("MINIMAX_API_KEY not found")
+            }
+            return try AnthropicCompatibleProvider(
+                modelId: minimaxModel.modelId,
+                baseURL: configuration.getBaseURL(for: .minimax) ?? "https://api.minimax.io/anthropic",
+                configuration: configuration,
+                apiKey: apiKey,
+                auth: .bearer(apiKey, betaHeader: nil),
+                capabilities: ModelCapabilities(
+                    supportsVision: minimaxModel.supportsVision,
+                    supportsTools: minimaxModel.supportsTools,
+                    supportsStreaming: true,
+                    contextLength: minimaxModel.contextLength,
+                    maxOutputTokens: 8192,
+                ),
+            )
+
         case let .openRouter(modelId):
             return try OpenRouterProvider(modelId: modelId, configuration: configuration)
 

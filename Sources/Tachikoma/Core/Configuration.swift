@@ -294,6 +294,7 @@ public final class TachikomaConfiguration: @unchecked Sendable {
         let urlMappings: [Provider: String] = [
             .openai: "OPENAI_BASE_URL",
             .anthropic: "ANTHROPIC_BASE_URL",
+            .minimax: "MINIMAX_BASE_URL",
             .ollama: "OLLAMA_BASE_URL",
             .azureOpenAI: "AZURE_OPENAI_ENDPOINT",
         ]

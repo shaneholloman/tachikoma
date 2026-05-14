@@ -33,6 +33,19 @@ struct ProviderSystemTests {
     }
 
     @Test
+    func `Provider Factory - MiniMax Provider Creation`() async throws {
+        try await TestHelpers.withTestConfiguration(apiKeys: ["minimax": "test-key"]) { config in
+            let model = Model.minimax(.m27)
+            let provider = try ProviderFactory.createProvider(for: model, configuration: config)
+
+            #expect(provider.modelId == "MiniMax-M2.7")
+            #expect(provider.capabilities.supportsVision == false)
+            #expect(provider.capabilities.supportsTools == true)
+            #expect(provider.capabilities.supportsStreaming == true)
+        }
+    }
+
+    @Test
     func `Provider Factory - Grok Provider Creation`() async throws {
         try await TestHelpers.withTestConfiguration(apiKeys: ["grok": "test-key"]) { config in
             let model = Model.grok(.grok43)
@@ -81,11 +94,24 @@ struct ProviderSystemTests {
 
             let previousOpenAI = getenv("OPENAI_API_KEY").flatMap { String(cString: $0) }
             let previousAnthropic = getenv("ANTHROPIC_API_KEY").flatMap { String(cString: $0) }
+            let previousMiniMax = getenv("MINIMAX_API_KEY").flatMap { String(cString: $0) }
+            let previousAnthropicCompatible = getenv("ANTHROPIC_COMPATIBLE_API_KEY").flatMap { String(cString: $0) }
+            let previousGeneric = getenv("API_KEY").flatMap { String(cString: $0) }
             unsetenv("OPENAI_API_KEY")
             unsetenv("ANTHROPIC_API_KEY")
+            unsetenv("MINIMAX_API_KEY")
+            setenv("ANTHROPIC_COMPATIBLE_API_KEY", "generic-compatible-key", 1)
+            setenv("API_KEY", "generic-key", 1)
             defer {
                 if let previousOpenAI { setenv("OPENAI_API_KEY", previousOpenAI, 1) }
                 if let previousAnthropic { setenv("ANTHROPIC_API_KEY", previousAnthropic, 1) }
+                if let previousMiniMax { setenv("MINIMAX_API_KEY", previousMiniMax, 1) } else { unsetenv("MINIMAX_API_KEY") }
+                if let previousAnthropicCompatible {
+                    setenv("ANTHROPIC_COMPATIBLE_API_KEY", previousAnthropicCompatible, 1)
+                } else {
+                    unsetenv("ANTHROPIC_COMPATIBLE_API_KEY")
+                }
+                if let previousGeneric { setenv("API_KEY", previousGeneric, 1) } else { unsetenv("API_KEY") }
             }
 
             #expect(throws: TachikomaError.self) {
@@ -94,6 +120,10 @@ struct ProviderSystemTests {
 
             #expect(throws: TachikomaError.self) {
                 try AnthropicProvider(model: .opus4, configuration: config)
+            }
+
+            #expect(throws: TachikomaError.self) {
+                try ProviderFactory.createProvider(for: .minimax(.m27), configuration: config)
             }
         }
     }

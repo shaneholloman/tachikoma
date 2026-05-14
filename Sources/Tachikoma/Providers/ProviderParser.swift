@@ -94,6 +94,8 @@ public enum ProviderParser {
     ///   - hasOpenAI: Whether OpenAI API key is available
     ///   - hasAnthropic: Whether Anthropic API key is available
     ///   - hasGrok: Whether Grok API key is available
+    ///   - hasGoogle: Whether Google/Gemini API key is available
+    ///   - hasMiniMax: Whether MiniMax API key is available
     ///   - hasOllama: Whether Ollama is available (always true as it doesn't require API key)
     ///   - configuredDefault: Optional default from configuration
     ///   - isEnvironmentProvided: Whether the providers string came from environment variable
@@ -103,6 +105,8 @@ public enum ProviderParser {
         hasOpenAI: Bool,
         hasAnthropic: Bool,
         hasGrok: Bool = false,
+        hasGoogle: Bool? = nil,
+        hasMiniMax: Bool = false,
         hasOllama: Bool = true,
         configuredDefault: LanguageModel? = nil,
         isEnvironmentProvided: Bool = false,
@@ -113,14 +117,19 @@ public enum ProviderParser {
         let providers = self.parseList(providersString)
         var environmentModel: LanguageModel?
 
+        let canUseGoogleProvider = hasGoogle ?? true
+        let canFallbackToGoogle = hasGoogle ?? false
+
         for config in providers {
             switch config.provider.lowercased() {
             case "openai" where hasOpenAI:
                 environmentModel = self.parseOpenAIModel(config.model)
             case "anthropic" where hasAnthropic:
                 environmentModel = self.parseAnthropicModel(config.model)
-            case "google", "gemini":
+            case "google" where canUseGoogleProvider, "gemini" where canUseGoogleProvider:
                 environmentModel = self.parseGoogleModel(config.model)
+            case "minimax" where hasMiniMax:
+                environmentModel = self.parseMiniMaxModel(config.model)
             case "grok" where hasGrok, "xai" where hasGrok:
                 environmentModel = self.parseGrokModel(config.model)
             case "ollama" where hasOllama:
@@ -151,6 +160,8 @@ public enum ProviderParser {
                 hasOpenAI: hasOpenAI,
                 hasAnthropic: hasAnthropic,
                 hasGrok: hasGrok,
+                hasGoogle: canFallbackToGoogle,
+                hasMiniMax: hasMiniMax,
                 hasOllama: hasOllama,
             )
         }
@@ -169,6 +180,8 @@ public enum ProviderParser {
         hasOpenAI: Bool,
         hasAnthropic: Bool,
         hasGrok: Bool = false,
+        hasGoogle: Bool? = nil,
+        hasMiniMax: Bool = false,
         hasOllama: Bool = true,
         configuredDefault: LanguageModel? = nil,
     )
@@ -180,6 +193,8 @@ public enum ProviderParser {
             hasOpenAI: hasOpenAI,
             hasAnthropic: hasAnthropic,
             hasGrok: hasGrok,
+            hasGoogle: hasGoogle,
+            hasMiniMax: hasMiniMax,
             hasOllama: hasOllama,
             configuredDefault: configuredDefault,
             isEnvironmentProvided: false,
@@ -287,6 +302,17 @@ public enum ProviderParser {
         }
     }
 
+    private static func parseMiniMaxModel(_ modelString: String) -> LanguageModel? {
+        switch modelString.lowercased() {
+        case "minimax-m2.7", "minimax-m2-7", "m2.7", "m2-7":
+            .minimax(.m27)
+        case "minimax-m2.7-highspeed", "minimax-m2-7-highspeed", "m2.7-highspeed", "m2-7-highspeed":
+            .minimax(.m27Highspeed)
+        default:
+            nil
+        }
+    }
+
     private static func parseGrokModel(_ modelString: String) -> LanguageModel? {
         switch modelString.lowercased() {
         case "grok-4.3", "grok-4-3", "grok43", "grok-latest":
@@ -340,6 +366,8 @@ public enum ProviderParser {
         hasOpenAI: Bool,
         hasAnthropic: Bool,
         hasGrok: Bool,
+        hasGoogle: Bool,
+        hasMiniMax: Bool,
         hasOllama _: Bool,
     )
         -> LanguageModel
@@ -350,6 +378,10 @@ public enum ProviderParser {
             .openai(.gpt55)
         } else if hasGrok {
             .grok(.grok43)
+        } else if hasGoogle {
+            .google(.gemini31ProPreview)
+        } else if hasMiniMax {
+            .minimax(.m27)
         } else {
             .ollama(.llama33)
         }

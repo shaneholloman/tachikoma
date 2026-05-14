@@ -9,6 +9,7 @@ public final class AnthropicCompatibleProvider: ModelProvider {
     public let additionalHeaders: [String: String]
     public let capabilities: ModelCapabilities
     private let configuration: TachikomaConfiguration
+    private let auth: TKAuthValue?
 
     public init(
         modelId: String,
@@ -16,6 +17,8 @@ public final class AnthropicCompatibleProvider: ModelProvider {
         configuration: TachikomaConfiguration,
         apiKey: String? = nil,
         additionalHeaders: [String: String] = [:],
+        auth: TKAuthValue? = nil,
+        capabilities: ModelCapabilities? = nil,
     ) throws {
         self.modelId = modelId
         self.baseURL = baseURL
@@ -25,18 +28,30 @@ public final class AnthropicCompatibleProvider: ModelProvider {
         // Try explicit provider key, then configuration, then common environment variable patterns.
         if let key = apiKey {
             self.apiKey = key
+            self.auth = auth ?? .apiKey(key)
         } else if let key = configuration.getAPIKey(for: .custom("anthropic_compatible")) {
             self.apiKey = key
+            self.auth = auth ?? .apiKey(key)
         } else if
             let key = ProcessInfo.processInfo.environment["ANTHROPIC_COMPATIBLE_API_KEY"] ??
             ProcessInfo.processInfo.environment["API_KEY"]
         {
             self.apiKey = key
+            self.auth = auth ?? .apiKey(key)
+        } else if let auth {
+            self.auth = auth
+            switch auth {
+            case let .apiKey(key):
+                self.apiKey = key
+            case let .bearer(token, _):
+                self.apiKey = token
+            }
         } else {
             self.apiKey = nil
+            self.auth = nil
         }
 
-        self.capabilities = ModelCapabilities(
+        self.capabilities = capabilities ?? ModelCapabilities(
             supportsVision: true,
             supportsTools: true,
             supportsStreaming: true,
@@ -73,6 +88,7 @@ public final class AnthropicCompatibleProvider: ModelProvider {
             model: .custom(self.modelId),
             configuration: compatConfig,
             additionalHeaders: self.additionalHeaders,
+            authOverride: self.auth,
         )
     }
 }
