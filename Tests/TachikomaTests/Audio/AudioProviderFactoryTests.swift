@@ -81,43 +81,47 @@ struct AudioProviderFactoryTests {
     }
 
     @Test
-    func `AudioConfiguration reads configuration keys before environment`() {
-        let previousOpenAIKey = getenv("OPENAI_API_KEY").flatMap { String(cString: $0) }
-        unsetenv("OPENAI_API_KEY")
-        defer {
-            if let previousOpenAIKey {
-                setenv("OPENAI_API_KEY", previousOpenAIKey, 1)
+    func `AudioConfiguration reads configuration keys before environment`() async {
+        await TestEnvironmentMutex.shared.withLock {
+            let previousOpenAIKey = getenv("OPENAI_API_KEY").flatMap { String(cString: $0) }
+            unsetenv("OPENAI_API_KEY")
+            defer {
+                if let previousOpenAIKey {
+                    setenv("OPENAI_API_KEY", previousOpenAIKey, 1)
+                }
             }
+
+            let configuration = TachikomaConfiguration()
+            configuration.setAPIKey("configured-key", for: "openai")
+
+            let resolvedKey = AudioConfiguration.getAPIKey(for: "openai", configuration: configuration)
+            #expect(resolvedKey == "configured-key")
         }
-
-        let configuration = TachikomaConfiguration()
-        configuration.setAPIKey("configured-key", for: "openai")
-
-        let resolvedKey = AudioConfiguration.getAPIKey(for: "openai", configuration: configuration)
-        #expect(resolvedKey == "configured-key")
     }
 
     @Test
-    func `AudioConfiguration falls back to environment variable`() {
-        let previousOpenAIKey = getenv("OPENAI_API_KEY").flatMap { String(cString: $0) }
-        setenv("OPENAI_API_KEY", "env-key-123", 1)
-        defer {
-            if let previousOpenAIKey {
-                setenv("OPENAI_API_KEY", previousOpenAIKey, 1)
-            } else {
-                unsetenv("OPENAI_API_KEY")
+    func `AudioConfiguration falls back to environment variable`() async {
+        await TestEnvironmentMutex.shared.withLock {
+            let previousOpenAIKey = getenv("OPENAI_API_KEY").flatMap { String(cString: $0) }
+            setenv("OPENAI_API_KEY", "env-key-123", 1)
+            defer {
+                if let previousOpenAIKey {
+                    setenv("OPENAI_API_KEY", previousOpenAIKey, 1)
+                } else {
+                    unsetenv("OPENAI_API_KEY")
+                }
             }
-        }
 
-        let expectedKey = getenv("OPENAI_API_KEY").map { String(cString: $0) }
-        let resolvedKey = AudioConfiguration.getAPIKey(
-            for: "openai",
-            configuration: TachikomaConfiguration(loadFromEnvironment: false),
-        )
-        if let expectedKey {
-            #expect(resolvedKey == expectedKey)
-        } else {
-            Issue.record("Expected environment override for OPENAI_API_KEY")
+            let expectedKey = getenv("OPENAI_API_KEY").map { String(cString: $0) }
+            let resolvedKey = AudioConfiguration.getAPIKey(
+                for: "openai",
+                configuration: TachikomaConfiguration(loadFromEnvironment: false),
+            )
+            if let expectedKey {
+                #expect(resolvedKey == expectedKey)
+            } else {
+                Issue.record("Expected environment override for OPENAI_API_KEY")
+            }
         }
     }
 }
